@@ -38,14 +38,14 @@ interface Batch {
   listings: BatchListing[];
 }
 const BATCH_STATUS_BADGE_COLOR: Record<string, string> = {
-  done: "emerald-500",
-  queued: "amber-500",
-  pending: "amber-500",
-  failed: "red-500",
+  done: "dark:bg-sky-500",
+  queued: "dark:bg-amber-700",
+  pending: "dark:bg-amber-700",
+  failed: "dark:bg-red-900",
 };
 
 const BATCH_STATUS_LABELS: Record<string, string> = {
-  done: "Done",
+  done: "Success",
   queued: "Queued",
   pending: "Pending",
   failed: "Failed",
@@ -112,7 +112,7 @@ export default function History() {
             onClick={() => setSelectedShopIds(new Set())}
             className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${selectedShopIds.size === 0
                 ? "bg-accent text-primary-foreground border-accent"
-                : "bg-transparent text-muted-foreground hover:bg-muted"
+                : "bg-card text-muted-foreground hover:bg-muted"
               }`}
           >
             All shops
@@ -124,7 +124,7 @@ export default function History() {
               onClick={() => toggleShop(s.id)}
               className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${selectedShopIds.has(s.id)
                   ? "bg-accent text-primary-foreground border-accent"
-                  : "bg-transparent text-muted-foreground hover:bg-muted"
+                  : "bg-card text-muted-foreground hover:bg-muted"
                 }`}
             >
               {s.title}
@@ -134,7 +134,7 @@ export default function History() {
       )}
 
       {loading ? (
-        <p className="text-sm text-muted-foreground">Loading batches…</p>
+        <></>
       ) : batches.length === 0 ? (
         <Empty className="border bg-card">
           <EmptyHeader>
@@ -162,7 +162,7 @@ export default function History() {
                     </p>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
-                    <Badge className={`bg-${BATCH_STATUS_BADGE_COLOR[b.status] ?? "bg-emerald-500"} text-white`}>{BATCH_STATUS_LABELS[b.status] ?? b.status}</Badge>
+                    <Badge className={`${BATCH_STATUS_BADGE_COLOR[b.status] ?? "bg-emerald-500"} text-white`}>{BATCH_STATUS_LABELS[b.status] ?? b.status}</Badge>
                     <ChevronDownIcon
                       className={`size-5 text-muted-foreground transition-transform ${expanded ? "rotate-180" : ""}`}
                     />

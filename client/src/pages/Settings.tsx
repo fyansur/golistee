@@ -44,8 +44,10 @@ export default function Settings() {
           <SettingsIcon size="24" />Settings
         </p>
       </div>
-
-      <div className="max-w-lg space-y-6">
+      <div className="flex items-center justify-between mb-8">
+        <p className="text-xl font-black">Account Information</p>
+      </div>
+      <div className="space-y-6">
         <Card>
           <CardHeader><CardTitle className="text-sm">Account</CardTitle></CardHeader>
           <CardContent className="flex flex-col gap-3">
@@ -123,7 +125,7 @@ export default function Settings() {
             </form>
           </CardContent>
         </Card>
-{/* 
+        {/* 
         <Card>
           <CardHeader><CardTitle className="text-sm">Appearance</CardTitle></CardHeader>
           <CardContent className="flex flex-row items-center justify-between">

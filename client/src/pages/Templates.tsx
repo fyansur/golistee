@@ -89,7 +89,7 @@ export default function Templates() {
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="text-xl font-bold truncate">{t.name}</p>
-                  <p className="text-sm text-muted-foreground truncate">
+                  <p className="text-xs text-muted-foreground truncate">
                     {t.blueprintLabel} · {t.printProviderLabel}
                   </p>
                 </div>
@@ -133,10 +133,10 @@ export default function Templates() {
               )}
 
               {t.description && (
-                <p className="text-sm text-muted-foreground line-clamp-2">{t.description}</p>
+                <p className="text-xs text-muted-foreground line-clamp-2">{t.description}</p>
               )}
 
-              <p className="text-sm text-muted-foreground">{variantSummary(t)}</p>
+              <p className="text-xs text-muted-foreground">{variantSummary(t)}</p>
             </div>
           ))}
         </div>

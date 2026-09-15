@@ -38,9 +38,9 @@ const SALES_CHANNEL_LABELS: Record<string, string> = {
   shopify: "Shopify",
 };
 const SALES_CHANNEL_BADGE_COLOR: Record<string, string> = {
-  custom_integration: "bg-sky-500 text-white",
-  etsy: "bg-orange-500 text-white",
-  shopify: "bg-emerald-500 text-white",
+  custom_integration: "bg-sky-800 text-white",
+  etsy: "bg-orange-800 text-white",
+  shopify: "bg-emerald-800 text-white",
 };
 
 const TOKEN_STATUS_LABEL: Record<string, string> = {
@@ -138,7 +138,7 @@ export default function Connections() {
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 mb-2">
                   <p className="text-xl font-bold truncate">{account.label}</p>
-                  <Badge className={account.tokenStatus === "active" ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}>
+                  <Badge className={account.tokenStatus === "active" ? "bg-emerald-800 text-green-100" : "bg-red-900 text-red-100"}>
                     {TOKEN_STATUS_LABEL[account.tokenStatus] ?? account.tokenStatus}
                   </Badge>
                   </div>

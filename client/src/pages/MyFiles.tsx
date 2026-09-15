@@ -205,7 +205,7 @@ export default function MyFiles() {
       )}
 
       <div className="flex items-center gap-2">
-        <InputGroup className="flex-1">
+        <InputGroup className="flex-1 bg-card!">
           <InputGroupAddon align="inline-start">
             <SearchIcon className="size-4" />
           </InputGroupAddon>
@@ -216,7 +216,7 @@ export default function MyFiles() {
           />
         </InputGroup>
         <Select value={filter} onValueChange={(v) => setFilter(v as "active" | "archived")}>
-          <SelectTrigger className="w-44">
+          <SelectTrigger className="w-44 bg-card!">
             <SelectValue>{filter === "active" ? "All uploads" : "Archived"}</SelectValue>
           </SelectTrigger>
           <SelectContent>
@@ -227,7 +227,7 @@ export default function MyFiles() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-muted-foreground">Loading files…</p>
+        <></>
       ) : items.length === 0 ? (
         <Empty className="border bg-card">
           <EmptyHeader>
@@ -245,9 +245,9 @@ export default function MyFiles() {
               key={item.fileUrl}
               type="button"
               onClick={() => setOpenIndex(i)}
-              className="text-left rounded-lg overflow-hidden border hover:ring-2 hover:ring-primary"
+              className="text-left rounded-lg overflow-hidden border hover:border-primary/50 bg-card cursor-pointer"
             >
-              <div className="aspect-square" style={CHECKERBOARD_BG}>
+              <div className="aspect-square p-8" style={CHECKERBOARD_BG}>
                 <img src={item.thumbUrl ?? item.fileUrl} alt="" className="size-full object-contain" loading="lazy" />
               </div>
               <div className="p-3">

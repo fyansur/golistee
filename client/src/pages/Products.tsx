@@ -183,7 +183,7 @@ export default function Products() {
             onClick={() => setSelectedShopIds(new Set())}
             className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${selectedShopIds.size === 0
                 ? "bg-accent text-primary-foreground border-accent"
-                : "bg-transparent text-muted-foreground hover:bg-muted"
+                : "bg-card text-muted-foreground hover:bg-muted"
               }`}
           >
             All shops
@@ -195,7 +195,7 @@ export default function Products() {
               onClick={() => toggleShop(s.id)}
               className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${selectedShopIds.has(s.id)
                   ? "bg-accent text-primary-foreground border-accent"
-                  : "bg-transparent text-muted-foreground hover:bg-muted"
+                  : "bg-card text-muted-foreground hover:bg-muted"
                 }`}
             >
               {s.title}
@@ -204,8 +204,7 @@ export default function Products() {
         </div>
       )}
 
-      {loading ? (
-        <p className="text-sm text-muted-foreground">Loading products…</p>
+      {loading ? (<></>
       ) : products.length === 0 ? (
         <Empty className="border bg-card">
           <EmptyHeader>
@@ -248,13 +247,6 @@ export default function Products() {
                     <TableHead colSpan={4}>
                       <div className="flex items-center gap-3 justify-between w-full">
                         <span className="text-sm font-medium">{selectedIds.size}/{products.length}</span>
-                        <button
-                          type="button"
-                          onClick={() => setSelectedIds(new Set())}
-                          className="text-sm underline text-muted-foreground hover:text-foreground"
-                        >
-                          Deselect all
-                        </button>
                         <div className="ml-auto flex items-center gap-2">
                           <Button size="sm" variant="outline" onClick={bulkPublish} disabled={bulkBusy} className="font-medium text-xs">
                             <SendIcon className="size-3" /> Publish
