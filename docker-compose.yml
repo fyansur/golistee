@@ -8,6 +8,11 @@ services:
       POSTGRES_DB: golistee
     volumes:
       - golistee_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U golistee -d golistee"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
     restart: unless-stopped
 
   server:
@@ -17,9 +22,11 @@ services:
     container_name: golistee_server
     ports:
       - "3000:3000"
-    env_file: .env
+    env_file:
+      - .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:
