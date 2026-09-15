@@ -1,14 +1,13 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuGroup,
-  DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
+  DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
 } from "@/components/ui/sidebar";
 import { ChevronsUpDown, Files, HelpCircle, LogOutIcon, PlugIcon, Settings } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { ModeToggle } from "@/components/mode-toggle";
 
 export function NavUser() {
   const { isMobile } = useSidebar();

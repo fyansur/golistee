@@ -1,9 +1,15 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma.js";
 import { auth } from "../lib/middleware.js";
+import { encryptToken, decryptToken } from "../lib/crypto.js";
+import { printifyFetch } from "../lib/printify.js";
 
 const router = Router();
 router.use(auth);
+
+// Never send the (encrypted) token to the client — it has no use for it,
+// and there's no reason to put even the encrypted form on the wire.
+const withoutToken = <T extends { accessToken: string }>({ accessToken, ...rest }: T) => rest;
 
 // GET all accounts
 router.get("/", async (req, res) => {
@@ -12,7 +18,7 @@ router.get("/", async (req, res) => {
     where: { userId },
     include: { shops: true },
   });
-  res.json(accounts);
+  res.json(accounts.map(withoutToken));
 });
 
 // POST add account
@@ -21,7 +27,7 @@ router.post("/", async (req, res) => {
   const { label, accessToken } = req.body;
 
   // Validate token by hitting Printify API
-  const response = await fetch("https://api.printify.com/v1/shops.json", {
+  const response = await printifyFetch("https://api.printify.com/v1/shops.json", {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 
@@ -35,7 +41,7 @@ router.post("/", async (req, res) => {
     data: {
       userId,
       label,
-      accessToken,
+      accessToken: encryptToken(accessToken),
       shops: {
         create: shops.map((s: any) => ({
           printifyShopId: String(s.id),
@@ -47,7 +53,7 @@ router.post("/", async (req, res) => {
     include: { shops: true },
   });
 
-  res.json(account);
+  res.json(withoutToken(account));
 });
 
 // POST resync an account's shops from Printify — picks up shops the user
@@ -60,8 +66,8 @@ router.post("/:id/resync", async (req, res) => {
   });
   if (!account) return res.status(404).json({ error: "Account not found" });
 
-  const response = await fetch("https://api.printify.com/v1/shops.json", {
-    headers: { Authorization: `Bearer ${account.accessToken}` },
+  const response = await printifyFetch("https://api.printify.com/v1/shops.json", {
+    headers: { Authorization: `Bearer ${decryptToken(account.accessToken)}` },
   });
   if (!response.ok) {
     await prisma.printifyAccount.update({ where: { id: account.id }, data: { tokenStatus: "invalid" } });
@@ -123,7 +129,7 @@ router.post("/:id/resync", async (req, res) => {
     include: { shops: true },
   });
   res.json({
-    account: updated,
+    account: withoutToken(updated!),
     addedCount: newShops.length,
     missingCount: missingShops.length,
     updatedCount: renamedShops.length,

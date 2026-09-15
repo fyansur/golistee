@@ -6,13 +6,24 @@ import { r2 } from "../lib/r2.js";
 import { prisma } from "../lib/prisma.js";
 import { auth } from "../lib/middleware.js";
 import { pageParams } from "../lib/pagination.js";
+import { printifyFetch } from "../lib/printify.js";
+import { decryptToken } from "../lib/crypto.js";
 
 // Mirrors the client's own fileNameOf() (MyFiles.tsx) — recovers a display
 // name from the upload key when no explicit DesignAsset.name is set.
 const fileNameOf = (url: string) => (url.split("/").pop() ?? "").replace(/^\d+-/, "");
 
+const ALLOWED_IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp", "image/gif"]);
+
 const router = Router();
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 25 * 1024 * 1024 }, // print files can be large; still bounded
+  fileFilter: (_req, file, cb) => {
+    if (!ALLOWED_IMAGE_TYPES.has(file.mimetype)) return cb(new Error("Unsupported file type"));
+    cb(null, true);
+  },
+});
 router.use(auth);
 
 router.post("/upload", upload.single("file"), async (req, res) => {
@@ -73,10 +84,10 @@ router.post("/upload", upload.single("file"), async (req, res) => {
 
   let printifyData: any;
   try {
-    const printifyRes = await fetch("https://api.printify.com/v1/uploads/images.json", {
+    const printifyRes = await printifyFetch("https://api.printify.com/v1/uploads/images.json", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${account.accessToken}`,
+        Authorization: `Bearer ${decryptToken(account.accessToken)}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({

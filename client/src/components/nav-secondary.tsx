@@ -8,7 +8,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import type { LucideIcon } from "lucide-react";
-import { useLocation, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export function NavSecondary({
   label,

@@ -1,6 +1,5 @@
 // components/BlueprintMarquee.tsx
 
-import { cn } from "@/lib/utils";
 import { Marquee } from "@/components/ui/marquee";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";

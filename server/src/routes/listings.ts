@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma.js";
 import { auth } from "../lib/middleware.js";
+import { printifyJson } from "../lib/printify.js";
+import { decryptToken } from "../lib/crypto.js";
 
 const router = Router();
 router.use(auth);
@@ -11,11 +13,11 @@ router.get("/providers/:blueprintId", async (req, res) => {
   const account = await prisma.printifyAccount.findFirst({ where: { userId } });
   if (!account) return res.status(400).json({ error: "No Printify account connected" });
 
-  const response = await fetch(
+  const data = await printifyJson(
     `https://api.printify.com/v1/catalog/blueprints/${req.params.blueprintId}/print_providers.json`,
-    { headers: { Authorization: `Bearer ${account.accessToken}` } }
+    { headers: { Authorization: `Bearer ${decryptToken(account.accessToken)}` } }
   );
-  res.json(await response.json());
+  res.json(data);
 });
 
 // GET variants for a blueprint + provider
@@ -25,11 +27,11 @@ router.get("/variants/:blueprintId/:providerId", async (req, res) => {
   if (!account) return res.status(400).json({ error: "No Printify account connected" });
 
   const { blueprintId, providerId } = req.params;
-  const response = await fetch(
+  const data = await printifyJson(
     `https://api.printify.com/v1/catalog/blueprints/${blueprintId}/print_providers/${providerId}/variants.json?show-out-of-stock=1`,
-    { headers: { Authorization: `Bearer ${account.accessToken}` } }
+    { headers: { Authorization: `Bearer ${decryptToken(account.accessToken)}` } }
   );
-  res.json(await response.json());
+  res.json(data);
 });
 
 // GET placeholders for a blueprint + provider
@@ -39,12 +41,10 @@ router.get("/placeholders/:blueprintId/:providerId", async (req, res) => {
   if (!account) return res.status(400).json({ error: "No Printify account connected" });
 
   const { blueprintId, providerId } = req.params;
-  const response = await fetch(
+  const data = await printifyJson(
     `https://api.printify.com/v1/catalog/blueprints/${blueprintId}/print_providers/${providerId}/variants.json`,
-    { headers: { Authorization: `Bearer ${account.accessToken}` } }
+    { headers: { Authorization: `Bearer ${decryptToken(account.accessToken)}` } }
   );
-
-  const data = await response.json() as any;
 
   // Extract unique positions from first variant's placeholders
   const positions = [...new Set(
@@ -61,11 +61,10 @@ router.get("/shipping/:blueprintId/:providerId", async (req, res) => {
   if (!account) return res.status(400).json({ error: "No Printify account connected" });
 
   const { blueprintId, providerId } = req.params;
-  const response = await fetch(
+  const data = await printifyJson(
     `https://api.printify.com/v1/catalog/blueprints/${blueprintId}/print_providers/${providerId}/shipping.json`,
-    { headers: { Authorization: `Bearer ${account.accessToken}` } }
+    { headers: { Authorization: `Bearer ${decryptToken(account.accessToken)}` } }
   );
-  const data = await response.json() as any;
 
   // Simplification: one cost per variant, not split by destination country —
   // last matching profile wins if a variant appears in more than one.
@@ -92,11 +91,10 @@ router.get("/cost/:listingId", async (req, res) => {
   }
   if (!listing.printifyProductId) return res.json({});
 
-  const response = await fetch(
+  const data = await printifyJson(
     `https://api.printify.com/v1/shops/${listing.shop.printifyShopId}/products/${listing.printifyProductId}.json`,
-    { headers: { Authorization: `Bearer ${listing.shop.account.accessToken}` } }
+    { headers: { Authorization: `Bearer ${decryptToken(listing.shop.account.accessToken)}` } }
   );
-  const data = await response.json() as any;
   const costByVariant: Record<number, number> = {};
   for (const v of data.variants ?? []) costByVariant[v.id] = v.cost ?? 0;
   res.json(costByVariant);

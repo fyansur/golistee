@@ -7,7 +7,6 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/in
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Mail, Lock, CircleAlertIcon, Settings as SettingsIcon } from "lucide-react";
-import { ModeToggle } from "@/components/mode-toggle";
 import { toast } from "sonner";
 
 interface PasswordForm {

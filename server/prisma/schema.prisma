@@ -27,6 +27,8 @@ model CuratedBlueprint {
   images      Json
   addedAt     DateTime @default(now()) @db.Timestamptz
   user        User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model PrintifyAccount {
@@ -39,6 +41,8 @@ model PrintifyAccount {
   user        User      @relation(fields: [userId], references: [id])
   shops       Shop[]
   templates   Template[]
+
+  @@index([userId])
 }
 
 model Shop {
@@ -50,6 +54,8 @@ model Shop {
   status            String          @default("active")
   account           PrintifyAccount @relation(fields: [printifyAccountId], references: [id])
   listings          Listing[]
+
+  @@index([printifyAccountId])
 }
 
 model Template {
@@ -63,6 +69,8 @@ model Template {
   variants           Json
   description        String          @default("")
   account            PrintifyAccount @relation(fields: [printifyAccountId], references: [id])
+
+  @@index([printifyAccountId])
 }
 
 model PublishBatch {
@@ -75,6 +83,8 @@ model PublishBatch {
   status       String    @default("pending")
   createdAt    DateTime  @default(now()) @db.Timestamptz
   listings     Listing[]
+
+  @@index([userId])
 }
 
 model Listing {
@@ -97,6 +107,9 @@ model Listing {
   batch              PublishBatch    @relation(fields: [batchId], references: [id])
   shop               Shop            @relation(fields: [shopId], references: [id])
   designs            ListingDesign[]
+
+  @@index([batchId])
+  @@index([shopId])
 }
 
 model ListingDesign {
@@ -115,6 +128,8 @@ model ListingDesign {
   uploadStatus    String   @default("uploading")
   uploadError     String?
   listing         Listing  @relation(fields: [listingId], references: [id])
+
+  @@index([listingId])
 }
 
 // Display-name override + archived flag for a file in the "My files" library.

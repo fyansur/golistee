@@ -3,6 +3,8 @@ import { prisma } from "../lib/prisma.js";
 import { auth } from "../lib/middleware.js";
 import { fetchCatalogOptionsByCombo, comboKey } from "../lib/catalogOptions.js";
 import { pageParams } from "../lib/pagination.js";
+import { printifyFetch } from "../lib/printify.js";
+import { decryptToken } from "../lib/crypto.js";
 
 const router = Router();
 router.use(auth);
@@ -126,7 +128,7 @@ router.get("/history", async (req, res) => {
   ]);
 
   const catalogByCombo = await fetchCatalogOptionsByCombo(
-    batches.flatMap((b) => b.listings).map((l) => ({ blueprintId: l.blueprintId, printProviderId: l.printProviderId, accessToken: l.shop?.account?.accessToken }))
+    batches.flatMap((b) => b.listings).map((l) => ({ blueprintId: l.blueprintId, printProviderId: l.printProviderId, accessToken: l.shop?.account?.accessToken ? decryptToken(l.shop.account.accessToken) : "" }))
   );
   res.json({
     items: batches.map((b) => ({
@@ -150,9 +152,9 @@ router.delete("/listing/:id", async (req, res) => {
   }
 
   if (listing.printifyProductId) {
-    const delRes = await fetch(
+    const delRes = await printifyFetch(
       `https://api.printify.com/v1/shops/${listing.shop.printifyShopId}/products/${listing.printifyProductId}.json`,
-      { method: "DELETE", headers: { Authorization: `Bearer ${listing.shop.account.accessToken}` } }
+      { method: "DELETE", headers: { Authorization: `Bearer ${decryptToken(listing.shop.account.accessToken)}` } }
     );
     if (!delRes.ok && delRes.status !== 404) {
       const body = await delRes.json().catch(() => ({}));
@@ -261,7 +263,7 @@ router.put("/listing/:id", async (req, res) => {
       return res.json(updated);
     }
 
-    const token = listing.shop.account.accessToken;
+    const token = decryptToken(listing.shop.account.accessToken);
     const payload: any = { title, description: description ?? "", tags: tags ?? [], variants };
 
     if (includeDesigns) {
@@ -270,7 +272,7 @@ router.put("/listing/:id", async (req, res) => {
       // Printify treats print coverage and for-sale status as separate
       // things, and rejects the update ("Variants do not match...") if
       // print_areas doesn't cover the full set.
-      const currentRes = await fetch(
+      const currentRes = await printifyFetch(
         `https://api.printify.com/v1/shops/${listing.shop.printifyShopId}/products/${listing.printifyProductId}.json`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -279,7 +281,7 @@ router.put("/listing/:id", async (req, res) => {
       payload.print_areas = buildPrintAreas(designs, allVariantIds);
     }
 
-    const putRes = await fetch(
+    const putRes = await printifyFetch(
       `https://api.printify.com/v1/shops/${listing.shop.printifyShopId}/products/${listing.printifyProductId}.json`,
       {
         method: "PUT",
@@ -328,7 +330,7 @@ router.get("/listings", async (req, res) => {
   ]);
 
   const catalogByCombo = await fetchCatalogOptionsByCombo(
-    listings.map((l) => ({ blueprintId: l.blueprintId, printProviderId: l.printProviderId, accessToken: l.shop?.account?.accessToken }))
+    listings.map((l) => ({ blueprintId: l.blueprintId, printProviderId: l.printProviderId, accessToken: l.shop?.account?.accessToken ? decryptToken(l.shop.account.accessToken) : "" }))
   );
   res.json({
     items: listings.map((l) => summarizeListing(l, catalogByCombo.get(comboKey(l.blueprintId, l.printProviderId)))),
@@ -376,9 +378,9 @@ router.post("/listings/bulk-delete", async (req, res) => {
   let deleted = 0, failed = 0;
   for (const listing of listings) {
     if (listing.printifyProductId) {
-      const delRes = await fetch(
+      const delRes = await printifyFetch(
         `https://api.printify.com/v1/shops/${listing.shop.printifyShopId}/products/${listing.printifyProductId}.json`,
-        { method: "DELETE", headers: { Authorization: `Bearer ${listing.shop.account.accessToken}` } }
+        { method: "DELETE", headers: { Authorization: `Bearer ${decryptToken(listing.shop.account.accessToken)}` } }
       );
       if (!delRes.ok && delRes.status !== 404) {
         failed++;
@@ -560,11 +562,11 @@ function listingPublishErrors(listing: any): string[] {
 // product ("draft on Printify" — status shows this in Printify's own
 // dashboard); `publish: true` also pushes it live to the shop's sales channel.
 async function createOnPrintify(listing: any, shop: any, opts: { publish: boolean }) {
-  const token = shop.account.accessToken;
+  const token = decryptToken(shop.account.accessToken);
   const allVariantIds = (listing.variants as any[]).map((v: any) => v.id);
   const printAreas = buildPrintAreas(listing.designs ?? [], allVariantIds);
 
-  const createRes = await fetch(
+  const createRes = await printifyFetch(
     `https://api.printify.com/v1/shops/${shop.printifyShopId}/products.json`,
     {
       method: "POST",
@@ -595,7 +597,7 @@ async function createOnPrintify(listing: any, shop: any, opts: { publish: boolea
 // publishes it — used by bulk publish for listings that are already "draft
 // on Printify" or "out of sync" and just need pushing live.
 async function updateAndPublish(listing: any, shop: any) {
-  const token = shop.account.accessToken;
+  const token = decryptToken(shop.account.accessToken);
   const allVariantIds = (listing.variants as any[]).map((v: any) => v.id);
   const payload = {
     title: listing.title,
@@ -605,7 +607,7 @@ async function updateAndPublish(listing: any, shop: any) {
     print_areas: buildPrintAreas(listing.designs ?? [], allVariantIds),
   };
 
-  const putRes = await fetch(
+  const putRes = await printifyFetch(
     `https://api.printify.com/v1/shops/${shop.printifyShopId}/products/${listing.printifyProductId}.json`,
     {
       method: "PUT",
@@ -664,7 +666,7 @@ async function processBatch(batch: any) {
 // auto-sync this on every edit — a product only actually goes live/updates
 // there when this is called.
 async function publishToSalesChannel(printifyShopId: string, token: string, productId: string) {
-  const res = await fetch(
+  const res = await printifyFetch(
     `https://api.printify.com/v1/shops/${printifyShopId}/products/${productId}/publish.json`,
     {
       method: "POST",

@@ -3,6 +3,7 @@ import { prisma } from "../lib/prisma.js";
 import { auth } from "../lib/middleware.js";
 import { fetchCatalogOptionsByCombo, comboKey } from "../lib/catalogOptions.js";
 import { pageParams } from "../lib/pagination.js";
+import { decryptToken } from "../lib/crypto.js";
 
 const router = Router();
 router.use(auth);
@@ -27,7 +28,7 @@ router.get("/", async (req, res) => {
   // per id (for the swatch dots + "N colors · M sizes" summary on the card)
   // comes from Printify's catalog, same as the products list.
   const catalogByCombo = await fetchCatalogOptionsByCombo(
-    templates.map((t) => ({ blueprintId: t.blueprintId, printProviderId: t.printProviderId, accessToken: t.account.accessToken }))
+    templates.map((t) => ({ blueprintId: t.blueprintId, printProviderId: t.printProviderId, accessToken: decryptToken(t.account.accessToken) }))
   );
   res.json({
     items: templates.map((t) => {

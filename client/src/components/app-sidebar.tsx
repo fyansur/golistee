@@ -1,12 +1,10 @@
 import type * as React from "react";
 import { PlugIcon, BookOpenIcon, LayoutTemplateIcon, PackageIcon, HistoryIcon, Tag, Settings } from "lucide-react";
 import {
-  Sidebar, SidebarContent, SidebarFooter, SidebarHeader,
+  Sidebar, SidebarContent, SidebarHeader,
   SidebarMenu, SidebarMenuItem, SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { NavMain } from "@/components/nav-main";
-import { NavUser } from "./nav-user";
-import { NavSecondary } from "./nav-secondary";
 
 const NAV_ITEMS = [
   { title: "Catalog", url: "/blueprints", icon: Tag },

@@ -2,6 +2,8 @@ import { Router } from "express";
 import { prisma } from "../lib/prisma.js";
 import { auth } from "../lib/middleware.js";
 import { pageParams } from "../lib/pagination.js";
+import { printifyJson } from "../lib/printify.js";
+import { decryptToken } from "../lib/crypto.js";
 
 const router = Router();
 router.use(auth);
@@ -37,11 +39,9 @@ router.get("/search", async (req, res) => {
   const account = await prisma.printifyAccount.findFirst({ where: { userId } });
   if (!account) return res.status(400).json({ error: "No Printify account connected" });
 
-  const response = await fetch("https://api.printify.com/v1/catalog/blueprints.json", {
-    headers: { Authorization: `Bearer ${account.accessToken}` },
+  const data = await printifyJson("https://api.printify.com/v1/catalog/blueprints.json", {
+    headers: { Authorization: `Bearer ${decryptToken(account.accessToken)}` },
   });
-
-  const data = await response.json();
   res.json(data);
 });
 

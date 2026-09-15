@@ -1,3 +1,5 @@
+import { printifyJson } from "./printify.js";
+
 export const comboKey = (blueprintId: number, printProviderId: number) => `${blueprintId}:${printProviderId}`;
 
 // Fetches each distinct blueprint+provider combo's catalog variants once (not
@@ -19,11 +21,10 @@ export async function fetchCatalogOptionsByCombo(
   const result = new Map<string, Map<number, { color: string; size: string }>>();
   await Promise.all([...combos.entries()].map(async ([key, { blueprintId, printProviderId, token }]) => {
     try {
-      const res = await fetch(
+      const data = await printifyJson(
         `https://api.printify.com/v1/catalog/blueprints/${blueprintId}/print_providers/${printProviderId}/variants.json`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      const data = await res.json() as any;
       const map = new Map<number, { color: string; size: string }>();
       for (const v of data.variants ?? []) map.set(v.id, v.options);
       result.set(key, map);
