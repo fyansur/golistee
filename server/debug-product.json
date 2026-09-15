@@ -1,0 +1,6287 @@
+{
+  "current": {
+    "id": "6aa7a42045e1a32cff06951a",
+    "title": "Test 2",
+    "description": "",
+    "tags": [
+      "Unisex",
+      "Men's Clothing",
+      "Women's Clothing",
+      "Crew neck",
+      "DTG",
+      "Cotton",
+      "T-shirts",
+      "Oversized",
+      "TikTok",
+      "US Elections Season",
+      "Premium Apparel",
+      "Premium",
+      "Personalization Picks",
+      "Embroidery",
+      "Simple designs on large embroidery",
+      "Streetwear",
+      "Back to School"
+    ],
+    "options": [
+      {
+        "name": "Comfort Colors® Colors",
+        "type": "color",
+        "values": [
+          {
+            "id": 2766,
+            "title": "White",
+            "colors": [
+              "#ffffff"
+            ]
+          },
+          {
+            "id": 3325,
+            "title": "Brick",
+            "colors": [
+              "#915C5C"
+            ]
+          },
+          {
+            "id": 3344,
+            "title": "Ivory",
+            "colors": [
+              "#FFF7E7"
+            ]
+          },
+          {
+            "id": 3351,
+            "title": "Mustard",
+            "colors": [
+              "#D0AE6E"
+            ]
+          },
+          {
+            "id": 3366,
+            "title": "Yam",
+            "colors": [
+              "#C9814F"
+            ]
+          },
+          {
+            "id": 4549,
+            "title": "Espresso",
+            "colors": [
+              "#846b5b"
+            ]
+          },
+          {
+            "id": 2763,
+            "title": "Butter",
+            "colors": [
+              "#F5E1A4"
+            ]
+          },
+          {
+            "id": 3355,
+            "title": "Pepper",
+            "colors": [
+              "#5F605B"
+            ]
+          },
+          {
+            "id": 3339,
+            "title": "Grey",
+            "colors": [
+              "#7A7F79"
+            ]
+          },
+          {
+            "id": 3320,
+            "title": "Bay",
+            "colors": [
+              "#C3CFC1"
+            ]
+          },
+          {
+            "id": 3350,
+            "title": "Moss",
+            "colors": [
+              "#747F66"
+            ]
+          },
+          {
+            "id": 2819,
+            "title": "Island Reef",
+            "colors": [
+              "#A2D8C2"
+            ]
+          },
+          {
+            "id": 3328,
+            "title": "Chalky Mint",
+            "colors": [
+              "#A7D9D4"
+            ]
+          },
+          {
+            "id": 3347,
+            "title": "Light Green",
+            "colors": [
+              "#738874"
+            ]
+          },
+          {
+            "id": 3324,
+            "title": "Blue Spruce",
+            "colors": [
+              "#536758"
+            ]
+          },
+          {
+            "id": 2818,
+            "title": "Lagoon Blue",
+            "colors": [
+              "#89E4ED"
+            ]
+          },
+          {
+            "id": 4802,
+            "title": "Sapphire",
+            "colors": [
+              "#03b2d3"
+            ]
+          },
+          {
+            "id": 3329,
+            "title": "Chambray",
+            "colors": [
+              "#D9EDF5"
+            ]
+          },
+          {
+            "id": 3359,
+            "title": "Flo Blue",
+            "colors": [
+              "#7682C2"
+            ]
+          },
+          {
+            "id": 3323,
+            "title": "Blue Jean",
+            "colors": [
+              "#788CA1"
+            ]
+          },
+          {
+            "id": 3337,
+            "title": "Graphite",
+            "colors": [
+              "#373231"
+            ]
+          },
+          {
+            "id": 2767,
+            "title": "Black",
+            "colors": [
+              "#000000"
+            ]
+          },
+          {
+            "id": 2765,
+            "title": "Navy",
+            "colors": [
+              "#263040"
+            ]
+          },
+          {
+            "id": 3363,
+            "title": "Violet",
+            "colors": [
+              "#A88FD7"
+            ]
+          },
+          {
+            "id": 4663,
+            "title": "Neon Violet",
+            "colors": [
+              "#e8ace3"
+            ]
+          },
+          {
+            "id": 3353,
+            "title": "Orchid",
+            "colors": [
+              "#CBB3CC"
+            ]
+          },
+          {
+            "id": 3322,
+            "title": "Blossom",
+            "colors": [
+              "#F8D1E2"
+            ]
+          },
+          {
+            "id": 4800,
+            "title": "Neon Pink",
+            "colors": [
+              "#f57caf"
+            ]
+          },
+          {
+            "id": 2815,
+            "title": "Crunchberry",
+            "colors": [
+              "#EB7CA2"
+            ]
+          },
+          {
+            "id": 3321,
+            "title": "Berry",
+            "colors": [
+              "#775568"
+            ]
+          },
+          {
+            "id": 3365,
+            "title": "Watermelon",
+            "colors": [
+              "#DA807B"
+            ]
+          },
+          {
+            "id": 3330,
+            "title": "Chili",
+            "colors": [
+              "#853F44"
+            ]
+          },
+          {
+            "id": 3332,
+            "title": "Crimson",
+            "colors": [
+              "#B66A74"
+            ]
+          },
+          {
+            "id": 2764,
+            "title": "Red",
+            "colors": [
+              "#A80D27"
+            ]
+          }
+        ],
+        "display_in_preview": true
+      },
+      {
+        "name": "Clothing sizes",
+        "type": "size",
+        "values": [
+          {
+            "id": 14,
+            "title": "S"
+          },
+          {
+            "id": 1547,
+            "title": "M"
+          },
+          {
+            "id": 1548,
+            "title": "L"
+          },
+          {
+            "id": 1549,
+            "title": "XL"
+          },
+          {
+            "id": 18,
+            "title": "2XL"
+          },
+          {
+            "id": 19,
+            "title": "3XL"
+          },
+          {
+            "id": 20,
+            "title": "4XL"
+          }
+        ],
+        "display_in_preview": false
+      }
+    ],
+    "variants": [
+      {
+        "id": 73196,
+        "sku": "24195864965794732735",
+        "cost": 1304,
+        "price": 2600,
+        "title": "Black / S",
+        "grams": 130,
+        "is_enabled": true,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2767,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73197,
+        "sku": "13789709791244400100",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Navy / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2765,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73198,
+        "sku": "24428696670660789751",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Red / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2764,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73199,
+        "sku": "17164512163928323252",
+        "cost": 1304,
+        "price": 2600,
+        "title": "White / S",
+        "grams": 130,
+        "is_enabled": true,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2766,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73200,
+        "sku": "25529635621773051275",
+        "cost": 1304,
+        "price": 2700,
+        "title": "Black / M",
+        "grams": 155,
+        "is_enabled": true,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2767,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73201,
+        "sku": "39247450676258571270",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Navy / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2765,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73202,
+        "sku": "29879829399721777683",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Red / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2764,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73203,
+        "sku": "19559025963643289468",
+        "cost": 1304,
+        "price": 2700,
+        "title": "White / M",
+        "grams": 155,
+        "is_enabled": true,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2766,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73204,
+        "sku": "16515017537378116674",
+        "cost": 1304,
+        "price": 2800,
+        "title": "Black / L",
+        "grams": 172,
+        "is_enabled": true,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2767,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73205,
+        "sku": "26947460610340246246",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Navy / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2765,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73206,
+        "sku": "12594452024823608370",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Red / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2764,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73207,
+        "sku": "12495041945656872229",
+        "cost": 1304,
+        "price": 2800,
+        "title": "White / L",
+        "grams": 172,
+        "is_enabled": true,
+        "is_default": true,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2766,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73208,
+        "sku": "29376933029322465483",
+        "cost": 1304,
+        "price": 2900,
+        "title": "Black / XL",
+        "grams": 215,
+        "is_enabled": true,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2767,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73209,
+        "sku": "80715906208767786082",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Navy / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2765,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73210,
+        "sku": "29139830225984060917",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Red / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2764,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73211,
+        "sku": "32892760750001867091",
+        "cost": 1304,
+        "price": 2900,
+        "title": "White / XL",
+        "grams": 215,
+        "is_enabled": true,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2766,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73212,
+        "sku": "25289634172395422681",
+        "cost": 1428,
+        "price": 3000,
+        "title": "Black / 2XL",
+        "grams": 227,
+        "is_enabled": true,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2767,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73213,
+        "sku": "15206078391536271486",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Navy / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2765,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73214,
+        "sku": "15716999197807835580",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Red / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2764,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73215,
+        "sku": "24158635167435637324",
+        "cost": 1428,
+        "price": 3000,
+        "title": "White / 2XL",
+        "grams": 227,
+        "is_enabled": true,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2766,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73966,
+        "sku": "27662864994674339773",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Crunchberry / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2815,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73969,
+        "sku": "19977592199785587741",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Island Reef / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2819,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73970,
+        "sku": "30810146338784911052",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Lagoon Blue / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2818,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73973,
+        "sku": "22407582779047793632",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Crunchberry / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2815,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73976,
+        "sku": "15771496307154328249",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Island Reef / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2819,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73977,
+        "sku": "73246909951095071995",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Lagoon Blue / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2818,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73980,
+        "sku": "15720392514040107557",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Crunchberry / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2815,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73983,
+        "sku": "31221797317688349338",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Island Reef / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2819,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73984,
+        "sku": "25393386221742804750",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Lagoon Blue / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2818,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73987,
+        "sku": "29372246258357498770",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Crunchberry / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2815,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73990,
+        "sku": "37828752122185759117",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Island Reef / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2819,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73991,
+        "sku": "20859628631852626672",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Lagoon Blue / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2818,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73994,
+        "sku": "15269989197466107142",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Crunchberry / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2815,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73997,
+        "sku": "15562831856507842532",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Island Reef / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2819,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 73998,
+        "sku": "38341259083470275156",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Lagoon Blue / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2818,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78866,
+        "sku": "27649549737217321174",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Butter / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2763,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78867,
+        "sku": "27192175985160906350",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Butter / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2763,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78868,
+        "sku": "24828797169081271625",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Butter / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2763,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78869,
+        "sku": "63916878004870930135",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Butter / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2763,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78870,
+        "sku": "71942213898778718277",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Butter / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2763,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78876,
+        "sku": "45406570278588952753",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Bay / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3320,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78877,
+        "sku": "92824109960227124323",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Bay / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3320,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78878,
+        "sku": "20533485310427514642",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Bay / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3320,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78879,
+        "sku": "14217311262485876460",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Bay / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3320,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78880,
+        "sku": "14935931262067522315",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Bay / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3320,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78881,
+        "sku": "10261712091234575937",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Berry / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3321,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78882,
+        "sku": "60787350183028053820",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Berry / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3321,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78883,
+        "sku": "22673227021978006379",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Berry / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3321,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78884,
+        "sku": "55799165460589649902",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Berry / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3321,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78885,
+        "sku": "25984462710885810116",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Berry / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3321,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78886,
+        "sku": "85587481718131729146",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Blossom / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3322,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78887,
+        "sku": "68836056250431139575",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Blossom / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3322,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78888,
+        "sku": "21041427241128004170",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Blossom / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3322,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78889,
+        "sku": "22039404682435458274",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Blossom / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3322,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78890,
+        "sku": "16874535818781184661",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Blossom / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3322,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78891,
+        "sku": "28950328209290394863",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Blue Jean / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3323,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78892,
+        "sku": "10676424909686313462",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Blue Jean / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3323,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78893,
+        "sku": "50308430479369529140",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Blue Jean / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3323,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78894,
+        "sku": "99924514120492076344",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Blue Jean / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3323,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78895,
+        "sku": "13260396060590529364",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Blue Jean / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3323,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78896,
+        "sku": "16048091968080595986",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Blue Spruce / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3324,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78897,
+        "sku": "20639721304261651471",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Blue Spruce / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3324,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78898,
+        "sku": "10946489821584595264",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Blue Spruce / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3324,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78899,
+        "sku": "25886228173952691604",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Blue Spruce / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3324,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78900,
+        "sku": "20089998161649974074",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Blue Spruce / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3324,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78901,
+        "sku": "12836452314132716330",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Brick / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3325,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78902,
+        "sku": "32717542311295275069",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Brick / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3325,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78903,
+        "sku": "16793017355342857511",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Brick / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3325,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78904,
+        "sku": "17108764264766649351",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Brick / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3325,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78905,
+        "sku": "13759203722947098555",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Brick / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3325,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78916,
+        "sku": "10221822760164352531",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Chalky Mint / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3328,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78917,
+        "sku": "13155580803909034525",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Chalky Mint / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3328,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78918,
+        "sku": "95936092666080266091",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Chalky Mint / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3328,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78919,
+        "sku": "16632118530273782524",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Chalky Mint / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3328,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78920,
+        "sku": "17996045924354930753",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Chalky Mint / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3328,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78921,
+        "sku": "30082611651609168660",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Chambray / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3329,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78922,
+        "sku": "50271023429949522935",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Chambray / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3329,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78923,
+        "sku": "27454898161395385240",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Chambray / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3329,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78924,
+        "sku": "32389535830710715098",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Chambray / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3329,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78925,
+        "sku": "10555733229669575515",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Chambray / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3329,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78926,
+        "sku": "18444343142384236051",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Chili / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3330,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78927,
+        "sku": "67918151273408514311",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Chili / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3330,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78928,
+        "sku": "11167650174823498916",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Chili / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3330,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78929,
+        "sku": "21683397859143014188",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Chili / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3330,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78930,
+        "sku": "11961616915953326102",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Chili / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3330,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78936,
+        "sku": "32910924919253037207",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Crimson / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3332,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78937,
+        "sku": "96544996560267821803",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Crimson / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3332,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78938,
+        "sku": "13206715289288415621",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Crimson / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3332,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78939,
+        "sku": "14946766033816717101",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Crimson / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3332,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78940,
+        "sku": "23174563785075944051",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Crimson / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3332,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78961,
+        "sku": "19791963801642301882",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Graphite / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3337,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78962,
+        "sku": "22675528388931621703",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Graphite / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3337,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78963,
+        "sku": "32819476713885246404",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Graphite / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3337,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78964,
+        "sku": "26607424142730497581",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Graphite / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3337,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78965,
+        "sku": "19160015593041979592",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Graphite / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3337,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78971,
+        "sku": "48911805463770573634",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Grey / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3339,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78972,
+        "sku": "47309928499803329701",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Grey / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3339,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78973,
+        "sku": "99023220795690860659",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Grey / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3339,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78974,
+        "sku": "13756685385108012500",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Grey / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3339,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78975,
+        "sku": "15450551702640181857",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Grey / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3339,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78991,
+        "sku": "33877572794605218248",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Ivory / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3344,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78992,
+        "sku": "31210872871442313894",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Ivory / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3344,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78993,
+        "sku": "21508849519440307731",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Ivory / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3344,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78994,
+        "sku": "15182941174762978176",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Ivory / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3344,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 78995,
+        "sku": "30408327162359536318",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Ivory / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3344,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79006,
+        "sku": "14305961781206782315",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Light Green / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3347,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79007,
+        "sku": "12984998913233670857",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Light Green / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3347,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79008,
+        "sku": "10751925723023732679",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Light Green / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3347,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79009,
+        "sku": "26739338406170398912",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Light Green / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3347,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79010,
+        "sku": "33142677670732457473",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Light Green / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3347,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79021,
+        "sku": "26607850870117321601",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Moss / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3350,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79022,
+        "sku": "16133476258495851000",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Moss / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3350,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79023,
+        "sku": "22660471699946420817",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Moss / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3350,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79024,
+        "sku": "11287959826026211896",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Moss / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3350,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79025,
+        "sku": "21461802973052347301",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Moss / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3350,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79026,
+        "sku": "19933160594633880636",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Mustard / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3351,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79027,
+        "sku": "56389779007315694689",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Mustard / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3351,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79028,
+        "sku": "29721836312208835826",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Mustard / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3351,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79029,
+        "sku": "93179256899981112184",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Mustard / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3351,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79030,
+        "sku": "66196073423615259987",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Mustard / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3351,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79036,
+        "sku": "34368792802757790282",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Orchid / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3353,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79037,
+        "sku": "75946052382128078741",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Orchid / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3353,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79038,
+        "sku": "12931186799751203078",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Orchid / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3353,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79039,
+        "sku": "24734372748228936571",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Orchid / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3353,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79040,
+        "sku": "10978726216682315899",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Orchid / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3353,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79046,
+        "sku": "12026109333731406638",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Pepper / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3355,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79047,
+        "sku": "14450946163092075074",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Pepper / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3355,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79048,
+        "sku": "26953843362326419249",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Pepper / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3355,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79049,
+        "sku": "18029637217371751664",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Pepper / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3355,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79050,
+        "sku": "10345288376723339719",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Pepper / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3355,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79066,
+        "sku": "70242630299230410843",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Flo Blue / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3359,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79067,
+        "sku": "25675341171458393916",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Flo Blue / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3359,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79068,
+        "sku": "17221379172545727754",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Flo Blue / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3359,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79069,
+        "sku": "29213472333901085029",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Flo Blue / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3359,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79070,
+        "sku": "29285780479579928173",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Flo Blue / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3359,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79091,
+        "sku": "26915095808247121860",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Violet / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3363,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79092,
+        "sku": "91835385148834667861",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Violet / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3363,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79093,
+        "sku": "94412825170281381713",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Violet / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3363,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79094,
+        "sku": "57074546421520203702",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Violet / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3363,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79095,
+        "sku": "72759118582255292942",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Violet / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3363,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79101,
+        "sku": "32328697635876728637",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Watermelon / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3365,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79102,
+        "sku": "75256477899353106742",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Watermelon / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3365,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79103,
+        "sku": "27650275231041755530",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Watermelon / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3365,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79104,
+        "sku": "18883771704777191497",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Watermelon / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3365,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79105,
+        "sku": "32184155017164618941",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Watermelon / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3365,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79106,
+        "sku": "24049074709923117746",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Yam / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3366,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79107,
+        "sku": "17082111020864267846",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Yam / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3366,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79108,
+        "sku": "31315226447595390722",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Yam / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3366,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79109,
+        "sku": "26774231537350801609",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Yam / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3366,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79110,
+        "sku": "46303031231476023092",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Yam / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3366,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79112,
+        "sku": "22680276988319577615",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Bay / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3320,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79113,
+        "sku": "33119617509922080738",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Berry / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3321,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79114,
+        "sku": "14719879860844740687",
+        "cost": 1644,
+        "price": 3100,
+        "title": "Black / 3XL",
+        "grams": 400,
+        "is_enabled": true,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2767,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79115,
+        "sku": "20024924536826484608",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Blossom / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3322,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79116,
+        "sku": "78338139589338140514",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Blue Jean / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3323,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79117,
+        "sku": "55144450829359956533",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Blue Spruce / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3324,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79119,
+        "sku": "85452177973853960905",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Brick / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3325,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79122,
+        "sku": "18260843405460251119",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Butter / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2763,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79123,
+        "sku": "23810300975699767936",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Chalky Mint / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3328,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79124,
+        "sku": "28338117335424851975",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Chambray / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3329,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79125,
+        "sku": "25768923963104085282",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Chili / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3330,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79127,
+        "sku": "31568020076347654073",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Crimson / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3332,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79128,
+        "sku": "21664743158927008098",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Crunchberry / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2815,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79135,
+        "sku": "29437764184139789707",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Graphite / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3337,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79137,
+        "sku": "24387870789141831268",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Grey / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3339,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79141,
+        "sku": "15519132901676277676",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Island Reef / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2819,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79142,
+        "sku": "25348410147841996770",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Ivory / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3344,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79145,
+        "sku": "77561373484125748975",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Lagoon Blue / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2818,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79146,
+        "sku": "28171201696697978970",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Light Green / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3347,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79149,
+        "sku": "16530340198936982285",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Moss / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3350,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79150,
+        "sku": "31241481036438176145",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Mustard / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3351,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79152,
+        "sku": "46103804140220371001",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Navy / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2765,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79153,
+        "sku": "25691803297998899056",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Orchid / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3353,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79155,
+        "sku": "64608186851294522276",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Pepper / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3355,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79157,
+        "sku": "25271640537676567568",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Red / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2764,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79160,
+        "sku": "85757510133563174575",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Flo Blue / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3359,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79166,
+        "sku": "23905627733370463844",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Violet / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3363,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79168,
+        "sku": "45602933394590459597",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Watermelon / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3365,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79169,
+        "sku": "24172349960835774425",
+        "cost": 1644,
+        "price": 3100,
+        "title": "White / 3XL",
+        "grams": 400,
+        "is_enabled": true,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2766,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 79170,
+        "sku": "29952779853906941069",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Yam / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3366,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101421,
+        "sku": "22690947161143763981",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Bay / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3320,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101422,
+        "sku": "25223344228620317463",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Berry / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": false,
+        "is_printify_express_eligible": false,
+        "options": [
+          3321,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101423,
+        "sku": "18582672019595279440",
+        "cost": 2140,
+        "price": 3200,
+        "title": "Black / 4XL",
+        "grams": 480,
+        "is_enabled": true,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2767,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101424,
+        "sku": "13181990021657835248",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Blossom / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3322,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101425,
+        "sku": "20419973294555312199",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Blue Jean / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3323,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101426,
+        "sku": "23900042136538309307",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Blue Spruce / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": false,
+        "is_printify_express_eligible": false,
+        "options": [
+          3324,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101428,
+        "sku": "11311929842217962265",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Brick / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3325,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101431,
+        "sku": "15692897074227635149",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Butter / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2763,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101432,
+        "sku": "46948852725630959592",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Chalky Mint / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3328,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101433,
+        "sku": "26273525123374504832",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Chambray / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3329,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101434,
+        "sku": "32126114185627812485",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Chili / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3330,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101436,
+        "sku": "50670467667429871931",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Crimson / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3332,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101437,
+        "sku": "15609788081031669412",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Crunchberry / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2815,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101440,
+        "sku": "52275589927006704290",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Flo Blue / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3359,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101443,
+        "sku": "28620239893965314004",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Graphite / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3337,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101445,
+        "sku": "57315724180212181480",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Grey / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": false,
+        "is_printify_express_eligible": false,
+        "options": [
+          3339,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101449,
+        "sku": "61643027571458980714",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Island Reef / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2819,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101450,
+        "sku": "58321279882904220700",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Ivory / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3344,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101453,
+        "sku": "10598881236707235482",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Lagoon Blue / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2818,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101454,
+        "sku": "10303394399494781376",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Light Green / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3347,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101457,
+        "sku": "28285685093086853208",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Moss / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3350,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101458,
+        "sku": "29220860551204972404",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Mustard / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3351,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101460,
+        "sku": "52303553938779885288",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Navy / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2765,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101461,
+        "sku": "30529426541329537795",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Orchid / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3353,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101463,
+        "sku": "18409853642595854257",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Pepper / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3355,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101465,
+        "sku": "49940331835575345603",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Red / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": false,
+        "is_printify_express_eligible": false,
+        "options": [
+          2764,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101473,
+        "sku": "20251893227727957984",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Violet / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3363,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101475,
+        "sku": "33699336359574472184",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Watermelon / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3365,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101476,
+        "sku": "93776499540709185171",
+        "cost": 2140,
+        "price": 3200,
+        "title": "White / 4XL",
+        "grams": 480,
+        "is_enabled": true,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          2766,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 101477,
+        "sku": "12041544711771992263",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Yam / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          3366,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 102352,
+        "sku": "30261292871166560505",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Espresso / S",
+        "grams": 130,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4549,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 102353,
+        "sku": "29715328175207796117",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Espresso / M",
+        "grams": 155,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4549,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 102354,
+        "sku": "13787389426446829723",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Espresso / L",
+        "grams": 172,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4549,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 102355,
+        "sku": "30439838667778707216",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Espresso / XL",
+        "grams": 215,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4549,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 102356,
+        "sku": "32538037391560852923",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Espresso / 2XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4549,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 102357,
+        "sku": "31578891488268857753",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Espresso / 3XL",
+        "grams": 400,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4549,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 102358,
+        "sku": "11148707810186177103",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Espresso / 4XL",
+        "grams": 480,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4549,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148324,
+        "sku": "36385371815172803809",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Sapphire / S",
+        "grams": 145,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4802,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148325,
+        "sku": "27567117620261326917",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Sapphire / M",
+        "grams": 177,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4802,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148326,
+        "sku": "24494628054547317425",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Sapphire / L",
+        "grams": 204,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4802,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148327,
+        "sku": "31930187542275413180",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Sapphire / XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4802,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148328,
+        "sku": "25043348811158503551",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Sapphire / 2XL",
+        "grams": 263,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4802,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148329,
+        "sku": "19614979157973062892",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Sapphire / 3XL",
+        "grams": 268,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4802,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148330,
+        "sku": "30328150120882695896",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Sapphire / 4XL",
+        "grams": 268,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4802,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148331,
+        "sku": "14900305837783642070",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Neon Pink / S",
+        "grams": 145,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4800,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148332,
+        "sku": "30822615019263738421",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Neon Pink / M",
+        "grams": 177,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4800,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148333,
+        "sku": "24807842791859228510",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Neon Pink / L",
+        "grams": 204,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4800,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148334,
+        "sku": "12999646250221061534",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Neon Pink / XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4800,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148335,
+        "sku": "22058948909703430935",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Neon Pink / 2XL",
+        "grams": 263,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4800,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148336,
+        "sku": "15236495788880055264",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Neon Pink / 3XL",
+        "grams": 268,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4800,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148337,
+        "sku": "29289254526577398018",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Neon Pink / 4XL",
+        "grams": 268,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": true,
+        "is_printify_express_eligible": false,
+        "options": [
+          4800,
+          20
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148338,
+        "sku": "24966790960753561605",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Neon Violet / S",
+        "grams": 145,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": false,
+        "is_printify_express_eligible": false,
+        "options": [
+          4663,
+          14
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148339,
+        "sku": "95992796794765716490",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Neon Violet / M",
+        "grams": 177,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": false,
+        "is_printify_express_eligible": false,
+        "options": [
+          4663,
+          1547
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148340,
+        "sku": "94561827317770798896",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Neon Violet / L",
+        "grams": 204,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": false,
+        "is_printify_express_eligible": false,
+        "options": [
+          4663,
+          1548
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148341,
+        "sku": "25003181775850260806",
+        "cost": 1304,
+        "price": 1304,
+        "title": "Neon Violet / XL",
+        "grams": 227,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": false,
+        "is_printify_express_eligible": false,
+        "options": [
+          4663,
+          1549
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148342,
+        "sku": "18374992824389784928",
+        "cost": 1428,
+        "price": 1428,
+        "title": "Neon Violet / 2XL",
+        "grams": 263,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": false,
+        "is_printify_express_eligible": false,
+        "options": [
+          4663,
+          18
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148343,
+        "sku": "85192379614547275656",
+        "cost": 1644,
+        "price": 1644,
+        "title": "Neon Violet / 3XL",
+        "grams": 268,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": false,
+        "is_printify_express_eligible": false,
+        "options": [
+          4663,
+          19
+        ],
+        "quantity": 1
+      },
+      {
+        "id": 148344,
+        "sku": "19396733992574763442",
+        "cost": 2140,
+        "price": 2140,
+        "title": "Neon Violet / 4XL",
+        "grams": 268,
+        "is_enabled": false,
+        "is_default": false,
+        "is_available": false,
+        "is_printify_express_eligible": false,
+        "options": [
+          4663,
+          20
+        ],
+        "quantity": 1
+      }
+    ],
+    "images": [
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_98445_front",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/98445/test-2.jpg?camera_label=front",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "front",
+        "is_default": true,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_98446_back",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/98446/test-2.jpg?camera_label=back",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "back",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_100629_folded",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/100629/test-2.jpg?camera_label=folded",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_126095_person-5-context",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/126095/test-2.jpg?camera_label=person-5-context",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_126111_person-5-context-2",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/126111/test-2.jpg?camera_label=person-5-context-2",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_112433_person-1-front",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/112433/test-2.jpg?camera_label=person-1-front",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_112434_person-1-back",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/112434/test-2.jpg?camera_label=person-1-back",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_98448_person-2",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/98448/test-2.jpg?camera_label=person-2",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_100630_person-3-front",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/100630/test-2.jpg?camera_label=person-3-front",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_110640_person-3-back",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/110640/test-2.jpg?camera_label=person-3-back",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_100633_person-3-left-sleeve",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/100633/test-2.jpg?camera_label=person-3-left-sleeve",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "left_sleeve",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_100674_person-3-context",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/100674/test-2.jpg?camera_label=person-3-context",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_100634_person-4-front",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/100634/test-2.jpg?camera_label=person-4-front",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_100635_person-4-back",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/100635/test-2.jpg?camera_label=person-4-back",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_100636_person-4-right-sleeve",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/100636/test-2.jpg?camera_label=person-4-right-sleeve",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "right_sleeve",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_100637_person-4-context",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/100637/test-2.jpg?camera_label=person-4-context",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_110132_size-chart",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/110132/test-2.jpg?camera_label=size-chart",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73207_126094_folded-2",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73207/126094/test-2.jpg?camera_label=folded-2",
+        "variant_ids": [
+          73199,
+          73203,
+          73207,
+          73211,
+          73215,
+          79169,
+          101476
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_98445_front",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/98445/test-2.jpg?camera_label=front",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "front",
+        "is_default": true,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_98446_back",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/98446/test-2.jpg?camera_label=back",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "back",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_100629_folded",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/100629/test-2.jpg?camera_label=folded",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_126095_person-5-context",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/126095/test-2.jpg?camera_label=person-5-context",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_126111_person-5-context-2",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/126111/test-2.jpg?camera_label=person-5-context-2",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_112433_person-1-front",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/112433/test-2.jpg?camera_label=person-1-front",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_112434_person-1-back",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/112434/test-2.jpg?camera_label=person-1-back",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_98448_person-2",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/98448/test-2.jpg?camera_label=person-2",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_100630_person-3-front",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/100630/test-2.jpg?camera_label=person-3-front",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_110640_person-3-back",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/110640/test-2.jpg?camera_label=person-3-back",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_100633_person-3-left-sleeve",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/100633/test-2.jpg?camera_label=person-3-left-sleeve",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "left_sleeve",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_100674_person-3-context",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/100674/test-2.jpg?camera_label=person-3-context",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_100634_person-4-front",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/100634/test-2.jpg?camera_label=person-4-front",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_100635_person-4-back",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/100635/test-2.jpg?camera_label=person-4-back",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_100636_person-4-right-sleeve",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/100636/test-2.jpg?camera_label=person-4-right-sleeve",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "right_sleeve",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_100637_person-4-context",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/100637/test-2.jpg?camera_label=person-4-context",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_110132_size-chart",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/110132/test-2.jpg?camera_label=size-chart",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      },
+      {
+        "mockup_id": "6aa7a42045e1a32cff06951a_73204_126094_folded-2",
+        "src": "https://images-api.printify.com/mockup/6aa7a42045e1a32cff06951a/73204/126094/test-2.jpg?camera_label=folded-2",
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          79114,
+          101423
+        ],
+        "position": "other",
+        "is_default": false,
+        "is_selected_for_publishing": true,
+        "order": null
+      }
+    ],
+    "created_at": "2026-09-14 07:37:04+00:00",
+    "updated_at": "2026-09-14 07:37:04+00:00",
+    "visible": true,
+    "is_locked": false,
+    "blueprint_id": 706,
+    "user_id": 7340047,
+    "shop_id": 28914432,
+    "print_provider_id": 29,
+    "print_areas": [
+      {
+        "variant_ids": [
+          73196,
+          73197,
+          73198,
+          73199,
+          73200,
+          73201,
+          73202,
+          73203,
+          73204,
+          73205,
+          73206,
+          73207,
+          73208,
+          73209,
+          73210,
+          73211,
+          73212,
+          73213,
+          73214,
+          73215,
+          73966,
+          73969,
+          73970,
+          73973,
+          73976,
+          73977,
+          73980,
+          73983,
+          73984,
+          73987,
+          73990,
+          73991,
+          73994,
+          73997,
+          73998,
+          78866,
+          78867,
+          78868,
+          78869,
+          78870,
+          78876,
+          78877,
+          78878,
+          78879,
+          78880,
+          78881,
+          78882,
+          78883,
+          78884,
+          78885,
+          78886,
+          78887,
+          78888,
+          78889,
+          78890,
+          78891,
+          78892,
+          78893,
+          78894,
+          78895,
+          78896,
+          78897,
+          78898,
+          78899,
+          78900,
+          78901,
+          78902,
+          78903,
+          78904,
+          78905,
+          78916,
+          78917,
+          78918,
+          78919,
+          78920,
+          78921,
+          78922,
+          78923,
+          78924,
+          78925,
+          78926,
+          78927,
+          78928,
+          78929,
+          78930,
+          78936,
+          78937,
+          78938,
+          78939,
+          78940,
+          78961,
+          78962,
+          78963,
+          78964,
+          78965,
+          78971,
+          78972,
+          78973,
+          78974,
+          78975,
+          78991,
+          78992,
+          78993,
+          78994,
+          78995,
+          79006,
+          79007,
+          79008,
+          79009,
+          79010,
+          79021,
+          79022,
+          79023,
+          79024,
+          79025,
+          79026,
+          79027,
+          79028,
+          79029,
+          79030,
+          79036,
+          79037,
+          79038,
+          79039,
+          79040,
+          79046,
+          79047,
+          79048,
+          79049,
+          79050,
+          79066,
+          79067,
+          79068,
+          79069,
+          79070,
+          79091,
+          79092,
+          79093,
+          79094,
+          79095,
+          79101,
+          79102,
+          79103,
+          79104,
+          79105,
+          79106,
+          79107,
+          79108,
+          79109,
+          79110,
+          79112,
+          79113,
+          79114,
+          79115,
+          79116,
+          79117,
+          79119,
+          79122,
+          79123,
+          79124,
+          79125,
+          79127,
+          79128,
+          79135,
+          79137,
+          79141,
+          79142,
+          79145,
+          79146,
+          79149,
+          79150,
+          79152,
+          79153,
+          79155,
+          79157,
+          79160,
+          79166,
+          79168,
+          79169,
+          79170,
+          101421,
+          101422,
+          101423,
+          101424,
+          101425,
+          101426,
+          101428,
+          101431,
+          101432,
+          101433,
+          101434,
+          101436,
+          101437,
+          101440,
+          101443,
+          101445,
+          101449,
+          101450,
+          101453,
+          101454,
+          101457,
+          101458,
+          101460,
+          101461,
+          101463,
+          101465,
+          101473,
+          101475,
+          101476,
+          101477,
+          102352,
+          102353,
+          102354,
+          102355,
+          102356,
+          102357,
+          102358,
+          148324,
+          148325,
+          148326,
+          148327,
+          148328,
+          148329,
+          148330,
+          148331,
+          148332,
+          148333,
+          148334,
+          148335,
+          148336,
+          148337,
+          148338,
+          148339,
+          148340,
+          148341,
+          148342,
+          148343,
+          148344
+        ],
+        "placeholders": [
+          {
+            "position": "front",
+            "images": [
+              {
+                "id": "6aa6a505755518e66e90b0d2",
+                "name": "ARTEMIS II.png",
+                "type": "image/png",
+                "height": 5100,
+                "width": 4500,
+                "x": 0.5,
+                "y": 0.5,
+                "flipX": false,
+                "flipY": false,
+                "scale": 1,
+                "angle": 0,
+                "src": "https://pfy-prod-image-storage.s3.us-east-2.amazonaws.com/7340047/58048279-2855-48d2-a086-a747d7759f8c",
+                "layerType": "image",
+                "imageId": "6aa6a505755518e66e90b0d2_97dc18cc-e8fc-b5eb-9020-83fdffb9de99"
+              }
+            ],
+            "decoration_method": "dtg"
+          },
+          {
+            "position": "back",
+            "images": [],
+            "decoration_method": "dtg"
+          }
+        ],
+        "font_color": "#000",
+        "font_family": "Roboto",
+        "country": "Honduras"
+      }
+    ],
+    "print_details": [],
+    "sales_channel_properties": [],
+    "is_printify_express_eligible": false,
+    "is_printify_express_enabled": false,
+    "is_economy_shipping_eligible": true,
+    "is_economy_shipping_enabled": false,
+    "is_deleted": false,
+    "original_product_id": "",
+    "views": [
+      {
+        "id": 159085,
+        "label": "Front side",
+        "position": "front",
+        "files": [
+          {
+            "src": "https://images.printify.com/api/catalog/6989fdecb5bb3bbcb0084f52.svg",
+            "variant_ids": [
+              73196,
+              73197,
+              73198,
+              73199,
+              73200,
+              73201,
+              73202,
+              73203,
+              73204,
+              73205,
+              73206,
+              73207,
+              73208,
+              73209,
+              73210,
+              73211,
+              73212,
+              73213,
+              73214,
+              73215,
+              73965,
+              73966,
+              73968,
+              73969,
+              73970,
+              73972,
+              73973,
+              73975,
+              73976,
+              73977,
+              73979,
+              73980,
+              73982,
+              73983,
+              73984,
+              73986,
+              73987,
+              73989,
+              73990,
+              73991,
+              73993,
+              73994,
+              73996,
+              73997,
+              73998,
+              78866,
+              78867,
+              78868,
+              78869,
+              78870,
+              78871,
+              78872,
+              78873,
+              78874,
+              78875,
+              78876,
+              78877,
+              78878,
+              78879,
+              78880,
+              78881,
+              78882,
+              78883,
+              78884,
+              78885,
+              78886,
+              78887,
+              78888,
+              78889,
+              78890,
+              78891,
+              78892,
+              78893,
+              78894,
+              78895,
+              78896,
+              78897,
+              78898,
+              78899,
+              78900,
+              78901,
+              78902,
+              78903,
+              78904,
+              78905,
+              78906,
+              78907,
+              78908,
+              78909,
+              78910,
+              78911,
+              78912,
+              78913,
+              78914,
+              78915,
+              78916,
+              78917,
+              78918,
+              78919,
+              78920,
+              78921,
+              78922,
+              78923,
+              78924,
+              78925,
+              78926,
+              78927,
+              78928,
+              78929,
+              78930,
+              78931,
+              78932,
+              78933,
+              78934,
+              78935,
+              78936,
+              78937,
+              78938,
+              78939,
+              78940,
+              78941,
+              78942,
+              78943,
+              78944,
+              78945,
+              78946,
+              78947,
+              78948,
+              78949,
+              78950,
+              78951,
+              78952,
+              78953,
+              78954,
+              78955,
+              78956,
+              78957,
+              78958,
+              78959,
+              78960,
+              78961,
+              78962,
+              78963,
+              78964,
+              78965,
+              78966,
+              78967,
+              78968,
+              78969,
+              78970,
+              78971,
+              78972,
+              78973,
+              78974,
+              78975,
+              78976,
+              78977,
+              78978,
+              78979,
+              78980,
+              78981,
+              78982,
+              78983,
+              78984,
+              78985,
+              78986,
+              78987,
+              78988,
+              78989,
+              78990,
+              78991,
+              78992,
+              78993,
+              78994,
+              78995,
+              78996,
+              78997,
+              78998,
+              78999,
+              79000,
+              79001,
+              79002,
+              79003,
+              79004,
+              79005,
+              79006,
+              79007,
+              79008,
+              79009,
+              79010,
+              79011,
+              79012,
+              79013,
+              79014,
+              79015,
+              79016,
+              79017,
+              79018,
+              79019,
+              79020,
+              79021,
+              79022,
+              79023,
+              79024,
+              79025,
+              79026,
+              79027,
+              79028,
+              79029,
+              79030,
+              79031,
+              79032,
+              79033,
+              79034,
+              79035,
+              79036,
+              79037,
+              79038,
+              79039,
+              79040,
+              79041,
+              79042,
+              79043,
+              79044,
+              79045,
+              79046,
+              79047,
+              79048,
+              79049,
+              79050,
+              79051,
+              79052,
+              79053,
+              79054,
+              79055,
+              79056,
+              79057,
+              79058,
+              79059,
+              79060,
+              79061,
+              79062,
+              79063,
+              79064,
+              79065,
+              79066,
+              79067,
+              79068,
+              79069,
+              79070,
+              79071,
+              79072,
+              79073,
+              79074,
+              79075,
+              79076,
+              79077,
+              79078,
+              79079,
+              79080,
+              79081,
+              79082,
+              79083,
+              79084,
+              79085,
+              79086,
+              79087,
+              79088,
+              79089,
+              79090,
+              79091,
+              79092,
+              79093,
+              79094,
+              79095,
+              79096,
+              79097,
+              79098,
+              79099,
+              79100,
+              79101,
+              79102,
+              79103,
+              79104,
+              79105,
+              79106,
+              79107,
+              79108,
+              79109,
+              79110,
+              79111,
+              79112,
+              79113,
+              79114,
+              79115,
+              79116,
+              79117,
+              79118,
+              79119,
+              79120,
+              79121,
+              79122,
+              79123,
+              79124,
+              79125,
+              79126,
+              79127,
+              79128,
+              79129,
+              79130,
+              79132,
+              79133,
+              79134,
+              79135,
+              79136,
+              79137,
+              79138,
+              79139,
+              79140,
+              79141,
+              79142,
+              79143,
+              79144,
+              79145,
+              79146,
+              79147,
+              79148,
+              79149,
+              79150,
+              79151,
+              79152,
+              79153,
+              79154,
+              79155,
+              79156,
+              79157,
+              79158,
+              79159,
+              79160,
+              79162,
+              79163,
+              79164,
+              79165,
+              79166,
+              79167,
+              79168,
+              79169,
+              79170,
+              101420,
+              101421,
+              101422,
+              101423,
+              101424,
+              101425,
+              101426,
+              101427,
+              101428,
+              101429,
+              101430,
+              101431,
+              101432,
+              101433,
+              101434,
+              101435,
+              101436,
+              101437,
+              101438,
+              101439,
+              101440,
+              101441,
+              101442,
+              101443,
+              101444,
+              101445,
+              101446,
+              101447,
+              101448,
+              101449,
+              101450,
+              101451,
+              101452,
+              101453,
+              101454,
+              101455,
+              101456,
+              101457,
+              101458,
+              101459,
+              101460,
+              101461,
+              101462,
+              101463,
+              101464,
+              101465,
+              101466,
+              101467,
+              101468,
+              101469,
+              101470,
+              101471,
+              101472,
+              101473,
+              101474,
+              101475,
+              101476,
+              101477,
+              101811,
+              101812,
+              101813,
+              101814,
+              101815,
+              101816,
+              101817,
+              101818,
+              101819,
+              101820,
+              101821,
+              101822,
+              101823,
+              101824,
+              102352,
+              102353,
+              102354,
+              102355,
+              102356,
+              102357,
+              102358,
+              148324,
+              148325,
+              148326,
+              148327,
+              148328,
+              148329,
+              148330,
+              148331,
+              148332,
+              148333,
+              148334,
+              148335,
+              148336,
+              148337,
+              148338,
+              148339,
+              148340,
+              148341,
+              148342,
+              148343,
+              148344,
+              243755,
+              243756,
+              243757,
+              243758,
+              243759,
+              243760,
+              243761
+            ]
+          }
+        ]
+      },
+      {
+        "id": 26947,
+        "label": "Back side",
+        "position": "back",
+        "files": [
+          {
+            "src": "https://images.printify.com/api/catalog/64b61c85dba4d5d9ff0a5db1.svg",
+            "variant_ids": [
+              73196,
+              73197,
+              73198,
+              73199,
+              73200,
+              73201,
+              73202,
+              73203,
+              73204,
+              73205,
+              73206,
+              73207,
+              73208,
+              73209,
+              73210,
+              73211,
+              73212,
+              73213,
+              73214,
+              73215,
+              73965,
+              73966,
+              73968,
+              73969,
+              73970,
+              73972,
+              73973,
+              73975,
+              73976,
+              73977,
+              73979,
+              73980,
+              73982,
+              73983,
+              73984,
+              73986,
+              73987,
+              73989,
+              73990,
+              73991,
+              73993,
+              73994,
+              73996,
+              73997,
+              73998,
+              78866,
+              78867,
+              78868,
+              78869,
+              78870,
+              78871,
+              78872,
+              78873,
+              78874,
+              78875,
+              78876,
+              78877,
+              78878,
+              78879,
+              78880,
+              78881,
+              78882,
+              78883,
+              78884,
+              78885,
+              78886,
+              78887,
+              78888,
+              78889,
+              78890,
+              78891,
+              78892,
+              78893,
+              78894,
+              78895,
+              78896,
+              78897,
+              78898,
+              78899,
+              78900,
+              78901,
+              78902,
+              78903,
+              78904,
+              78905,
+              78906,
+              78907,
+              78908,
+              78909,
+              78910,
+              78911,
+              78912,
+              78913,
+              78914,
+              78915,
+              78916,
+              78917,
+              78918,
+              78919,
+              78920,
+              78921,
+              78922,
+              78923,
+              78924,
+              78925,
+              78926,
+              78927,
+              78928,
+              78929,
+              78930,
+              78931,
+              78932,
+              78933,
+              78934,
+              78935,
+              78936,
+              78937,
+              78938,
+              78939,
+              78940,
+              78941,
+              78942,
+              78943,
+              78944,
+              78945,
+              78946,
+              78947,
+              78948,
+              78949,
+              78950,
+              78951,
+              78952,
+              78953,
+              78954,
+              78955,
+              78956,
+              78957,
+              78958,
+              78959,
+              78960,
+              78961,
+              78962,
+              78963,
+              78964,
+              78965,
+              78966,
+              78967,
+              78968,
+              78969,
+              78970,
+              78971,
+              78972,
+              78973,
+              78974,
+              78975,
+              78976,
+              78977,
+              78978,
+              78979,
+              78980,
+              78981,
+              78982,
+              78983,
+              78984,
+              78985,
+              78986,
+              78987,
+              78988,
+              78989,
+              78990,
+              78991,
+              78992,
+              78993,
+              78994,
+              78995,
+              78996,
+              78997,
+              78998,
+              78999,
+              79000,
+              79001,
+              79002,
+              79003,
+              79004,
+              79005,
+              79006,
+              79007,
+              79008,
+              79009,
+              79010,
+              79011,
+              79012,
+              79013,
+              79014,
+              79015,
+              79016,
+              79017,
+              79018,
+              79019,
+              79020,
+              79021,
+              79022,
+              79023,
+              79024,
+              79025,
+              79026,
+              79027,
+              79028,
+              79029,
+              79030,
+              79031,
+              79032,
+              79033,
+              79034,
+              79035,
+              79036,
+              79037,
+              79038,
+              79039,
+              79040,
+              79041,
+              79042,
+              79043,
+              79044,
+              79045,
+              79046,
+              79047,
+              79048,
+              79049,
+              79050,
+              79051,
+              79052,
+              79053,
+              79054,
+              79055,
+              79056,
+              79057,
+              79058,
+              79059,
+              79060,
+              79061,
+              79062,
+              79063,
+              79064,
+              79065,
+              79066,
+              79067,
+              79068,
+              79069,
+              79070,
+              79071,
+              79072,
+              79073,
+              79074,
+              79075,
+              79076,
+              79077,
+              79078,
+              79079,
+              79080,
+              79081,
+              79082,
+              79083,
+              79084,
+              79085,
+              79086,
+              79087,
+              79088,
+              79089,
+              79090,
+              79091,
+              79092,
+              79093,
+              79094,
+              79095,
+              79096,
+              79097,
+              79098,
+              79099,
+              79100,
+              79101,
+              79102,
+              79103,
+              79104,
+              79105,
+              79106,
+              79107,
+              79108,
+              79109,
+              79110,
+              79111,
+              79112,
+              79113,
+              79114,
+              79115,
+              79116,
+              79117,
+              79118,
+              79119,
+              79120,
+              79121,
+              79122,
+              79123,
+              79124,
+              79125,
+              79126,
+              79127,
+              79128,
+              79129,
+              79130,
+              79132,
+              79133,
+              79134,
+              79135,
+              79136,
+              79137,
+              79138,
+              79139,
+              79140,
+              79141,
+              79142,
+              79143,
+              79144,
+              79145,
+              79146,
+              79147,
+              79148,
+              79149,
+              79150,
+              79151,
+              79152,
+              79153,
+              79154,
+              79155,
+              79156,
+              79157,
+              79158,
+              79159,
+              79160,
+              79162,
+              79163,
+              79164,
+              79165,
+              79166,
+              79167,
+              79168,
+              79169,
+              79170,
+              101420,
+              101421,
+              101422,
+              101423,
+              101424,
+              101425,
+              101426,
+              101427,
+              101428,
+              101429,
+              101430,
+              101431,
+              101432,
+              101433,
+              101434,
+              101435,
+              101436,
+              101437,
+              101438,
+              101439,
+              101440,
+              101441,
+              101442,
+              101443,
+              101444,
+              101445,
+              101446,
+              101447,
+              101448,
+              101449,
+              101450,
+              101451,
+              101452,
+              101453,
+              101454,
+              101455,
+              101456,
+              101457,
+              101458,
+              101459,
+              101460,
+              101461,
+              101462,
+              101463,
+              101464,
+              101465,
+              101466,
+              101467,
+              101468,
+              101469,
+              101470,
+              101471,
+              101472,
+              101473,
+              101474,
+              101475,
+              101476,
+              101477,
+              101811,
+              101812,
+              101813,
+              101814,
+              101815,
+              101816,
+              101817,
+              101818,
+              101819,
+              101820,
+              101821,
+              101822,
+              101823,
+              101824,
+              102352,
+              102353,
+              102354,
+              102355,
+              102356,
+              102357,
+              102358,
+              148324,
+              148325,
+              148326,
+              148327,
+              148328,
+              148329,
+              148330,
+              148331,
+              148332,
+              148333,
+              148334,
+              148335,
+              148336,
+              148337,
+              148338,
+              148339,
+              148340,
+              148341,
+              148342,
+              148343,
+              148344,
+              243755,
+              243756,
+              243757,
+              243758,
+              243759,
+              243760,
+              243761
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "payload": {
+    "title": "Test Edit",
+    "description": "",
+    "tags": [],
+    "variants": [
+      {
+        "id": 73196,
+        "price": 2600,
+        "is_enabled": true
+      },
+      {
+        "id": 73200,
+        "price": 2700,
+        "is_enabled": true
+      },
+      {
+        "id": 73204,
+        "price": 2800,
+        "is_enabled": true
+      },
+      {
+        "id": 73208,
+        "price": 2900,
+        "is_enabled": true
+      },
+      {
+        "id": 73212,
+        "price": 3000,
+        "is_enabled": true
+      },
+      {
+        "id": 73199,
+        "price": 2600,
+        "is_enabled": true
+      },
+      {
+        "id": 73203,
+        "price": 2700,
+        "is_enabled": true
+      },
+      {
+        "id": 73207,
+        "price": 2800,
+        "is_enabled": true
+      },
+      {
+        "id": 73211,
+        "price": 2900,
+        "is_enabled": true
+      },
+      {
+        "id": 73215,
+        "price": 3000,
+        "is_enabled": true
+      }
+    ],
+    "blueprint_id": 706,
+    "print_provider_id": 29,
+    "print_areas": [
+      {
+        "variant_ids": [
+          73196,
+          73200,
+          73204,
+          73208,
+          73212,
+          73199,
+          73203,
+          73207,
+          73211,
+          73215
+        ],
+        "placeholders": [
+          {
+            "position": "front",
+            "images": [
+              {
+                "id": "6aa6a505755518e66e90b0d2",
+                "x": 0.5,
+                "y": 0.5,
+                "scale": 1,
+                "angle": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

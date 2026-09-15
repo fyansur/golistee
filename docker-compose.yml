@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: golistee_db
+    environment:
+      POSTGRES_USER: golistee
+      POSTGRES_PASSWORD: golistee
+      POSTGRES_DB: golistee
+    ports:
+      - "5433:5432"
+    volumes:
+      - golistee_data:/var/lib/postgresql
+
+volumes:
+  golistee_data:
