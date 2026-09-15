@@ -18,6 +18,7 @@ import {
   LayoutGridIcon, ListIcon, ImagesIcon,
 } from "lucide-react";
 import api from "@/lib/api";
+import { toast } from "sonner";
 import type { Design, ListingDraft } from "@/pages/CreateListing";
 
 // Printify recommends 300 DPI print files. We don't get the print area's real
@@ -555,8 +556,8 @@ export function DesignDialog({ draft, onChange, onClose }: Props) {
         return draft.variants.find((v: any) => v.id === id) ?? { id, price: 0, is_enabled: true };
       })});
       onClose();
-    } catch {
-      alert("Upload failed");
+    } catch (err: any) {
+      toast.error(err.response?.data?.error ?? "Upload failed");
     } finally {
       setUploading(false);
       setUploadProgress(null);

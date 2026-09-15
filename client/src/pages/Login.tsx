@@ -38,8 +38,8 @@ export default function Login() {
       // it (Settings) renders blank right after login.
       await refreshUser();
       navigate("/products");
-    } catch {
-      setServerError("Invalid credentials");
+    } catch (err: any) {
+      setServerError(err.response?.data?.error ?? "Something went wrong. Please try again.");
     }
   };
 

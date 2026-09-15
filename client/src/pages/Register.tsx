@@ -36,8 +36,8 @@ export default function Register() {
       // ran before this token existed, so `user` needs an explicit refresh.
       await refreshUser();
       navigate("/products");
-    } catch {
-      setServerError("Email already exists");
+    } catch (err: any) {
+      setServerError(err.response?.data?.error ?? "Something went wrong. Please try again.");
     }
   };
 
@@ -90,7 +90,7 @@ export default function Register() {
               control={control}
               rules={{
                 required: "Password is required",
-                minLength: { value: 6, message: "At least 6 characters" },
+                minLength: { value: 8, message: "At least 8 characters" },
               }}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>

@@ -97,8 +97,8 @@ export default function Catalog() {
           b.model?.toLowerCase().includes(search.toLowerCase()),
       );
       setResults(filtered);
-    } catch {
-      toast.error("Failed to fetch catalog");
+    } catch (err: any) {
+      toast.error(err.response?.data?.error ?? "Failed to fetch catalog");
     } finally {
       setLoading(false);
     }
