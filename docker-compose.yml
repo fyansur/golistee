@@ -6,6 +6,9 @@ services:
       POSTGRES_USER: golistee
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: golistee
+    ports:
+      # Hanya bisa diakses dari VPS sendiri, tidak terbuka ke publik
+      - "127.0.0.1:5433:5432"
     volumes:
       - golistee_data:/var/lib/postgresql/data
     healthcheck:
@@ -13,20 +16,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 12
-    restart: unless-stopped
-
-  server:
-    build:
-      context: .
-      dockerfile: Dockerfile.server
-    container_name: golistee_server
-    ports:
-      - "3000:3000"
-    env_file:
-      - .env
-    depends_on:
-      db:
-        condition: service_healthy
     restart: unless-stopped
 
 volumes:
