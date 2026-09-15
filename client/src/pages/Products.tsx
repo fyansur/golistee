@@ -222,7 +222,7 @@ export default function Products() {
       ) : (
         <>
           <div className="border rounded-lg overflow-hidden">
-            <Table className="table-fixed">
+            <Table className="table-fixed bg-card">
               {/* Column widths are fixed here, independent of what each row
                   renders — the selected-state header collapses 4 columns into
                   one colSpan cell, which would otherwise reflow every column
@@ -300,7 +300,7 @@ export default function Products() {
                   const status = LISTING_STATUS[p.status] ?? { label: p.status, dot: "bg-muted-foreground" };
                   const title = p.title || "Untitled";
                   return (
-                    <TableRow key={p.id} data-state={selectedIds.has(p.id) ? "selected" : undefined} className="h-36">  
+                    <TableRow key={p.id} data-state={selectedIds.has(p.id) ? "selected" : undefined} className="h-36 ">  
                       <TableCell className="pl-4">
                         <Checkbox checked={selectedIds.has(p.id)} onCheckedChange={() => toggleSelect(p.id)} />
                       </TableCell>
