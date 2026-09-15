@@ -1,0 +1,134 @@
+name: Deploy Golistee
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Hindari dua deploy berjalan barengan ke VPS yang sama.
+concurrency:
+  group: golistee-production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Configure SSH
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_SSH_KNOWN_HOSTS: ${{ secrets.VPS_SSH_KNOWN_HOSTS }}
+        run: |
+          set -Eeuo pipefail
+
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          # Host key disimpan sebagai secret supaya koneksi SSH tidak menerima host sembarang.
+          printf '%s\n' "$VPS_SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy application
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          set -Eeuo pipefail
+
+          ssh \
+            -i ~/.ssh/id_ed25519 \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            "$VPS_USER@$VPS_HOST" 'bash -s' <<'REMOTE_SCRIPT'
+          set -Eeuo pipefail
+
+          APP_DIR="/opt/golistee"
+          SERVER_DIR="$APP_DIR/server"
+          CLIENT_DIR="$APP_DIR/client"
+          PM2_APP="golistee-server"
+
+          show_diagnostics() {
+            echo ":: Server diagnostics ::"
+            pm2 status || true
+            pm2 logs "$PM2_APP" --lines 80 --nostream || true
+
+            echo ":: Database diagnostics ::"
+            cd "$APP_DIR"
+            docker compose ps || true
+            docker compose logs --tail=80 db || true
+          }
+
+          trap 'exit_code=$?; echo "Deploy failed with exit code $exit_code"; show_diagnostics; exit $exit_code' ERR
+
+          cd "$APP_DIR"
+
+          # Samakan source VPS secara pasti dengan commit terbaru di GitHub/main.
+          git fetch --prune origin main
+          git reset --hard origin/main
+
+          # Docker hanya untuk PostgreSQL.
+          docker compose up -d db
+
+          echo "Waiting for PostgreSQL..."
+          for attempt in $(seq 1 30); do
+            if docker compose exec -T db pg_isready -U golistee -d golistee > /dev/null 2>&1; then
+              break
+            fi
+
+            if [ "$attempt" = "30" ]; then
+              echo "PostgreSQL did not become ready in time."
+              exit 1
+            fi
+
+            sleep 2
+          done
+
+          # Build frontend yang akan disajikan Express dari client/dist.
+          cd "$CLIENT_DIR"
+          npm ci
+          npm run build
+
+          # Backend environment tetap memakai server/.env di VPS dan tidak disentuh workflow.
+          cd "$SERVER_DIR"
+          test -f .env || {
+            echo "Missing required production environment file: $SERVER_DIR/.env"
+            exit 1
+          }
+
+          npm ci
+          npx prisma generate --config prisma7.config.ts
+          npx prisma migrate deploy --config prisma7.config.ts
+
+          # Jangan start dist/index.js — gunakan TSX, sesuai setup Prisma saat ini.
+          if pm2 describe "$PM2_APP" > /dev/null 2>&1; then
+            pm2 restart "$PM2_APP" --update-env
+          else
+            pm2 start npx \
+              --name "$PM2_APP" \
+              --cwd "$SERVER_DIR" \
+              -- tsx src/index.ts
+            pm2 save
+          fi
+
+          # Gagal deploy jika aplikasi tidak sehat setelah restart.
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --retry 10 \
+            --retry-delay 2 \
+            --retry-connrefused \
+            http://127.0.0.1:3000/health
+
+          echo
+          echo "Deploy successful."
+          REMOTE_SCRIPT
