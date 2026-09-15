@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Field, FieldLabel, FieldContent, FieldError } from "@/components/ui/field";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Mail, Lock, CircleAlertIcon } from "lucide-react";
+import { Mail, Lock, CircleAlertIcon, ArrowLeftIcon } from "lucide-react";
+import { useForceLightMode } from "@/hooks/use-force-light-mode";
 
 interface RegisterForm {
   email: string;
@@ -16,6 +17,7 @@ interface RegisterForm {
 }
 
 export default function Register() {
+  useForceLightMode();
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
   const [serverError, setServerError] = useState("");
@@ -33,17 +35,23 @@ export default function Register() {
       // Same reasoning as Login: AuthProvider's own mount-time check already
       // ran before this token existed, so `user` needs an explicit refresh.
       await refreshUser();
-      navigate("/");
+      navigate("/products");
     } catch {
       setServerError("Email already exists");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-accent p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center gap-3 p-4">
+      
+      <div className="w-full max-w-sm">
+      <Button variant="outline" size="sm" className="w-fit max-w-sm justify-start bg-card!" render={<Link to="/" />} nativeButton={false}>
+        <ArrowLeftIcon className="size-4" /> Back
+      </Button>
+      </div>
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <span className="text-accent text-2xl text-center font-logo">golistee</span>
+          <span className="text-accent text-5xl text-center font-logo">golistee</span>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -63,7 +71,7 @@ export default function Register() {
                   <FieldLabel>Email</FieldLabel>
                   <FieldContent>
                     <InputGroup>
-                      <InputGroupAddon align="inline-start"><Mail className="size-3.5" /></InputGroupAddon>
+                      <InputGroupAddon align="inline-start"><Mail className="size-4" /></InputGroupAddon>
                       <InputGroupInput type="email" placeholder="you@example.com" aria-invalid={fieldState.invalid} {...field} />
                     </InputGroup>
                     {fieldState.invalid && (
@@ -89,8 +97,8 @@ export default function Register() {
                   <FieldLabel>Password</FieldLabel>
                   <FieldContent>
                     <InputGroup>
-                      <InputGroupAddon align="inline-start"><Lock className="size-3.5" /></InputGroupAddon>
-                      <InputGroupInput type="password" aria-invalid={fieldState.invalid} {...field} />
+                      <InputGroupAddon align="inline-start"><Lock className="size-4" /></InputGroupAddon>
+                      <InputGroupInput type="password" placeholder="Password" aria-invalid={fieldState.invalid} {...field} />
                     </InputGroup>
                     {fieldState.invalid && (
                       <Alert className="mt-1 flex p-2 rounded-md text-destructive bg-destructive/10 border-destructive/10">

@@ -55,7 +55,7 @@ export default function Settings() {
               <FieldLabel>Email</FieldLabel>
               <FieldContent>
                 <InputGroup>
-                  <InputGroupAddon align="inline-start"><Mail className="size-3.5" /></InputGroupAddon>
+                  <InputGroupAddon align="inline-start"><Mail className="size-4" /></InputGroupAddon>
                   <InputGroupInput value={user.email} disabled />
                 </InputGroup>
               </FieldContent>
@@ -79,7 +79,7 @@ export default function Settings() {
                     <FieldLabel>Current Password</FieldLabel>
                     <FieldContent>
                       <InputGroup>
-                        <InputGroupAddon align="inline-start"><Lock className="size-3.5" /></InputGroupAddon>
+                        <InputGroupAddon align="inline-start"><Lock className="size-4" /></InputGroupAddon>
                         <InputGroupInput type="password" aria-invalid={fieldState.invalid} {...field} />
                       </InputGroup>
                       {fieldState.invalid && (
@@ -105,7 +105,7 @@ export default function Settings() {
                     <FieldLabel>New Password</FieldLabel>
                     <FieldContent>
                       <InputGroup>
-                        <InputGroupAddon align="inline-start"><Lock className="size-3.5" /></InputGroupAddon>
+                        <InputGroupAddon align="inline-start"><Lock className="size-4" /></InputGroupAddon>
                         <InputGroupInput type="password" aria-invalid={fieldState.invalid} {...field} />
                       </InputGroup>
                       {fieldState.invalid && (

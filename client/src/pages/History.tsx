@@ -3,6 +3,7 @@ import api from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { HistoryIcon, ChevronDownIcon } from "lucide-react";
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
+import { Skeleton } from "@/components/ui/skeleton";
 import { LISTING_STATUS } from "@/lib/listingStatus";
 import { PaginationFooter } from "@/components/PaginationFooter";
 
@@ -51,8 +52,36 @@ const BATCH_STATUS_LABELS: Record<string, string> = {
   failed: "Failed",
 };
 
+function BatchCardSkeleton() {
+  return (
+    <div className="rounded-xl border bg-card overflow-hidden">
+      <div className="flex items-center justify-between p-5">
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-40" />
+          <Skeleton className="h-3 w-56" />
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <Skeleton className="h-5 w-16 rounded-full" />
+          <Skeleton className="size-5 rounded-sm" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ShopChipsSkeleton() {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {["w-16", "w-20", "w-24", "w-14"].map((w, i) => (
+        <Skeleton key={i} className={`h-6 rounded-full ${w}`} />
+      ))}
+    </div>
+  );
+}
+
 export default function History() {
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [accountsLoading, setAccountsLoading] = useState(true);
   const [selectedShopIds, setSelectedShopIds] = useState<Set<string>>(new Set());
   const [batches, setBatches] = useState<Batch[]>([]);
   const [total, setTotal] = useState(0);
@@ -62,7 +91,7 @@ export default function History() {
   const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
-    api.get("/connections").then(({ data }) => setAccounts(data));
+    api.get("/connections").then(({ data }) => setAccounts(data)).finally(() => setAccountsLoading(false));
   }, []);
 
   useEffect(() => {
@@ -105,7 +134,9 @@ export default function History() {
         <p className="text-xl font-black">Batches</p>
       </div>
 
-      {shops.length > 0 && (
+      {accountsLoading ? (
+        <ShopChipsSkeleton />
+      ) : shops.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
@@ -134,7 +165,9 @@ export default function History() {
       )}
 
       {loading ? (
-        <></>
+        <div className="space-y-4">
+          {Array.from({ length: 5 }).map((_, i) => <BatchCardSkeleton key={i} />)}
+        </div>
       ) : batches.length === 0 ? (
         <Empty className="border bg-card">
           <EmptyHeader>

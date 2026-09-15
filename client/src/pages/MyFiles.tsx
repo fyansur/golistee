@@ -7,6 +7,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/in
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 import { PaginationFooter } from "@/components/PaginationFooter";
 import {
   SearchIcon, UploadCloudIcon, ChevronLeftIcon, ChevronRightIcon,
@@ -45,6 +46,20 @@ const CHECKERBOARD_BG: React.CSSProperties = {
   backgroundSize: "12px 12px",
   backgroundPosition: "0 0, 0 6px, 6px -6px, -6px 0px",
 };
+
+function FileCardSkeleton() {
+  return (
+    <div className="rounded-lg overflow-hidden border bg-card">
+      <div className="aspect-square p-8">
+        <Skeleton className="size-full" />
+      </div>
+      <div className="p-3 space-y-2">
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-3 w-1/2" />
+      </div>
+    </div>
+  );
+}
 
 export default function MyFiles() {
   const [items, setItems] = useState<FileItem[]>([]);
@@ -227,7 +242,9 @@ export default function MyFiles() {
       </div>
 
       {loading ? (
-        <></>
+        <div className="grid grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, i) => <FileCardSkeleton key={i} />)}
+        </div>
       ) : items.length === 0 ? (
         <Empty className="border bg-card">
           <EmptyHeader>

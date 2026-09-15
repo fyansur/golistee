@@ -14,6 +14,7 @@ import Products from "@/pages/Products";
 import History from "@/pages/History";
 import MyFiles from "@/pages/MyFiles";
 import Settings from "@/pages/Settings";
+import Landing from "@/pages/Landing";
 import CreateListing from "./pages/CreateListing";
 import EditListing from "./pages/EditListing";
 
@@ -28,10 +29,10 @@ function App() {
         <AuthProvider>
           <BreadcrumbProvider>
             <Routes>
+              <Route path="/" element={<Landing />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-                <Route path="/" element={<Products />} />
                 <Route path="/connections" element={<Connections />} />
                 <Route path="/blueprints" element={<Catalog />} />
                 <Route path="/templates" element={<Templates />} />

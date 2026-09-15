@@ -313,14 +313,14 @@ export function ListingCardForm({ draft, onChange, locked, index, onRemove, coll
               </SelectContent>
             </Select>
           )}
-          {onToggleCollapse && (
-            <Button type="button" variant="outline" size="icon" onClick={onToggleCollapse} aria-label={collapsed ? "Expand" : "Collapse"}>
-              {collapsed ? <ChevronDownIcon className="size-4" /> : <ChevronUpIcon className="size-4" />}
-            </Button>
-          )}
           {onRemove && (
             <Button type="button" variant="outline" size="icon" onClick={onRemove} aria-label="Remove listing">
               <Trash2Icon className="size-4 text-destructive" />
+            </Button>
+          )}
+          {onToggleCollapse && (
+            <Button type="button" variant="outline" size="icon" onClick={onToggleCollapse} aria-label={collapsed ? "Expand" : "Collapse"}>
+              {collapsed ? <ChevronDownIcon className="size-4" /> : <ChevronUpIcon className="size-4" />}
             </Button>
           )}
         </div>
@@ -409,7 +409,7 @@ export function ListingCardForm({ draft, onChange, locked, index, onRemove, coll
                 {draft.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="h-8 flex items-center gap-1 border text-xs px-2 py-0.5 rounded-md"
+                    className="bg-background h-8 flex items-center gap-1 border text-xs px-2 py-0.5 rounded-md"
                   >
                     {tag}
                     <button className="text-muted hover:text-foreground active:translate-y-[1px]" onClick={() => removeTag(tag)}>
@@ -419,7 +419,7 @@ export function ListingCardForm({ draft, onChange, locked, index, onRemove, coll
                 ))}
                 {draft.tags.length < 13 && (
                   <input
-                    className="flex-1 min-w-24 bg-transparent text-sm outline-none"
+                    className="flex-1 min-w-24 h-8 bg-transparent text-sm outline-none"
                     placeholder="Keywords"
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
@@ -444,7 +444,7 @@ export function ListingCardForm({ draft, onChange, locked, index, onRemove, coll
               </div>
             </FieldContent>
           <div className="text-xs text-muted-foreground flex gap-2">
-            <span><Kbd>⏎</Kbd> Add a tag </span><span><Kbd>Del</Kbd> Remove all tags </span>
+            <span><Kbd>⏎</Kbd> Apply tag </span><span><Kbd>Del</Kbd> Remove all tags </span>
           </div>
           </Field>
           </>

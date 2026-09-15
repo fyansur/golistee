@@ -19,10 +19,48 @@ import {
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/empty";
 import { LISTING_STATUS } from "@/lib/listingStatus";
 import { PaginationFooter } from "@/components/PaginationFooter";
+
+function ProductRowSkeleton() {
+  return (
+    <TableRow className="h-36">
+      <TableCell className="pl-4">
+        <Skeleton className="size-4 rounded-sm" />
+      </TableCell>
+      <TableCell>
+        <div className="flex items-center gap-3">
+          <Skeleton className="size-20 rounded-lg shrink-0" />
+          <div className="space-y-2 flex-1">
+            <Skeleton className="h-4 w-1/3" />
+            <Skeleton className="h-3 w-1/4" />
+          </div>
+        </div>
+      </TableCell>
+      <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+      <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+      <TableCell>
+        <div className="flex items-center gap-1 justify-center">
+          <Skeleton className="size-8 rounded-md" />
+          <Skeleton className="size-8 rounded-md" />
+        </div>
+      </TableCell>
+    </TableRow>
+  );
+}
+
+function ShopChipsSkeleton() {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {["w-16", "w-20", "w-24", "w-14"].map((w, i) => (
+        <Skeleton key={i} className={`h-6 rounded-full ${w}`} />
+      ))}
+    </div>
+  );
+}
 
 interface Shop {
   id: string;
@@ -55,6 +93,7 @@ interface Product {
 export default function Products() {
   const navigate = useNavigate();
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [accountsLoading, setAccountsLoading] = useState(true);
   const [selectedShopIds, setSelectedShopIds] = useState<Set<string>>(new Set());
   const [products, setProducts] = useState<Product[]>([]);
   const [total, setTotal] = useState(0);
@@ -67,7 +106,7 @@ export default function Products() {
   const [copyTargetShop, setCopyTargetShop] = useState("");
 
   useEffect(() => {
-    api.get("/connections").then(({ data }) => setAccounts(data));
+    api.get("/connections").then(({ data }) => setAccounts(data)).finally(() => setAccountsLoading(false));
   }, []);
 
   const fetchProducts = () => {
@@ -176,7 +215,9 @@ export default function Products() {
         </Button>
       </div>
 
-      {shops.length > 0 && (
+      {accountsLoading ? (
+        <ShopChipsSkeleton />
+      ) : shops.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
@@ -204,7 +245,30 @@ export default function Products() {
         </div>
       )}
 
-      {loading ? (<></>
+      {loading ? (
+        <div className="border rounded-lg overflow-hidden">
+          <Table className="table-fixed bg-card">
+            <colgroup>
+              <col className="w-10" />
+              <col className="w-[80%]" />
+              <col className="w-[15%]" />
+              <col className="w-[15%]" />
+              <col className="w-[10%]" />
+            </colgroup>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="pl-4 py-4" />
+                <TableHead>Product</TableHead>
+                <TableHead>Shop</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-center" />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: 5 }).map((_, i) => <ProductRowSkeleton key={i} />)}
+            </TableBody>
+          </Table>
+        </div>
       ) : products.length === 0 ? (
         <Empty className="border bg-card">
           <EmptyHeader>

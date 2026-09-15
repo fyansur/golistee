@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Field, FieldLabel, FieldContent, FieldError } from "@/components/ui/field";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Mail, Lock, CircleAlertIcon } from "lucide-react";
+import { Mail, Lock, CircleAlertIcon, ArrowLeftIcon } from "lucide-react";
+import { useForceLightMode } from "@/hooks/use-force-light-mode";
 
 interface LoginForm {
   email: string;
@@ -16,6 +17,7 @@ interface LoginForm {
 }
 
 export default function Login() {
+  useForceLightMode();
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
   const [serverError, setServerError] = useState("");
@@ -35,17 +37,22 @@ export default function Login() {
       // stays null until an unrelated full reload, and any page gating on
       // it (Settings) renders blank right after login.
       await refreshUser();
-      navigate("/");
+      navigate("/products");
     } catch {
       setServerError("Invalid credentials");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-accent p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center gap-3 p-4">
+      <div className="w-full max-w-sm">
+      <Button variant="outline" size="sm" className="w-fit max-w-sm justify-start bg-card!" render={<Link to="/" />} nativeButton={false}>
+        <ArrowLeftIcon className="size-4" /> Back
+      </Button>
+      </div>
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <span className="text-accent text-2xl font-logo text-center">golistee</span>
+          <span className="text-accent text-5xl font-logo text-center">golistee</span>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -65,7 +72,7 @@ export default function Login() {
                   <FieldLabel>Email</FieldLabel>
                   <FieldContent>
                     <InputGroup>
-                      <InputGroupAddon align="inline-start"><Mail className="size-3.5" /></InputGroupAddon>
+                      <InputGroupAddon align="inline-start"><Mail className="size-4" /></InputGroupAddon>
                       <InputGroupInput type="email" placeholder="you@example.com" aria-invalid={fieldState.invalid} {...field} />
                     </InputGroup>
                     {fieldState.invalid && (
@@ -88,8 +95,8 @@ export default function Login() {
                   <FieldLabel>Password</FieldLabel>
                   <FieldContent>
                     <InputGroup>
-                      <InputGroupAddon align="inline-start"><Lock className="size-3.5" /></InputGroupAddon>
-                      <InputGroupInput type="password" aria-invalid={fieldState.invalid} {...field} />
+                      <InputGroupAddon align="inline-start"><Lock className="size-4" /></InputGroupAddon>
+                      <InputGroupInput type="password" placeholder="Password" aria-invalid={fieldState.invalid} {...field} />
                     </InputGroup>
                     {fieldState.invalid && (
                       <Alert className="mt-1 flex p-2 rounded-md text-destructive bg-destructive/10 border-destructive/10">

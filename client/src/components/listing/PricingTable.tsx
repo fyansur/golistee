@@ -96,7 +96,21 @@ export function PricingTable({ draft, onChange, locked }: Props) {
   };
 
   return (
-    <Table className="border rounded-xl text-sm">
+    <Table className="table-fixed border rounded-xl text-sm">
+      {/* Fixed layout + explicit col widths — variant sub-rows render fewer/
+          different cell contents than their parent size row, which would
+          otherwise reflow every column's width each time a group expands. */}
+      <colgroup>
+        <col className="w-[12%]" />
+        <col className="w-[18%]" />
+        {locked && <col className="w-[12%]" />}
+        {locked && <col className="w-[12%]" />}
+        {locked && <col className="w-[16%]" />}
+        {locked && <col className="w-[11%]" />}
+        {/* Only unspecified-width column — soaks up whatever space the fixed columns don't. */}
+        <col className="w-auto" />
+        <col className="w-12" />
+      </colgroup>
       <TableHeader>
         <TableRow className="bg-muted hover:bg-muted">
           <TableHead className="h-auto px-4 py-3 text-xs font-semibold">Size</TableHead>
@@ -106,7 +120,7 @@ export function PricingTable({ draft, onChange, locked }: Props) {
           {locked && <TableHead className="h-auto px-4 py-3 text-xs font-semibold">Profit</TableHead>}
           {locked && <TableHead className="h-auto px-4 py-3 text-xs font-semibold">Margin</TableHead>}
           <TableHead className="h-auto px-4 py-3 text-xs font-semibold">Retail price</TableHead>
-          <TableHead className="h-auto w-8 px-0" />
+          <TableHead className="h-auto px-0" />
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -127,8 +141,8 @@ export function PricingTable({ draft, onChange, locked }: Props) {
                 className="cursor-pointer bg-background"
                 onClick={() => toggle(size)}
               >
-                <TableCell className="px-4 py-3 font-medium border-r">{size}</TableCell>
-                <TableCell className="px-4 py-3 text-muted-foreground border-r">
+                <TableCell className="px-4 py-3 font-medium border-r truncate">{size}</TableCell>
+                <TableCell className="px-4 py-3 text-muted-foreground border-r truncate">
                   {vars.length} color{vars.length > 1 ? "s" : ""}
                 </TableCell>
                 {locked && (
@@ -187,8 +201,8 @@ export function PricingTable({ draft, onChange, locked }: Props) {
                     />
                   </InputGroup>
                 </TableCell>
-                <TableCell className="px-4 py-3 text-end">
-                  <ChevronDownIcon className={`size-4 text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                <TableCell className="flex justify-center px-4 py-3">
+                  <ChevronDownIcon className={`size-10 text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} />
                 </TableCell>
               </TableRow>
               {isOpen &&
@@ -198,29 +212,29 @@ export function PricingTable({ draft, onChange, locked }: Props) {
                   const canEditVEarnings = costCents != null && costCents > 0;
 
                   return (
-                    <TableRow key={v.id} className="bg-muted/30 hover:bg-muted/30">
-                      <TableCell className="px-4 py-2.5 border-r" />
-                      <TableCell className="px-4 py-2.5 border-r">
-                        <span className="flex items-center gap-2">
+                    <TableRow key={v.id} className="bg-background/50">
+                      <TableCell className="px-4 py-3.5 border-r" />
+                      <TableCell className="px-4 py-3.5 border-r">
+                        <span className="flex items-center gap-2 min-w-0">
                           <span
                             className="inline-block size-4 shrink-0 rounded-full border"
                             style={{ backgroundColor: colorToHex(v.options.color) }}
                           />
-                          {v.options.color}
+                          <span className="truncate">{v.options.color}</span>
                         </span>
                       </TableCell>
                       {locked && (
-                        <TableCell className="px-4 py-2.5 text-muted-foreground border-r">
+                        <TableCell className="px-4 py-3.5 text-muted-foreground border-r">
                           {costCents != null ? fmt(costCents) : "—"}
                         </TableCell>
                       )}
                       {locked && (
-                        <TableCell className="px-4 py-2.5 text-muted-foreground border-r">
+                        <TableCell className="px-4 py-3.5 text-muted-foreground border-r">
                           {shipCents != null ? fmt(shipCents) : "—"}
                         </TableCell>
                       )}
                       {locked && (
-                        <TableCell className="px-4 py-2.5 border-r">
+                        <TableCell className="px-4 py-3.5 border-r">
                           <InputGroup className="bg-card!">
                             <InputGroupAddon>USD</InputGroupAddon>
                             <InputGroupInput
@@ -236,7 +250,7 @@ export function PricingTable({ draft, onChange, locked }: Props) {
                         </TableCell>
                       )}
                       {locked && (
-                        <TableCell className="px-4 py-2.5 border-r">
+                        <TableCell className="px-4 py-3.5 border-r">
                           <InputGroup className="bg-card!">
                             <InputGroupInput
                               type="number"
@@ -251,7 +265,7 @@ export function PricingTable({ draft, onChange, locked }: Props) {
                           </InputGroup>
                         </TableCell>
                       )}
-                      <TableCell className="px-4 py-2.5 border-r">
+                      <TableCell className="px-4 py-3.5 border-r">
                         <InputGroup>
                           <InputGroupAddon>USD</InputGroupAddon>
                           <InputGroupInput
