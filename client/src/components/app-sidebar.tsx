@@ -1,10 +1,13 @@
 import type * as React from "react";
-import { PlugIcon, BookOpenIcon, LayoutTemplateIcon, PackageIcon, HistoryIcon, Tag, Settings } from "lucide-react";
+import { PlugIcon, BookOpenIcon, LayoutTemplateIcon, PackageIcon, HistoryIcon, Tag, Settings, LogOutIcon } from "lucide-react";
 import {
-  Sidebar, SidebarContent, SidebarHeader,
-  SidebarMenu, SidebarMenuItem, SidebarTrigger,
+  Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader,
+  SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { NavMain } from "@/components/nav-main";
+import { useAuth } from "@/context/AuthContext";
+import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/mode-toggle";
 
 const NAV_ITEMS = [
   { title: "Catalog", url: "/blueprints", icon: Tag },
@@ -20,6 +23,8 @@ const NAV_FOOTER = [
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { logout } = useAuth();
+
   return (
     <Sidebar collapsible="icon" variant="sidebar" {...props}>
       <SidebarHeader>
@@ -38,6 +43,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={NAV_ITEMS} label="Products" />
         <NavMain items={NAV_FOOTER} label="Accounts" />
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarGroup className="p-6!">
+        <SidebarMenu>
+          <SidebarMenuItem>
+          </SidebarMenuItem>
+          <SidebarMenuItem className="flex justify-between gap-2">
+            <span className="group-data-[collapsible=icon]:hidden"><ModeToggle/></span>
+            <SidebarMenuButton render={
+              <Button variant ="outline" className="flex-1 hover:bg-muted!" onClick={logout}></Button>
+            }>
+              <><LogOutIcon/><span  className="group-data-[collapsible=icon]:hidden">Log out</span></>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+        </SidebarGroup>
+      </SidebarFooter>
     </Sidebar>
   );
 }

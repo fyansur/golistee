@@ -18,7 +18,7 @@ const ALLOWED_IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp", "i
 const router = Router();
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 25 * 1024 * 1024 }, // print files can be large; still bounded
+  limits: { fileSize: 100 * 1024 * 1024 }, // print files can be large; still bounded
   fileFilter: (_req, file, cb) => {
     if (!ALLOWED_IMAGE_TYPES.has(file.mimetype)) return cb(new Error("Unsupported file type"));
     cb(null, true);

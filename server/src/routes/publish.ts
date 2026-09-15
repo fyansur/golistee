@@ -339,6 +339,10 @@ router.get("/listings", async (req, res) => {
 });
 
 // POST bulk publish — used by the Products page's multi-select toolbar.
+// Backgrounded like /batch/:batchId/publish: a real selection can be dozens
+// of sequential Printify round-trips, which would otherwise hold the HTTP
+// request open for minutes. The client sees per-row status update on its
+// next fetch instead of an exact count in the response.
 router.post("/listings/bulk-publish", async (req, res) => {
   const userId = (req as any).userId;
   const { ids } = req.body as { ids: string[] };
@@ -347,26 +351,11 @@ router.post("/listings/bulk-publish", async (req, res) => {
     include: { designs: true, shop: { include: { account: true } } },
   });
 
-  let published = 0, failed = 0;
-  for (const listing of listings) {
-    try {
-      const errors = listingPublishErrors(listing);
-      if (errors.length > 0) throw new Error(errors.join(", "));
-      const { printifyProductId, status } = listing.printifyProductId
-        ? await updateAndPublish(listing, listing.shop)
-        : await createOnPrintify(listing, listing.shop, { publish: true });
-      await prisma.listing.update({ where: { id: listing.id }, data: { status, printifyProductId, errorMessage: null } });
-      published++;
-    } catch (err: any) {
-      await prisma.listing.update({ where: { id: listing.id }, data: { status: "failed", errorMessage: err.message } });
-      failed++;
-    }
-  }
-
-  res.json({ ok: true, published, failed });
+  res.json({ ok: true, queued: listings.length });
+  processBulkPublish(listings).catch(console.error);
 });
 
-// POST bulk delete
+// POST bulk delete — same backgrounding rationale as bulk-publish.
 router.post("/listings/bulk-delete", async (req, res) => {
   const userId = (req as any).userId;
   const { ids } = req.body as { ids: string[] };
@@ -375,29 +364,15 @@ router.post("/listings/bulk-delete", async (req, res) => {
     include: { shop: { include: { account: true } } },
   });
 
-  let deleted = 0, failed = 0;
-  for (const listing of listings) {
-    if (listing.printifyProductId) {
-      const delRes = await printifyFetch(
-        `https://api.printify.com/v1/shops/${listing.shop.printifyShopId}/products/${listing.printifyProductId}.json`,
-        { method: "DELETE", headers: { Authorization: `Bearer ${decryptToken(listing.shop.account.accessToken)}` } }
-      );
-      if (!delRes.ok && delRes.status !== 404) {
-        failed++;
-        continue; // still live on Printify — don't orphan it by deleting our copy
-      }
-    }
-    await prisma.listingDesign.deleteMany({ where: { listingId: listing.id } });
-    await prisma.listing.delete({ where: { id: listing.id } });
-    deleted++;
-  }
-
-  res.json({ ok: true, deleted, failed });
+  res.json({ ok: true, queued: listings.length });
+  processBulkDelete(listings).catch(console.error);
 });
 
 // POST copy selected listings to another store as a draft (both locally and
 // on Printify, same rules as Save as Draft) — never auto-publishes, so the
 // user can review each copy before it goes live in the new store.
+// Backgrounded for the same reason as bulk-publish/bulk-delete — the caller
+// gets the new batch id back immediately and can watch it on the History page.
 router.post("/listings/bulk-copy", async (req, res) => {
   const userId = (req as any).userId;
   const { ids, targetShopId } = req.body as { ids: string[]; targetShopId: string };
@@ -414,54 +389,8 @@ router.post("/listings/bulk-copy", async (req, res) => {
     data: { userId, shopIds: [targetShopId], total: listings.length },
   });
 
-  let copied = 0, failed = 0, localOnly = 0;
-  for (const listing of listings) {
-    const copy = await prisma.listing.create({
-      data: {
-        batchId: batch.id,
-        shopId: targetShopId,
-        blueprintId: listing.blueprintId,
-        blueprintLabel: listing.blueprintLabel,
-        printProviderId: listing.printProviderId,
-        printProviderLabel: listing.printProviderLabel,
-        title: listing.title,
-        description: listing.description,
-        tags: listing.tags,
-        variants: listing.variants as any,
-        designs: {
-          create: listing.designs.map((d) => ({
-            position: d.position,
-            variantIds: d.variantIds,
-            fileUrl: d.fileUrl,
-            thumbUrl: d.thumbUrl,
-            printifyImageId: d.printifyImageId,
-            x: d.x, y: d.y, scale: d.scale, angle: d.angle,
-            uploadStatus: d.uploadStatus,
-          })),
-        },
-      },
-      include: { designs: true },
-    });
-
-    // Not ready for even a draft on Printify (e.g. no title) — the copy
-    // still exists, just as a local-only draft, same as Save as Draft.
-    if (listingDraftErrors(copy).length > 0) {
-      localOnly++;
-      continue;
-    }
-
-    try {
-      const { printifyProductId, status } = await createOnPrintify(copy, targetShop, { publish: false });
-      await prisma.listing.update({ where: { id: copy.id }, data: { status, printifyProductId } });
-      copied++;
-    } catch (err: any) {
-      await prisma.listing.update({ where: { id: copy.id }, data: { status: "failed", errorMessage: err.message } });
-      failed++;
-    }
-  }
-
-  await prisma.publishBatch.update({ where: { id: batch.id }, data: { status: "done", successCount: copied + localOnly, failedCount: failed } });
-  res.json({ ok: true, copied, failed, localOnly });
+  res.json({ ok: true, queued: listings.length, batchId: batch.id });
+  processBulkCopy(listings, targetShop, batch.id).catch(console.error);
 });
 
 export default router;
@@ -659,6 +588,101 @@ async function processBatch(batch: any) {
     where: { id: batch.id },
     data: { status: "done" },
   });
+}
+
+// Backs POST /listings/bulk-publish — each item gets its own try/catch so one
+// failure (or a printifyFetch timeout) can't abort the rest of the selection.
+async function processBulkPublish(listings: any[]) {
+  for (const listing of listings) {
+    try {
+      const errors = listingPublishErrors(listing);
+      if (errors.length > 0) throw new Error(errors.join(", "));
+      await prisma.listing.update({ where: { id: listing.id }, data: { status: "creating" } });
+      const { printifyProductId, status } = listing.printifyProductId
+        ? await updateAndPublish(listing, listing.shop)
+        : await createOnPrintify(listing, listing.shop, { publish: true });
+      await prisma.listing.update({ where: { id: listing.id }, data: { status, printifyProductId, errorMessage: null } });
+    } catch (err: any) {
+      await prisma.listing.update({ where: { id: listing.id }, data: { status: "failed", errorMessage: err.message } });
+    }
+  }
+}
+
+// Backs POST /listings/bulk-delete — same per-item isolation as above.
+async function processBulkDelete(listings: any[]) {
+  for (const listing of listings) {
+    try {
+      if (listing.printifyProductId) {
+        const delRes = await printifyFetch(
+          `https://api.printify.com/v1/shops/${listing.shop.printifyShopId}/products/${listing.printifyProductId}.json`,
+          { method: "DELETE", headers: { Authorization: `Bearer ${decryptToken(listing.shop.account.accessToken)}` } }
+        );
+        if (!delRes.ok && delRes.status !== 404) continue; // still live on Printify — don't orphan it by deleting our copy
+      }
+      await prisma.listingDesign.deleteMany({ where: { listingId: listing.id } });
+      await prisma.listing.delete({ where: { id: listing.id } });
+    } catch (err) {
+      console.error(`Bulk delete failed for listing ${listing.id}:`, err);
+    }
+  }
+}
+
+// Backs POST /listings/bulk-copy — the outer try/catch covers the copy's own
+// creation failing (not just the later Printify call), since that step can
+// no longer fail the whole HTTP request the way it used to when this ran
+// synchronously.
+async function processBulkCopy(listings: any[], targetShop: any, batchId: string) {
+  let successCount = 0, failedCount = 0;
+  for (const listing of listings) {
+    try {
+      const copy = await prisma.listing.create({
+        data: {
+          batchId,
+          shopId: targetShop.id,
+          blueprintId: listing.blueprintId,
+          blueprintLabel: listing.blueprintLabel,
+          printProviderId: listing.printProviderId,
+          printProviderLabel: listing.printProviderLabel,
+          title: listing.title,
+          description: listing.description,
+          tags: listing.tags,
+          variants: listing.variants as any,
+          designs: {
+            create: listing.designs.map((d: any) => ({
+              position: d.position,
+              variantIds: d.variantIds,
+              fileUrl: d.fileUrl,
+              thumbUrl: d.thumbUrl,
+              printifyImageId: d.printifyImageId,
+              x: d.x, y: d.y, scale: d.scale, angle: d.angle,
+              uploadStatus: d.uploadStatus,
+            })),
+          },
+        },
+        include: { designs: true },
+      });
+
+      // Not ready for even a draft on Printify (e.g. no title) — the copy
+      // still exists, just as a local-only draft, same as Save as Draft.
+      if (listingDraftErrors(copy).length > 0) {
+        successCount++;
+        continue;
+      }
+
+      try {
+        const { printifyProductId, status } = await createOnPrintify(copy, targetShop, { publish: false });
+        await prisma.listing.update({ where: { id: copy.id }, data: { status, printifyProductId } });
+        successCount++;
+      } catch (err: any) {
+        await prisma.listing.update({ where: { id: copy.id }, data: { status: "failed", errorMessage: err.message } });
+        failedCount++;
+      }
+    } catch (err) {
+      failedCount++;
+      console.error(`Bulk copy failed for listing ${listing.id}:`, err);
+    }
+  }
+  await prisma.publishBatch.update({ where: { id: batchId }, data: { status: "done", successCount, failedCount } });
 }
 
 // Pushes a product's current data (title/description/images/variants/tags) to

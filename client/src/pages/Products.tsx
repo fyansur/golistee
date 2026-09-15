@@ -111,11 +111,14 @@ export default function Products() {
     }
   };
 
+  // Bulk actions run in the background on the server now (a real selection
+  // can be dozens of sequential Printify calls) — the response is just an
+  // acknowledgment, not a final count. Status per row catches up on refetch.
   const bulkPublish = async () => {
     setBulkBusy(true);
     try {
       const { data } = await api.post("/publish/listings/bulk-publish", { ids: [...selectedIds] });
-      toast.success(data.failed > 0 ? `${data.published} published, ${data.failed} failed` : `${data.published} product(s) published`);
+      toast.success(`${data.queued} product(s) queued for publishing`);
       setSelectedIds(new Set());
       fetchProducts();
     } catch (err: any) {
@@ -129,7 +132,7 @@ export default function Products() {
     setBulkBusy(true);
     try {
       const { data } = await api.post("/publish/listings/bulk-delete", { ids: [...selectedIds] });
-      toast.success(data.failed > 0 ? `${data.deleted} deleted, ${data.failed} failed` : `${data.deleted} product(s) deleted`);
+      toast.success(`${data.queued} product(s) queued for deletion`);
       setSelectedIds(new Set());
       fetchProducts();
     } catch (err: any) {
@@ -144,8 +147,7 @@ export default function Products() {
     setBulkBusy(true);
     try {
       const { data } = await api.post("/publish/listings/bulk-copy", { ids: [...selectedIds], targetShopId: copyTargetShop });
-      const total = data.copied + data.localOnly;
-      toast.success(data.failed > 0 ? `${total} copied as draft, ${data.failed} failed` : `${total} product(s) copied as draft`);
+      toast.success(`${data.queued} product(s) queued to copy as draft`);
       setCopyDialogOpen(false);
       setCopyTargetShop("");
       setSelectedIds(new Set());

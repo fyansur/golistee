@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
 import api from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Field, FieldLabel, FieldContent, FieldError } from "@/components/ui/field";
@@ -16,6 +17,7 @@ interface RegisterForm {
 
 export default function Register() {
   const navigate = useNavigate();
+  const { refreshUser } = useAuth();
   const [serverError, setServerError] = useState("");
 
   const { control, handleSubmit, formState } = useForm<RegisterForm>({
@@ -28,6 +30,9 @@ export default function Register() {
     try {
       const { data } = await api.post("/auth/register", values);
       localStorage.setItem("token", data.token);
+      // Same reasoning as Login: AuthProvider's own mount-time check already
+      // ran before this token existed, so `user` needs an explicit refresh.
+      await refreshUser();
       navigate("/");
     } catch {
       setServerError("Email already exists");
@@ -35,10 +40,10 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen flex items-center justify-center bg-accent p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <span className="text-accent text-2xl font-logo">golistee</span>
+          <span className="text-accent text-2xl text-center font-logo">golistee</span>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">

@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "@/lib/api";
 
 interface User {
@@ -17,6 +18,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
 
   const refreshUser = async () => {
     try {
@@ -27,9 +29,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // ProtectedRoute only checks localStorage on render, so clearing the token
+  // alone doesn't move anyone off the page they're already looking at —
+  // needs an explicit redirect.
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
+    navigate("/login");
   };
 
   useEffect(() => {
