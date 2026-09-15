@@ -15,31 +15,11 @@ services:
       context: .
       dockerfile: Dockerfile.server
     container_name: golistee_server
+    ports:
+      - "3000:3000"
     env_file: .env
     depends_on:
       - db
-    restart: unless-stopped
-
-  client:
-    build:
-      context: .
-      dockerfile: Dockerfile.client
-    container_name: golistee_client
-    restart: unless-stopped
-
-  nginx:
-    image: nginx:alpine
-    container_name: golistee_nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-      - /var/www/certbot:/var/www/certbot
-    depends_on:
-      - client
-      - server
     restart: unless-stopped
 
 volumes:
