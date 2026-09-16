@@ -147,7 +147,7 @@ export default function TemplateForm() {
           <ArrowLeftIcon className="size-4" /> Back
         </Button>
         <span className="text-lg font-semibold justify-self-center">
-          Edit Template
+          {isEdit ? "Edit Template" : "Create Template"}
         </span>
         <Button onClick={save} disabled={saving || !name.trim() || !blueprintId || !printProviderId} className="justify-self-end">
           <SaveIcon className="size-4" />
@@ -156,10 +156,6 @@ export default function TemplateForm() {
       </div>
 
       <div className="max-w-7xl mx-auto p-8 space-y-6">
-        <p className="text-3xl font-black flex gap-3 items-center">
-          <LayoutTemplateIcon size="24" />{isEdit ? "Edit Template" : "Create Template"}
-        </p>
-
         <Card>
           <CardContent className="space-y-5">
             <Field>
