@@ -520,6 +520,7 @@ export function DesignDialog({ draft, onChange, onClose }: Props) {
         setUploadProgress({ index: uploadedCount + 1, total: toUpload.length, percent: 0 });
         const form = new FormData();
         form.append("file", d.file);
+        if (draft.shopId) form.append("shopId", draft.shopId);
         form.append("position", d.position);
         form.append("x", String(d.x));
         form.append("y", String(d.y));

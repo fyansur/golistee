@@ -6,8 +6,7 @@ import { r2 } from "../lib/r2.js";
 import { prisma } from "../lib/prisma.js";
 import { auth } from "../lib/middleware.js";
 import { pageParams } from "../lib/pagination.js";
-import { printifyFetch } from "../lib/printify.js";
-import { decryptToken } from "../lib/crypto.js";
+import { ensurePrintifyImage } from "../lib/printifyImages.js";
 
 // Mirrors the client's own fileNameOf() (MyFiles.tsx) — recovers a display
 // name from the upload key when no explicit DesignAsset.name is set.
@@ -30,7 +29,15 @@ router.post("/upload", upload.single("file"), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file" });
 
   const userId = (req as any).userId;
-  const { position, x, y, scale, angle, variantIds } = req.body;
+  const { position, x, y, scale, angle, variantIds, shopId } = req.body;
+  const shop = shopId ? await prisma.shop.findFirst({
+    where: { id: shopId, account: { userId } }, include: { account: true },
+  }) : null;
+  if (shopId && !shop) return res.status(404).json({ error: "Store not found" });
+  const account = shop?.account ?? await prisma.printifyAccount.findFirst({
+    where: { userId, tokenStatus: "active" }, orderBy: { connectedAt: "asc" },
+  });
+  if (!account) return res.status(400).json({ error: "No active Printify account connected" });
   const base = {
     position,
     x: Number(x), y: Number(y), scale: Number(scale), angle: Number(angle),
@@ -78,39 +85,25 @@ router.post("/upload", upload.single("file"), async (req, res) => {
     console.error("Thumbnail generation failed:", err.message);
   }
 
-  // Sync to Printify
-  const account = await prisma.printifyAccount.findFirst({ where: { userId } });
-  if (!account) return res.status(400).json({ error: "No account" });
-
-  let printifyData: any;
+  // Track the original file even if the subsequent Printify sync fails.
+  await prisma.designAsset.upsert({
+    where: { userId_fileUrl: { userId, fileUrl } },
+    create: { userId, fileUrl, thumbUrl }, update: { thumbUrl },
+  });
+  let printifyImageId: string;
   try {
-    const printifyRes = await printifyFetch("https://api.printify.com/v1/uploads/images.json", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${decryptToken(account.accessToken)}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        file_name: req.file.originalname,
-        url: fileUrl,
-      }),
+    printifyImageId = await ensurePrintifyImage(account, { fileUrl });
+    await prisma.designAsset.update({
+      where: { userId_fileUrl: { userId, fileUrl } }, data: { printifyImageId },
     });
-    printifyData = await printifyRes.json();
-    if (!printifyRes.ok || !printifyData.id) {
-      throw new Error(printifyData.message ?? printifyRes.statusText ?? "Printify rejected the image");
-    }
   } catch (err: any) {
     return fail(fileUrl, `Printify sync failed: ${err.message}`);
   }
-
-  res.json({ ...base, fileUrl, thumbUrl, printifyImageId: printifyData.id, uploadStatus: "synced" });
+  res.json({ ...base, fileUrl, thumbUrl, printifyImageId, uploadStatus: "synced" });
 });
 
-// GET previously uploaded designs (for the "reuse a design" gallery, and for
-// the "My files" page) — every account's uploads land on the same Printify
-// account per user (see above), so this only needs to scope by userId, not
-// by shop/account. Archived files (see PATCH /library below) are excluded
-// unless ?archived=true is passed.
+// The library is user-wide; image IDs are resolved for the destination account
+// before creating/updating products. Legacy library IDs are only hints.
 router.get("/library", async (req, res) => {
   const userId = (req as any).userId;
   const [designs, assets] = await Promise.all([

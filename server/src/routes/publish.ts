@@ -5,6 +5,7 @@ import { fetchCatalogOptionsByCombo, comboKey } from "../lib/catalogOptions.js";
 import { pageParams } from "../lib/pagination.js";
 import { printifyFetch } from "../lib/printify.js";
 import { decryptToken } from "../lib/crypto.js";
+import { createOnPrintify, updateAndPublish } from "../lib/listingPublish.js";
 
 const router = Router();
 router.use(auth);
@@ -263,40 +264,7 @@ router.put("/listing/:id", async (req, res) => {
       return res.json(updated);
     }
 
-    const token = decryptToken(listing.shop.account.accessToken);
-    const payload: any = { title, description: description ?? "", tags: tags ?? [], variants };
-
-    if (includeDesigns) {
-      // print_areas must cover every variant Printify has on this product
-      // (the full blueprint range), not just the ones we've enabled —
-      // Printify treats print coverage and for-sale status as separate
-      // things, and rejects the update ("Variants do not match...") if
-      // print_areas doesn't cover the full set.
-      const currentRes = await printifyFetch(
-        `https://api.printify.com/v1/shops/${listing.shop.printifyShopId}/products/${listing.printifyProductId}.json`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const current = await currentRes.json() as any;
-      const allVariantIds = current.variants.map((v: any) => v.id);
-      payload.print_areas = buildPrintAreas(designs, allVariantIds);
-    }
-
-    const putRes = await printifyFetch(
-      `https://api.printify.com/v1/shops/${listing.shop.printifyShopId}/products/${listing.printifyProductId}.json`,
-      {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }
-    );
-    const product = await putRes.json() as any;
-    if (!putRes.ok) {
-      console.error("Printify PUT failed:", JSON.stringify(product));
-      throw new Error(product.message ?? JSON.stringify(product.errors ?? product));
-    }
-
-    // An explicit Publish always pushes live now.
-    await publishToSalesChannel(listing.shop.printifyShopId, token, listing.printifyProductId);
+    await updateAndPublish(freshListing, listing.shop, { includeDesigns });
 
     const updated = await prisma.listing.update({
       where: { id: listing.id },
@@ -486,71 +454,6 @@ function listingPublishErrors(listing: any): string[] {
   return errors;
 }
 
-// Creates a listing on Printify for the first time (it has no printifyProductId
-// yet). `publish: false` leaves it sitting on Printify as an unpublished
-// product ("draft on Printify" — status shows this in Printify's own
-// dashboard); `publish: true` also pushes it live to the shop's sales channel.
-async function createOnPrintify(listing: any, shop: any, opts: { publish: boolean }) {
-  const token = decryptToken(shop.account.accessToken);
-  const allVariantIds = (listing.variants as any[]).map((v: any) => v.id);
-  const printAreas = buildPrintAreas(listing.designs ?? [], allVariantIds);
-
-  const createRes = await printifyFetch(
-    `https://api.printify.com/v1/shops/${shop.printifyShopId}/products.json`,
-    {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: listing.title,
-        description: listing.description,
-        tags: listing.tags,
-        blueprint_id: listing.blueprintId,
-        print_provider_id: listing.printProviderId,
-        variants: listing.variants,
-        print_areas: printAreas,
-      }),
-    }
-  );
-
-  const product = await createRes.json() as any;
-  if (!createRes.ok) throw new Error(product.message ?? "Create failed");
-
-  if (opts.publish) {
-    await publishToSalesChannel(shop.printifyShopId, token, product.id);
-  }
-
-  return { printifyProductId: product.id as string, status: opts.publish ? "published" : "draft_on_printify" };
-}
-
-// Updates an already-created Printify product with its current local data and
-// publishes it — used by bulk publish for listings that are already "draft
-// on Printify" or "out of sync" and just need pushing live.
-async function updateAndPublish(listing: any, shop: any) {
-  const token = decryptToken(shop.account.accessToken);
-  const allVariantIds = (listing.variants as any[]).map((v: any) => v.id);
-  const payload = {
-    title: listing.title,
-    description: listing.description,
-    tags: listing.tags,
-    variants: listing.variants,
-    print_areas: buildPrintAreas(listing.designs ?? [], allVariantIds),
-  };
-
-  const putRes = await printifyFetch(
-    `https://api.printify.com/v1/shops/${shop.printifyShopId}/products/${listing.printifyProductId}.json`,
-    {
-      method: "PUT",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    }
-  );
-  const product = await putRes.json() as any;
-  if (!putRes.ok) throw new Error(product.message ?? "Update failed");
-
-  await publishToSalesChannel(shop.printifyShopId, token, listing.printifyProductId);
-  return { printifyProductId: listing.printifyProductId as string, status: "published" };
-}
-
 // --- Background worker ---
 async function processBatch(batch: any) {
   for (const listing of batch.listings) {
@@ -683,46 +586,4 @@ async function processBulkCopy(listings: any[], targetShop: any, batchId: string
     }
   }
   await prisma.publishBatch.update({ where: { id: batchId }, data: { status: "done", successCount, failedCount } });
-}
-
-// Pushes a product's current data (title/description/images/variants/tags) to
-// its connected sales channel (Etsy, Shopify, ...). Printify itself doesn't
-// auto-sync this on every edit — a product only actually goes live/updates
-// there when this is called.
-async function publishToSalesChannel(printifyShopId: string, token: string, productId: string) {
-  const res = await printifyFetch(
-    `https://api.printify.com/v1/shops/${printifyShopId}/products/${productId}/publish.json`,
-    {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ title: true, description: true, images: false, variants: true, tags: true }),
-    }
-  );
-  if (!res.ok) throw new Error("Publish failed");
-}
-
-function buildPrintAreas(designs: any[], allVariantIds: number[]) {
-  return designs.map((d) => {
-    // empty variantIds = default design: applies to every selected variant
-    // except the ones another design already overrides for this position.
-    const isDefault = (d.variantIds?.length ?? 0) === 0;
-    const overriddenElsewhere = isDefault
-      ? designs
-        .filter((o) => o !== d && o.position === d.position && (o.variantIds?.length ?? 0) > 0)
-        .flatMap((o) => o.variantIds)
-      : [];
-
-    return {
-      variant_ids: isDefault
-        ? allVariantIds.filter((id) => !overriddenElsewhere.includes(id))
-        : d.variantIds,
-      placeholders: [{
-        position: d.position,
-        images: [{
-          id: d.printifyImageId,
-          x: d.x, y: d.y, scale: d.scale, angle: d.angle,
-        }],
-      }],
-    };
-  });
 }

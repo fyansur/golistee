@@ -41,6 +41,7 @@ model PrintifyAccount {
   user        User      @relation(fields: [userId], references: [id])
   shops       Shop[]
   templates   Template[]
+  images      PrintifyImage[]
 
   @@index([userId])
 }
@@ -150,4 +151,14 @@ model DesignAsset {
   user            User    @relation(fields: [userId], references: [id])
 
   @@unique([userId, fileUrl])
+}
+
+// Image IDs are scoped to the Printify account, not globally reusable files.
+model PrintifyImage {
+  printifyAccountId String
+  fileUrl           String
+  printifyImageId    String
+  account           PrintifyAccount @relation(fields: [printifyAccountId], references: [id], onDelete: Cascade)
+
+  @@id([printifyAccountId, fileUrl])
 }

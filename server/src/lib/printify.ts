@@ -28,7 +28,9 @@ export async function printifyJson<T = any>(url: string, options?: RequestInit):
   const res = await printifyFetch(url, options);
   const data = await res.json().catch(() => null);
   if (!res.ok) {
-    throw new PrintifyError(res.status, data?.message ?? res.statusText ?? "Printify request failed");
+    const details = [data?.message, data?.errors?.reason ?? (data?.errors ? JSON.stringify(data.errors) : null)]
+      .filter(Boolean).join(": ") || res.statusText || "Printify request failed";
+    throw new PrintifyError(res.status, `Printify ${options?.method ?? "GET"} ${new URL(url).pathname} (HTTP ${res.status}): ${details}`);
   }
   return data as T;
 }
