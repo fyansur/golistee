@@ -3,6 +3,7 @@ import { prisma } from "../lib/prisma.js";
 import { auth } from "../lib/middleware.js";
 import { printifyJson } from "../lib/printify.js";
 import { decryptToken } from "../lib/crypto.js";
+import { findCatalogAccount, shopAccessError } from "../lib/shopAccess.js";
 
 const router = Router();
 router.use(auth);
@@ -10,8 +11,8 @@ router.use(auth);
 // GET print providers for a blueprint
 router.get("/providers/:blueprintId", async (req, res) => {
   const userId = (req as any).userId;
-  const account = await prisma.printifyAccount.findFirst({ where: { userId } });
-  if (!account) return res.status(400).json({ error: "No Printify account connected" });
+  const account = await findCatalogAccount(userId);
+  if (!account) return res.status(400).json({ error: "No enabled Printify store connected" });
 
   const data = await printifyJson(
     `https://api.printify.com/v1/catalog/blueprints/${req.params.blueprintId}/print_providers.json`,
@@ -23,8 +24,8 @@ router.get("/providers/:blueprintId", async (req, res) => {
 // GET variants for a blueprint + provider
 router.get("/variants/:blueprintId/:providerId", async (req, res) => {
   const userId = (req as any).userId;
-  const account = await prisma.printifyAccount.findFirst({ where: { userId } });
-  if (!account) return res.status(400).json({ error: "No Printify account connected" });
+  const account = await findCatalogAccount(userId);
+  if (!account) return res.status(400).json({ error: "No enabled Printify store connected" });
 
   const { blueprintId, providerId } = req.params;
   const data = await printifyJson(
@@ -37,8 +38,8 @@ router.get("/variants/:blueprintId/:providerId", async (req, res) => {
 // GET placeholders for a blueprint + provider
 router.get("/placeholders/:blueprintId/:providerId", async (req, res) => {
   const userId = (req as any).userId;
-  const account = await prisma.printifyAccount.findFirst({ where: { userId } });
-  if (!account) return res.status(400).json({ error: "No Printify account connected" });
+  const account = await findCatalogAccount(userId);
+  if (!account) return res.status(400).json({ error: "No enabled Printify store connected" });
 
   const { blueprintId, providerId } = req.params;
   const data = await printifyJson(
@@ -57,8 +58,8 @@ router.get("/placeholders/:blueprintId/:providerId", async (req, res) => {
 // GET buyer shipping cost per variant for a blueprint + provider
 router.get("/shipping/:blueprintId/:providerId", async (req, res) => {
   const userId = (req as any).userId;
-  const account = await prisma.printifyAccount.findFirst({ where: { userId } });
-  if (!account) return res.status(400).json({ error: "No Printify account connected" });
+  const account = await findCatalogAccount(userId);
+  if (!account) return res.status(400).json({ error: "No enabled Printify store connected" });
 
   const { blueprintId, providerId } = req.params;
   const data = await printifyJson(
@@ -89,6 +90,8 @@ router.get("/cost/:listingId", async (req, res) => {
   if (!listing || listing.batch.userId !== userId) {
     return res.status(404).json({ error: "Listing not found" });
   }
+  const accessError = shopAccessError(listing.shop);
+  if (accessError) return res.status(409).json({ error: accessError });
   if (!listing.printifyProductId) return res.json({});
 
   const data = await printifyJson(

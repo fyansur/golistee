@@ -62,10 +62,8 @@ try {
     console.log(JSON.stringify({ testListingId: listing.id, title: listing.title }));
     try {
       await createOnPrintify(listing, listing.shop, { publish: false });
-      await prisma.publishBatch.update({ where: { id: batch.id }, data: { status: "done", successCount: 1 } });
     } catch (error) {
       await prisma.listing.update({ where: { id: listing.id }, data: { status: "failed", errorMessage: error.message } });
-      await prisma.publishBatch.update({ where: { id: batch.id }, data: { status: "done", failedCount: 1 } });
       throw error;
     }
   }

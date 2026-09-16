@@ -4,6 +4,7 @@ import { auth } from "../lib/middleware.js";
 import { pageParams } from "../lib/pagination.js";
 import { printifyJson } from "../lib/printify.js";
 import { decryptToken } from "../lib/crypto.js";
+import { findCatalogAccount } from "../lib/shopAccess.js";
 
 const router = Router();
 router.use(auth);
@@ -36,8 +37,8 @@ router.get("/ids", async (req, res) => {
 // GET search from Printify catalog (pakai token akun pertama user)
 router.get("/search", async (req, res) => {
   const userId = (req as any).userId;
-  const account = await prisma.printifyAccount.findFirst({ where: { userId } });
-  if (!account) return res.status(400).json({ error: "No Printify account connected" });
+  const account = await findCatalogAccount(userId);
+  if (!account) return res.status(400).json({ error: "No enabled Printify store connected" });
 
   const data = await printifyJson("https://api.printify.com/v1/catalog/blueprints.json", {
     headers: { Authorization: `Bearer ${decryptToken(account.accessToken)}` },

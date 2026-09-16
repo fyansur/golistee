@@ -5,7 +5,8 @@ import { fetchCatalogOptionsByCombo, comboKey } from "../lib/catalogOptions.js";
 import { pageParams } from "../lib/pagination.js";
 import { printifyFetch } from "../lib/printify.js";
 import { decryptToken } from "../lib/crypto.js";
-import { createOnPrintify, updateAndPublish } from "../lib/listingPublish.js";
+import { createOnPrintify, statusAfterPrintifyDraft, updateAndPublish, updateOnPrintify } from "../lib/listingPublish.js";
+import { shopAccessError, usableShopWhere } from "../lib/shopAccess.js";
 
 const router = Router();
 router.use(auth);
@@ -19,9 +20,9 @@ router.post("/batch", async (req, res) => {
   const { listings, draftOnPrintify } = req.body;
 
   const shopIds = [...new Set(listings.map((l: any) => l.shopId))] as string[];
-  const ownedCount = await prisma.shop.count({ where: { id: { in: shopIds }, account: { userId } } });
-  if (ownedCount !== shopIds.length) {
-    return res.status(403).json({ error: "One or more stores don't belong to this account" });
+  const usableCount = await prisma.shop.count({ where: { id: { in: shopIds }, ...usableShopWhere(userId) } });
+  if (usableCount !== shopIds.length) {
+    return res.status(409).json({ error: "One or more stores are disabled or unavailable. Enable them from Connections first." });
   }
 
   const batch = await prisma.publishBatch.create({
@@ -74,7 +75,7 @@ router.post("/batch", async (req, res) => {
 
   const updated = await prisma.publishBatch.findUnique({
     where: { id: batch.id },
-    include: { listings: { include: { designs: true } } },
+    include: { listings: { include: { designs: true, shop: { include: { account: true } } } } },
   });
   res.json(updated);
 });
@@ -84,12 +85,14 @@ router.post("/batch/:batchId/publish", async (req, res) => {
   const userId = (req as any).userId;
   const batch = await prisma.publishBatch.findFirst({
     where: { id: req.params.batchId, userId },
-    include: { listings: { include: { designs: true } } },
+    include: { listings: { include: { designs: true, shop: { include: { account: true } } } } },
   });
   if (!batch) return res.status(404).json({ error: "Batch not found" });
 
   const errors: string[] = [];
   for (const listing of batch.listings) {
+    const accessError = shopAccessError(listing.shop);
+    if (accessError) errors.push(`${listing.title} — ${accessError}`);
     for (const e of listingPublishErrors(listing)) errors.push(`${listing.title} — ${e}`);
   }
 
@@ -97,14 +100,9 @@ router.post("/batch/:batchId/publish", async (req, res) => {
     return res.status(400).json({ error: "Publish cancelled", details: errors });
   }
 
-  await prisma.publishBatch.update({
-    where: { id: batch.id },
-    data: { status: "queued" },
-  });
-
   processBatch(batch).catch(console.error);
 
-  res.json({ ok: true, message: "Batch queued" });
+  res.json({ ok: true, message: "Batch publish started" });
 });
 
 // GET history — scoped to the logged-in user's own batches, optionally
@@ -153,6 +151,8 @@ router.delete("/listing/:id", async (req, res) => {
   }
 
   if (listing.printifyProductId) {
+    const accessError = shopAccessError(listing.shop);
+    if (accessError) return res.status(409).json({ error: accessError });
     const delRes = await printifyFetch(
       `https://api.printify.com/v1/shops/${listing.shop.printifyShopId}/products/${listing.printifyProductId}.json`,
       { method: "DELETE", headers: { Authorization: `Bearer ${decryptToken(listing.shop.account.accessToken)}` } }
@@ -173,7 +173,16 @@ router.get("/listing/:id", async (req, res) => {
   const userId = (req as any).userId;
   const listing = await prisma.listing.findUnique({
     where: { id: req.params.id },
-    include: { designs: true, batch: true },
+    include: {
+      designs: true,
+      batch: true,
+      shop: {
+        select: {
+          id: true, title: true, enabled: true, status: true,
+          account: { select: { tokenStatus: true } },
+        },
+      },
+    },
   });
   if (!listing || listing.batch.userId !== userId) {
     return res.status(404).json({ error: "Listing not found" });
@@ -181,15 +190,13 @@ router.get("/listing/:id", async (req, res) => {
   res.json(listing);
 });
 
-// PUT edit a listing — local fields always saved. `publish: true` pushes the
-// edit live (creating the product on Printify first if it's never been
-// pushed at all). `publish: false` is now also "Save as Draft" — it tries to
-// create the product on Printify as unpublished (same as a fresh batch save)
-// if it's never touched Printify yet; a listing already live there instead
-// drifts to "out of sync" until the next explicit publish.
+// PUT edit a listing. `publish: true` pushes live; otherwise
+// `draftOnPrintify: true` creates/updates the Printify draft without touching
+// the sales channel, while false/omitted saves only to our database.
 router.put("/listing/:id", async (req, res) => {
   const userId = (req as any).userId;
   const { title, description, tags, variants, designs, publish } = req.body;
+  const draftOnPrintify = req.body.draftOnPrintify === true;
 
   const listing = await prisma.listing.findUnique({
     where: { id: req.params.id },
@@ -197,6 +204,10 @@ router.put("/listing/:id", async (req, res) => {
   });
   if (!listing || listing.batch.userId !== userId) {
     return res.status(404).json({ error: "Listing not found" });
+  }
+  if (publish || draftOnPrintify) {
+    const accessError = shopAccessError(listing.shop);
+    if (accessError) return res.status(409).json({ error: accessError });
   }
 
   const includeDesigns = Array.isArray(designs);
@@ -225,20 +236,29 @@ router.put("/listing/:id", async (req, res) => {
   });
 
   if (!publish) {
-    if (listing.printifyProductId) {
-      // Already live somewhere — a local-only edit just drifts it out of sync.
-      await prisma.listing.update({ where: { id: listing.id }, data: { status: "out_of_sync" } });
-    } else {
-      // First-ever save — try to draft it on Printify too, same as a fresh
-      // batch save; if it's not ready yet, it just stays a local-only draft.
-      const freshListing = await prisma.listing.findUnique({ where: { id: listing.id }, include: { designs: true } });
-      if (listingDraftErrors(freshListing!).length === 0) {
-        try {
+    const freshListing = await prisma.listing.findUnique({ where: { id: listing.id }, include: { designs: true } });
+    if (!draftOnPrintify) {
+      await prisma.listing.update({
+        where: { id: listing.id },
+        data: { status: listing.printifyProductId ? "out_of_sync" : "draft", errorMessage: null },
+      });
+    } else if (listingDraftErrors(freshListing!).length === 0) {
+      try {
+        if (listing.printifyProductId) {
+          await updateOnPrintify(freshListing, listing.shop, { includeDesigns });
+          await prisma.listing.update({
+            where: { id: listing.id },
+            data: {
+              status: statusAfterPrintifyDraft(listing.lastPublishedAt),
+              errorMessage: null,
+            },
+          });
+        } else {
           const { printifyProductId, status } = await createOnPrintify(freshListing, listing.shop, { publish: false });
           await prisma.listing.update({ where: { id: listing.id }, data: { status, printifyProductId, errorMessage: null } });
-        } catch (err: any) {
-          await prisma.listing.update({ where: { id: listing.id }, data: { status: "failed", errorMessage: err.message } });
         }
+      } catch (err: any) {
+        await prisma.listing.update({ where: { id: listing.id }, data: { status: "failed", errorMessage: err.message } });
       }
     }
     const updated = await prisma.listing.findUnique({ where: { id: listing.id }, include: { designs: true } });
@@ -319,6 +339,12 @@ router.post("/listings/bulk-publish", async (req, res) => {
     include: { designs: true, shop: { include: { account: true } } },
   });
 
+  if (listings.length !== new Set(ids).size) {
+    return res.status(404).json({ error: "One or more products were not found" });
+  }
+  const blocked = listings.find((listing) => shopAccessError(listing.shop));
+  if (blocked) return res.status(409).json({ error: shopAccessError(blocked.shop) });
+
   res.json({ ok: true, queued: listings.length });
   processBulkPublish(listings).catch(console.error);
 });
@@ -331,6 +357,12 @@ router.post("/listings/bulk-delete", async (req, res) => {
     where: { id: { in: ids }, batch: { userId } },
     include: { shop: { include: { account: true } } },
   });
+
+  if (listings.length !== new Set(ids).size) {
+    return res.status(404).json({ error: "One or more products were not found" });
+  }
+  const blocked = listings.find((listing) => listing.printifyProductId && shopAccessError(listing.shop));
+  if (blocked) return res.status(409).json({ error: shopAccessError(blocked.shop) });
 
   res.json({ ok: true, queued: listings.length });
   processBulkDelete(listings).catch(console.error);
@@ -345,13 +377,19 @@ router.post("/listings/bulk-copy", async (req, res) => {
   const userId = (req as any).userId;
   const { ids, targetShopId } = req.body as { ids: string[]; targetShopId: string };
 
-  const targetShop = await prisma.shop.findFirst({ where: { id: targetShopId, account: { userId } }, include: { account: true } });
-  if (!targetShop) return res.status(404).json({ error: "Target store not found" });
+  const targetShop = await prisma.shop.findFirst({
+    where: { id: targetShopId, ...usableShopWhere(userId) },
+    include: { account: true },
+  });
+  if (!targetShop) return res.status(409).json({ error: "Target store is disabled or unavailable" });
 
   const listings = await prisma.listing.findMany({
     where: { id: { in: ids }, batch: { userId } },
     include: { designs: true },
   });
+  if (listings.length !== new Set(ids).size) {
+    return res.status(404).json({ error: "One or more products were not found" });
+  }
 
   const batch = await prisma.publishBatch.create({
     data: { userId, shopIds: [targetShopId], total: listings.length },
@@ -409,6 +447,10 @@ function summarizeListing(l: any, catalogOptions?: Map<number, { color: string; 
     id: l.id,
     title: l.title,
     shop: l.shop.title,
+    shopId: l.shop.id,
+    shopEnabled: l.shop.enabled,
+    shopStatus: l.shop.status,
+    accountTokenStatus: l.shop.account.tokenStatus,
     blueprintLabel: l.blueprintLabel,
     printProviderLabel: l.printProviderLabel,
     thumbnail: design?.thumbUrl ?? design?.fileUrl ?? null,
@@ -465,32 +507,21 @@ async function processBatch(batch: any) {
         include: { account: true },
       });
       if (!shop) throw new Error("Shop not found");
+      const accessError = shopAccessError(shop);
+      if (accessError) throw new Error(accessError);
 
       const { printifyProductId, status } = listing.printifyProductId
         ? await updateAndPublish(listing, shop)
         : await createOnPrintify(listing, shop, { publish: true });
       await prisma.listing.update({ where: { id: listing.id }, data: { status, printifyProductId } });
 
-      await prisma.publishBatch.update({
-        where: { id: batch.id },
-        data: { successCount: { increment: 1 } },
-      });
     } catch (err: any) {
       await prisma.listing.update({
         where: { id: listing.id },
         data: { status: "failed", errorMessage: err.message },
       });
-      await prisma.publishBatch.update({
-        where: { id: batch.id },
-        data: { failedCount: { increment: 1 } },
-      });
     }
   }
-
-  await prisma.publishBatch.update({
-    where: { id: batch.id },
-    data: { status: "done" },
-  });
 }
 
 // Backs POST /listings/bulk-publish — each item gets its own try/catch so one
@@ -498,6 +529,8 @@ async function processBatch(batch: any) {
 async function processBulkPublish(listings: any[]) {
   for (const listing of listings) {
     try {
+      const accessError = shopAccessError(listing.shop);
+      if (accessError) throw new Error(accessError);
       const errors = listingPublishErrors(listing);
       if (errors.length > 0) throw new Error(errors.join(", "));
       await prisma.listing.update({ where: { id: listing.id }, data: { status: "creating" } });
@@ -516,6 +549,8 @@ async function processBulkDelete(listings: any[]) {
   for (const listing of listings) {
     try {
       if (listing.printifyProductId) {
+        const accessError = shopAccessError(listing.shop);
+        if (accessError) throw new Error(accessError);
         const delRes = await printifyFetch(
           `https://api.printify.com/v1/shops/${listing.shop.printifyShopId}/products/${listing.printifyProductId}.json`,
           { method: "DELETE", headers: { Authorization: `Bearer ${decryptToken(listing.shop.account.accessToken)}` } }
@@ -535,7 +570,6 @@ async function processBulkDelete(listings: any[]) {
 // no longer fail the whole HTTP request the way it used to when this ran
 // synchronously.
 async function processBulkCopy(listings: any[], targetShop: any, batchId: string) {
-  let successCount = 0, failedCount = 0;
   for (const listing of listings) {
     try {
       const copy = await prisma.listing.create({
@@ -568,22 +602,17 @@ async function processBulkCopy(listings: any[], targetShop: any, batchId: string
       // Not ready for even a draft on Printify (e.g. no title) — the copy
       // still exists, just as a local-only draft, same as Save as Draft.
       if (listingDraftErrors(copy).length > 0) {
-        successCount++;
         continue;
       }
 
       try {
         const { printifyProductId, status } = await createOnPrintify(copy, targetShop, { publish: false });
         await prisma.listing.update({ where: { id: copy.id }, data: { status, printifyProductId } });
-        successCount++;
       } catch (err: any) {
         await prisma.listing.update({ where: { id: copy.id }, data: { status: "failed", errorMessage: err.message } });
-        failedCount++;
       }
     } catch (err) {
-      failedCount++;
       console.error(`Bulk copy failed for listing ${listing.id}:`, err);
     }
   }
-  await prisma.publishBatch.update({ where: { id: batchId }, data: { status: "done", successCount, failedCount } });
 }

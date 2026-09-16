@@ -162,7 +162,7 @@ export default function Catalog() {
 
       <div className="flex items-center justify-between mb-8">
         <p className="text-xl font-black">Your Collection</p>
-        <Button className="bg-accent hover:bg-accent/80" variant="default" size="sm" type="button" onClick={() => window.location.href = "/create"}>
+        <Button className="bg-accent hover:bg-accent/80" variant="default" type="button" onClick={() => window.location.href = "/create"}>
           <PlusIcon className="size-4" /> Create Products
         </Button>
       </div>
@@ -183,7 +183,7 @@ export default function Catalog() {
                   <p className="text-xs text-muted-foreground leading-none truncate">{p.title}</p>
                 </CardContent>
                 <CardFooter>
-                  <Button size="sm" className="w-full" onClick={() => removeFromPool(p.id)}>
+                  <Button className="w-full" onClick={() => removeFromPool(p.id)}>
                     Remove
                   </Button>
                 </CardFooter>
@@ -251,7 +251,6 @@ export default function Catalog() {
                     </CardContent>
                     <CardFooter>
                       <Button
-                        size="sm"
                         className="w-full"
                         disabled={inPool(b.id)}
                         onClick={() => !inPool(b.id) && addToPool(b)}

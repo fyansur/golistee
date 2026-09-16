@@ -15,6 +15,7 @@ model User {
   accounts     PrintifyAccount[]
   blueprints   CuratedBlueprint[]
   designAssets DesignAsset[]
+  templates    Template[]
 }
 
 model CuratedBlueprint {
@@ -40,7 +41,6 @@ model PrintifyAccount {
   connectedAt DateTime  @default(now()) @db.Timestamptz
   user        User      @relation(fields: [userId], references: [id])
   shops       Shop[]
-  templates   Template[]
   images      PrintifyImage[]
 
   @@index([userId])
@@ -53,15 +53,17 @@ model Shop {
   title             String
   salesChannel      String
   status            String          @default("active")
+  enabled           Boolean         @default(true)
   account           PrintifyAccount @relation(fields: [printifyAccountId], references: [id])
   listings          Listing[]
 
   @@index([printifyAccountId])
+  @@unique([printifyAccountId, printifyShopId])
 }
 
 model Template {
   id                 String          @id @default(cuid())
-  printifyAccountId  String
+  userId             String
   name               String
   blueprintId        Int
   blueprintLabel     String
@@ -69,21 +71,18 @@ model Template {
   printProviderLabel String
   variants           Json
   description        String          @default("")
-  account            PrintifyAccount @relation(fields: [printifyAccountId], references: [id])
+  user               User            @relation(fields: [userId], references: [id])
 
-  @@index([printifyAccountId])
+  @@index([userId])
 }
 
 model PublishBatch {
-  id           String    @id @default(cuid())
-  userId       String
-  shopIds      String[]
-  total        Int       @default(0)
-  successCount Int       @default(0)
-  failedCount  Int       @default(0)
-  status       String    @default("pending")
-  createdAt    DateTime  @default(now()) @db.Timestamptz
-  listings     Listing[]
+  id        String    @id @default(cuid())
+  userId    String
+  shopIds   String[]
+  total     Int       @default(0)
+  createdAt DateTime  @default(now()) @db.Timestamptz
+  listings  Listing[]
 
   @@index([userId])
 }
@@ -103,6 +102,7 @@ model Listing {
   status             String          @default("draft")
   errorMessage       String?
   printifyProductId  String?
+  lastPublishedAt    DateTime?       @db.Timestamptz
   createdAt          DateTime        @default(now()) @db.Timestamptz
   updatedAt          DateTime        @default(now()) @updatedAt @db.Timestamptz
   batch              PublishBatch    @relation(fields: [batchId], references: [id])

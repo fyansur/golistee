@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { Package, PlusIcon, PaintbrushIcon, Trash2Icon, Box, SendIcon, CopyIcon } from "lucide-react";
+import { Package, PlusIcon, PaintbrushIcon, Trash2Icon, Box, SendIcon, CopyIcon, UnplugIcon } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel,
@@ -22,8 +22,9 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/empty";
-import { LISTING_STATUS } from "@/lib/listingStatus";
 import { PaginationFooter } from "@/components/PaginationFooter";
+import { Badge } from "@/components/ui/badge";
+import { ListingStatusBadge } from "@/components/ListingStatusBadge";
 
 function ProductRowSkeleton() {
   return (
@@ -65,18 +66,33 @@ function ShopChipsSkeleton() {
 interface Shop {
   id: string;
   title: string;
+  enabled: boolean;
+  status: string;
+  listingCount: number;
 }
 
 interface Account {
   id: string;
   label: string;
+  tokenStatus: string;
   shops: Shop[];
+}
+
+interface OperationalShop {
+  id: string;
+  title: string;
+  printifyAccountId: string;
+  accountLabel: string;
 }
 
 interface Product {
   id: string;
   title: string;
   shop: string;
+  shopId: string;
+  shopEnabled: boolean;
+  shopStatus: string;
+  accountTokenStatus: string;
   blueprintLabel: string;
   printProviderLabel: string;
   thumbnail: string | null;
@@ -93,6 +109,7 @@ interface Product {
 export default function Products() {
   const navigate = useNavigate();
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [operationalShops, setOperationalShops] = useState<OperationalShop[]>([]);
   const [accountsLoading, setAccountsLoading] = useState(true);
   const [selectedShopIds, setSelectedShopIds] = useState<Set<string>>(new Set());
   const [products, setProducts] = useState<Product[]>([]);
@@ -107,6 +124,7 @@ export default function Products() {
 
   useEffect(() => {
     api.get("/connections").then(({ data }) => setAccounts(data)).finally(() => setAccountsLoading(false));
+    api.get("/connections/shops").then(({ data }) => setOperationalShops(data));
   }, []);
 
   const fetchProducts = () => {
@@ -198,7 +216,25 @@ export default function Products() {
     }
   };
 
-  const shops = accounts.flatMap((a) => a.shops);
+  const shops = accounts.flatMap((a) => a.shops).filter((shop) => shop.listingCount > 0);
+  const selectedProducts = products.filter((product) => selectedIds.has(product.id));
+  const selectedPublishBlocked = selectedProducts.some((product) =>
+    !product.shopEnabled || product.shopStatus !== "active" || product.accountTokenStatus !== "active"
+  );
+  const selectedDeleteBlocked = selectedProducts.some((product) =>
+    product.hasPrintifyProduct && (!product.shopEnabled || product.shopStatus !== "active" || product.accountTokenStatus !== "active")
+  );
+
+  const shopAvailability = (shop: Shop, account: Account) => {
+    if (account.tokenStatus !== "active") return "Connection expired";
+    if (shop.status !== "active") return "Unavailable";
+    return null;
+  };
+  const productAvailability = (product: Product) => {
+    if (product.accountTokenStatus !== "active") return "Connection expired";
+    if (product.shopStatus !== "active") return "Unavailable";
+    return null;
+  };
 
   return (
     <div className="max-w-7xl mx-auto justify-center p-8 space-y-6">
@@ -234,12 +270,18 @@ export default function Products() {
               key={s.id}
               type="button"
               onClick={() => toggleShop(s.id)}
-              className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${selectedShopIds.has(s.id)
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${selectedShopIds.has(s.id)
                   ? "bg-accent text-primary-foreground border-accent"
                   : "bg-card text-muted-foreground hover:bg-muted"
                 }`}
             >
               {s.title}
+              {!s.enabled && <UnplugIcon className="size-3.5" aria-label="Store disabled" />}
+              {(() => {
+                const account = accounts.find((candidate) => candidate.shops.some((shop) => shop.id === s.id));
+                const availability = account ? shopAvailability(s, account) : null;
+                return availability ? ` · ${availability}` : "";
+              })()}
             </button>
           ))}
         </div>
@@ -250,10 +292,10 @@ export default function Products() {
           <Table className="table-fixed bg-card">
             <colgroup>
               <col className="w-10" />
-              <col className="w-[80%]" />
-              <col className="w-[15%]" />
-              <col className="w-[15%]" />
-              <col className="w-[10%]" />
+              <col />
+              <col className="w-36" />
+              <col className="w-40" />
+              <col className="w-24" />
             </colgroup>
             <TableHeader>
               <TableRow>
@@ -293,10 +335,10 @@ export default function Products() {
                   a checkbox is toggled. */}
               <colgroup>
                 <col className="w-10" />
-                <col className="w-[80%]" />
-                <col className="w-[15%]" />
-                <col className="w-[15%]" />
-                <col className="w-[10%]" />
+                <col />
+                <col className="w-36" />
+                <col className="w-40" />
+                <col className="w-24" />
               </colgroup>
               <TableHeader>
                 <TableRow>
@@ -312,7 +354,7 @@ export default function Products() {
                       <div className="flex items-center gap-3 justify-between w-full">
                         <span className="text-sm font-medium">{selectedIds.size}/{products.length}</span>
                         <div className="ml-auto flex items-center gap-2">
-                          <Button size="sm" variant="outline" onClick={bulkPublish} disabled={bulkBusy} className="font-medium text-xs">
+                          <Button size="sm" variant="outline" onClick={bulkPublish} disabled={bulkBusy || selectedPublishBlocked} title={selectedPublishBlocked ? "Enable every selected product's store before publishing" : undefined} className="font-medium text-xs">
                             <SendIcon className="size-3" /> Publish
                           </Button>
                           <Button size="sm" variant="outline" onClick={() => setCopyDialogOpen(true)} disabled={bulkBusy} className="font-medium text-xs">
@@ -320,7 +362,7 @@ export default function Products() {
                           </Button>
                           <AlertDialog>
                             <AlertDialogTrigger render={
-                              <Button size="sm" variant="outline" className="text-destructive border-destructive hover:text-destructive font-medium text-xs" disabled={bulkBusy} />
+                              <Button size="sm" variant="outline" className="text-destructive border-destructive hover:text-destructive font-medium text-xs" disabled={bulkBusy || selectedDeleteBlocked} title={selectedDeleteBlocked ? "Enable stores before deleting products from Printify" : undefined} />
                             }>
                               <Trash2Icon className="size-3" /> Delete
                             </AlertDialogTrigger>
@@ -353,8 +395,8 @@ export default function Products() {
               </TableHeader>
               <TableBody>
                 {products.map((p) => {
-                  const status = LISTING_STATUS[p.status] ?? { label: p.status, dot: "bg-muted-foreground" };
                   const title = p.title || "Untitled";
+                  const availability = productAvailability(p);
                   return (
                     <TableRow key={p.id} data-state={selectedIds.has(p.id) ? "selected" : undefined} className="h-36 ">  
                       <TableCell className="pl-4">
@@ -385,13 +427,16 @@ export default function Products() {
                         </div>
                       </TableCell>
 
-                      <TableCell className="truncate">{p.shop}</TableCell>
+                      <TableCell>
+                        <div className="flex min-w-0 flex-col items-start gap-1">
+                          <span className="max-w-full truncate">{p.shop}</span>
+                          {!p.shopEnabled && !availability && <UnplugIcon className="size-4 text-muted-foreground" aria-label="Store disabled" />}
+                          {availability && <Badge variant="destructive">{availability}</Badge>}
+                        </div>
+                      </TableCell>
 
                       <TableCell>
-                        <div className="flex items-center gap-1.5">
-                          <span className={`size-2 rounded-full ${status.dot}`} />
-                          <span>{status.label}</span>
-                        </div>
+                        <ListingStatusBadge status={p.status} />
                       </TableCell>
 
                       <TableCell>
@@ -400,7 +445,7 @@ export default function Products() {
                             <PaintbrushIcon className="size-4" />
                           </Button>
                           <AlertDialog>
-                            <AlertDialogTrigger render={<Button variant="ghost" size="icon" className="size-8" />}>
+                            <AlertDialogTrigger render={<Button variant="ghost" size="icon" className="size-8" disabled={p.hasPrintifyProduct && (!p.shopEnabled || p.shopStatus !== "active" || p.accountTokenStatus !== "active")} title={p.hasPrintifyProduct && (!p.shopEnabled || p.shopStatus !== "active" || p.accountTokenStatus !== "active") ? "Enable this store before deleting the product from Printify" : undefined} />}>
                               <Trash2Icon className="size-4 text-destructive" />
                             </AlertDialogTrigger>
                             <AlertDialogContent>
@@ -443,14 +488,14 @@ export default function Products() {
             <Select value={copyTargetShop} onValueChange={(v) => setCopyTargetShop(v ?? "")}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a store...">
-                  {copyTargetShop ? shops.find((s) => s.id === copyTargetShop)?.title : "Select a store..."}
+                  {copyTargetShop ? operationalShops.find((s) => s.id === copyTargetShop)?.title : "Select a store..."}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                {accounts.map((a) => (
-                  <SelectGroup key={a.id}>
-                    <SelectLabel>{a.label}</SelectLabel>
-                    {a.shops.map((s) => (
+                {[...new Set(operationalShops.map((shop) => shop.accountLabel))].map((accountLabel) => (
+                  <SelectGroup key={accountLabel}>
+                    <SelectLabel>{accountLabel}</SelectLabel>
+                    {operationalShops.filter((shop) => shop.accountLabel === accountLabel).map((s) => (
                       <SelectItem key={s.id} value={s.id}>{s.title}</SelectItem>
                     ))}
                   </SelectGroup>

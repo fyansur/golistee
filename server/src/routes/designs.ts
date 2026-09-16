@@ -7,6 +7,7 @@ import { prisma } from "../lib/prisma.js";
 import { auth } from "../lib/middleware.js";
 import { pageParams } from "../lib/pagination.js";
 import { ensurePrintifyImage } from "../lib/printifyImages.js";
+import { findCatalogAccount, usableShopWhere } from "../lib/shopAccess.js";
 
 // Mirrors the client's own fileNameOf() (MyFiles.tsx) — recovers a display
 // name from the upload key when no explicit DesignAsset.name is set.
@@ -31,13 +32,11 @@ router.post("/upload", upload.single("file"), async (req, res) => {
   const userId = (req as any).userId;
   const { position, x, y, scale, angle, variantIds, shopId } = req.body;
   const shop = shopId ? await prisma.shop.findFirst({
-    where: { id: shopId, account: { userId } }, include: { account: true },
+    where: { id: shopId, ...usableShopWhere(userId) }, include: { account: true },
   }) : null;
-  if (shopId && !shop) return res.status(404).json({ error: "Store not found" });
-  const account = shop?.account ?? await prisma.printifyAccount.findFirst({
-    where: { userId, tokenStatus: "active" }, orderBy: { connectedAt: "asc" },
-  });
-  if (!account) return res.status(400).json({ error: "No active Printify account connected" });
+  if (shopId && !shop) return res.status(409).json({ error: "Store is disabled or unavailable" });
+  const account = shop?.account ?? await findCatalogAccount(userId);
+  if (!account) return res.status(400).json({ error: "No enabled Printify store connected" });
   const base = {
     position,
     x: Number(x), y: Number(y), scale: Number(scale), angle: Number(angle),

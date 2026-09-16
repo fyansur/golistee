@@ -1,9 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, SendIcon, SaveIcon } from "lucide-react";
+import { ChevronDownIcon, CloudUploadIcon, HardDriveIcon, PlusIcon, SendIcon, SaveIcon, ArrowLeftIcon } from "lucide-react";
 import { ListingCard } from "@/components/listing/ListingCard";
 import { toast } from "sonner";
 import api from "@/lib/api";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export interface Design {
   position: string;
@@ -50,6 +54,7 @@ function newDraft(): ListingDraft {
 }
 
 export default function CreateListing() {
+  const navigate = useNavigate();
   const [drafts, setDrafts] = useState<ListingDraft[]>([newDraft()]);
   const [publishing, setPublishing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -96,7 +101,7 @@ export default function CreateListing() {
     return errors;
   };
 
-  const saveAsDraft = async () => {
+  const saveAsDraft = async (draftOnPrintify: boolean) => {
     const errors = validateStructure();
     if (errors.length > 0) {
       toast.error(errors.join("\n"));
@@ -105,8 +110,8 @@ export default function CreateListing() {
 
     setSaving(true);
     try {
-      await api.post("/publish/batch", { listings: drafts, draftOnPrintify: true });
-      toast.success("Saved as draft");
+      await api.post("/publish/batch", { listings: drafts, draftOnPrintify });
+      toast.success(draftOnPrintify ? "Saved as draft on Printify" : "Saved as local draft");
       setDrafts([newDraft()]);
     } catch (err: any) {
       toast.error(err.response?.data?.error ?? "Save failed");
@@ -138,19 +143,32 @@ export default function CreateListing() {
 
   return (
     <>
-      <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-8 py-6">
-        <div>
-          <h1 className="text-xl font-semibold">Create Listing</h1>
-          <p className="text-sm text-muted-foreground">Add listings and publish in bulk</p>
-        </div>
-        <div className="flex gap-2">
+      <div className="sticky top-0 z-10 grid grid-cols-3 items-center justify-items-stretch border-b bg-background px-8 py-6">
+        <Button variant="ghost" onClick={() => navigate("/products")} className="justify-self-start">
+          <ArrowLeftIcon className="size-4" /> Back
+        </Button>
+        <span className="text-lg font-semibold justify-self-center">
+          Create Listing
+        </span>
+        <div className="flex gap-2 justify-self-end">
           <Button variant="outline" onClick={addCard}>
             <PlusIcon className="size-4" /> Add Listing
           </Button>
-          <Button variant="outline" onClick={saveAsDraft} disabled={saving || publishing}>
-            <SaveIcon className="size-4" />
-            {saving ? "Saving..." : "Save as Draft"}
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger render={<Button variant="outline" disabled={saving || publishing} />}>
+              <SaveIcon className="size-4" />
+              {saving ? "Saving..." : "Save as Draft"}
+              <ChevronDownIcon className="size-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-48">
+              <DropdownMenuItem onClick={() => saveAsDraft(false)}>
+                <HardDriveIcon className="size-4" /> Draft Locally
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => saveAsDraft(true)}>
+                <CloudUploadIcon className="size-4" /> Draft on Printify
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button onClick={publish} disabled={publishing || saving}>
             <SendIcon className="size-4" />
             {publishing ? "Publishing..." : "Publish All"}

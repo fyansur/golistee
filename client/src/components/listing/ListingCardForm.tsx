@@ -14,6 +14,8 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   Trash2Icon,
+  Save,
+  CheckIcon,
 } from "lucide-react";
 import {
   Field,
@@ -24,7 +26,7 @@ import {
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Dialog, DialogContent, DialogFooter,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -40,11 +42,19 @@ import type { ListingDraft } from "@/pages/CreateListing";
 import { DesignDropzone } from "@/components/listing/DesignDropzone";
 import { PricingTable } from "@/components/listing/PricingTable";
 import { Kbd } from "@/components/ui/kbd"
+import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Account {
   id: string;
   label: string;
-  shops: { id: string; title: string }[];
+  shops: { id: string; title: string; enabled: boolean; status: string }[];
+}
+interface OperationalShop {
+  id: string;
+  title: string;
+  printifyAccountId: string;
+  accountLabel: string;
 }
 interface Blueprint {
   id: string;
@@ -58,7 +68,6 @@ interface Provider {
 }
 interface Template {
   id: string;
-  printifyAccountId: string;
   name: string;
   blueprintId: number;
   blueprintLabel: string;
@@ -76,6 +85,7 @@ interface Props {
   // three selects instead of letting the user edit something that silently
   // won't save.
   locked?: boolean;
+  storeLocked?: boolean;
   // Card-chrome props — only CreateListing's multi-card list passes these
   // (numbering/collapsing/removing a card only makes sense there); EditListing
   // renders this form standalone and just omits them.
@@ -85,9 +95,11 @@ interface Props {
   onToggleCollapse?: () => void;
 }
 
-export function ListingCardForm({ draft, onChange, locked, index, onRemove, collapsed, onToggleCollapse }: Props) {
+export function ListingCardForm({ draft, onChange, locked, storeLocked, index, onRemove, collapsed, onToggleCollapse }: Props) {
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [operationalShops, setOperationalShops] = useState<OperationalShop[]>([]);
   const [blueprints, setBlueprints] = useState<Blueprint[]>([]);
+  const [blueprintsLoading, setBlueprintsLoading] = useState(true);
   const [providers, setProviders] = useState<Provider[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [tagInput, setTagInput] = useState("");
@@ -96,6 +108,8 @@ export function ListingCardForm({ draft, onChange, locked, index, onRemove, coll
   const [blueprintOpen, setBlueprintOpen] = useState(false);
   const [providerOpen, setProviderOpen] = useState(false);
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
+  const [selectedTemplateId, setSelectedTemplateId] = useState("");
+  const [replacingTemplate, setReplacingTemplate] = useState(false);
 
   const { control } = useForm({
     defaultValues: {
@@ -117,9 +131,12 @@ export function ListingCardForm({ draft, onChange, locked, index, onRemove, coll
 
   useEffect(() => {
     api.get("/connections").then(({ data }) => setAccounts(data));
+    api.get("/connections/shops").then(({ data }) => setOperationalShops(data));
     // This is a picker, not the paginated Catalog page — pull a generous
     // page size so the dropdown still shows everything for a normal user.
-    api.get("/blueprints", { params: { pageSize: 100 } }).then(({ data }) => setBlueprints(data.items));
+    api.get("/blueprints", { params: { pageSize: 100 } })
+      .then(({ data }) => setBlueprints(data.items))
+      .finally(() => setBlueprintsLoading(false));
     // This is a picker, not the paginated Templates page — pull a generous
     // page size so the dropdown still shows everything for a normal user.
     api.get("/templates", { params: { pageSize: 100 } }).then(({ data }) => setTemplates(data.items));
@@ -137,33 +154,57 @@ export function ListingCardForm({ draft, onChange, locked, index, onRemove, coll
   };
 
   const openSaveTemplate = () => {
-    // Templates aren't shop-scoped (no shopId column), just account-scoped —
-    // no need to require picking a store first, any connected account works.
-    const account = accounts[0];
-    if (!account || !draft.blueprintId || !draft.printProviderId || draft.variants.length === 0) {
+    if (!draft.blueprintId || !draft.printProviderId || draft.variants.length === 0) {
       toast.error("Select a blueprint, provider, and variant first before saving as template");
       return;
     }
     resetTemplateForm({ name: "" });
+    setSelectedTemplateId("");
     setTemplateDialogOpen(true);
   };
 
   const saveAsTemplate = async (values: { name: string }) => {
-    const account = accounts[0];
-    if (!account) return;
-    const { data } = await api.post("/templates", {
-      printifyAccountId: account.id,
-      name: values.name.trim(),
-      blueprintId: draft.blueprintId,
-      blueprintLabel: draft.blueprintLabel,
-      printProviderId: draft.printProviderId,
-      printProviderLabel: draft.printProviderLabel,
-      variants: draft.variants,
-      description: draft.description,
-    });
-    setTemplates((prev) => [...prev, data]);
-    setTemplateDialogOpen(false);
-    toast.success("Template saved");
+    try {
+      const { data } = await api.post("/templates", {
+        name: values.name.trim(),
+        blueprintId: draft.blueprintId,
+        blueprintLabel: draft.blueprintLabel,
+        printProviderId: draft.printProviderId,
+        printProviderLabel: draft.printProviderLabel,
+        variants: draft.variants,
+        description: draft.description,
+      });
+      setTemplates((prev) => [...prev, data]);
+      setTemplateDialogOpen(false);
+      toast.success("Template saved");
+    } catch (err: any) {
+      toast.error(err.response?.data?.error ?? "Failed to save template");
+    }
+  };
+
+  const replaceTemplate = async () => {
+    const template = templates.find((candidate) => candidate.id === selectedTemplateId);
+    if (!template) return;
+    setReplacingTemplate(true);
+    try {
+      const { data } = await api.put(`/templates/${template.id}`, {
+        name: template.name,
+        blueprintId: draft.blueprintId,
+        blueprintLabel: draft.blueprintLabel,
+        printProviderId: draft.printProviderId,
+        printProviderLabel: draft.printProviderLabel,
+        variants: draft.variants,
+        description: draft.description,
+      });
+      setTemplates((current) => current.map((item) => item.id === template.id ? { ...item, ...data } : item));
+      setTemplateDialogOpen(false);
+      setSelectedTemplateId("");
+      toast.success(`Template "${template.name}" replaced`);
+    } catch (err: any) {
+      toast.error(err.response?.data?.error ?? "Failed to replace template");
+    } finally {
+      setReplacingTemplate(false);
+    }
   };
 
   useEffect(() => {
@@ -225,11 +266,16 @@ export function ListingCardForm({ draft, onChange, locked, index, onRemove, coll
                 });
               }}
             >
-              <SelectTrigger size="sm">
+              <SelectTrigger>
                 <BoxIcon className="size-4" />
                 <SelectValue placeholder="Blueprint">{draft.blueprintLabel || "Blueprint"}</SelectValue>
               </SelectTrigger>
               <SelectContent align="start">
+                {blueprintsLoading ? (
+                  <div className="px-2 py-1.5 text-xs text-muted-foreground">Loading blueprints...</div>
+                ) : blueprints.length === 0 ? (
+                  <div className="px-2 py-1.5 text-xs text-muted-foreground">No blueprint added yet</div>
+                ) : null}
                 {blueprints.map((b) => (
                   <SelectItem key={b.id} value={b.blueprintId.toString()}>
                     {b.brand} {b.model}
@@ -259,7 +305,7 @@ export function ListingCardForm({ draft, onChange, locked, index, onRemove, coll
                 });
               }}
             >
-              <SelectTrigger size="sm">
+              <SelectTrigger>
                 <TruckIcon className="size-4" />
                 <SelectValue placeholder="Provider">{draft.printProviderLabel || "Provider"}</SelectValue>
               </SelectTrigger>
@@ -275,44 +321,48 @@ export function ListingCardForm({ draft, onChange, locked, index, onRemove, coll
               </Button>
             )}
           </div>
+
+            <div className="flex items-center gap-1">
+              {storeLocked ? (
+                <Button type="button" variant="outline" disabled>
+                  <StoreIcon className="size-4" />
+                  {accounts.flatMap((account) => account.shops).find((shop) => shop.id === draft.shopId)?.title ?? "Store"}
+                </Button>
+              ) : (
+                <Select value={draft.shopId} disabled={locked} onValueChange={(v) => onChange({ shopId: v ?? "" })}>
+                  <SelectTrigger>
+                    <StoreIcon className="size-4" />
+                    <SelectValue placeholder="Store">
+                      {draft.shopId
+                        ? operationalShops.find((shop) => shop.id === draft.shopId)?.title
+                        ?? accounts.flatMap((account) => account.shops).find((shop) => shop.id === draft.shopId)?.title
+                        ?? "Store"
+                        : "Store"}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent align="start">
+                    {[...new Set(operationalShops.map((shop) => shop.accountLabel))].map((accountLabel) => (
+                      <SelectGroup key={accountLabel}>
+                        <SelectLabel>{accountLabel}</SelectLabel>
+                        {operationalShops.filter((shop) => shop.accountLabel === accountLabel).map((s) => (
+                          <SelectItem key={s.id} value={s.id}>{s.title}</SelectItem>
+                        ))}
+                      </SelectGroup>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+              {draft.shopId && !locked && !storeLocked && (
+                <Button type="button" variant="ghost" size="icon" className="size-8" onClick={resetStore} aria-label="Clear store" title="Clear store">
+                  <RotateCcwIcon className="size-4" />
+                </Button>
+              )}
+            </div>
         </div>
 
         <div className="flex items-center gap-2">
           {/* Apply Template — not shown when locked, since a template also carries a
               blueprint/provider that this listing can no longer change. */}
-          {!locked && (
-            <Select
-              value="Apply Templates"
-              onValueChange={(id) => {
-                const t = templates.find((t) => t.id === id);
-                if (t) applyTemplate(t);
-              }}
-            >
-              <SelectTrigger size="sm">
-                <LayoutTemplateIcon className="size-4" />
-                <SelectValue placeholder="Template" />
-              </SelectTrigger>
-              <SelectContent align="end" className="min-w-56">
-                {templates.length === 0 && (
-                  <div className="px-2 py-1.5 text-xs text-muted-foreground">No templates yet</div>
-                )}
-                {accounts.map((a) => {
-                  const accountTemplates = templates.filter((t) => t.printifyAccountId === a.id);
-                  if (accountTemplates.length === 0) return null;
-                  return (
-                    <SelectGroup key={a.id}>
-                      <SelectLabel>{a.label}</SelectLabel>
-                      {accountTemplates.map((t) => (
-                        <SelectItem key={t.id} value={t.id}>
-                          {t.name}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          )}
           {onRemove && (
             <Button type="button" variant="outline" size="icon" onClick={onRemove} aria-label="Remove listing">
               <Trash2Icon className="size-4 text-destructive" />
@@ -389,110 +439,112 @@ export function ListingCardForm({ draft, onChange, locked, index, onRemove, coll
           {/* Variants and Sizing — full width */}
           {draft.variants && draft.variants.length > 0 && (
             <>
-          <Field>
-            <FieldLabel className="font-black text-sm">Pricing</FieldLabel>
-            <FieldContent>
-              <PricingTable draft={draft} onChange={onChange} locked={locked} />
-            </FieldContent>
-          </Field>
+              <Field>
+                <FieldLabel className="font-black text-sm">Pricing</FieldLabel>
+                <FieldContent>
+                  <PricingTable draft={draft} onChange={onChange} locked={locked} />
+                </FieldContent>
+              </Field>
 
-          {/* Tags */}
-          <Field>
-            <div className="flex items-center justify-between">
-              <FieldLabel className="font-black text-sm">Tags</FieldLabel>
-              <span className="text-xs text-muted-foreground">
-                {draft.tags.length}/13
-              </span>
-            </div>
-            <FieldContent>
-              <div className="flex flex-wrap gap-2 min-h-12 p-3 border rounded-md items-center">
-                {draft.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="bg-background h-8 flex items-center gap-1 border text-xs px-2 py-0.5 rounded-md"
-                  >
-                    {tag}
-                    <button className="text-muted hover:text-foreground active:translate-y-[1px]" onClick={() => removeTag(tag)}>
-                      <XIcon className="size-4" />
-                    </button>
+              {/* Tags */}
+              <Field>
+                <div className="flex items-center justify-between">
+                  <FieldLabel className="font-black text-sm">Tags</FieldLabel>
+                  <span className="text-xs text-muted-foreground">
+                    {draft.tags.length}/13
                   </span>
-                ))}
-                {draft.tags.length < 13 && (
-                  <input
-                    className="flex-1 min-w-24 h-8 bg-transparent text-sm outline-none"
-                    placeholder="Keywords"
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === ",") {
-                        e.preventDefault();
-                        addTag(tagInput);
-                      }
-                      // Only when the input itself is empty — otherwise these
-                      // would hijack normal text editing inside the field.
-                      if (tagInput === "" && draft.tags.length > 0) {
-                        if (e.key === "Backspace") removeTag(draft.tags[draft.tags.length - 1]);
-                        if (e.key === "Delete") onChange({ tags: [] });
-                      }
-                    }}
-                    onPaste={(e) => {
-                      e.preventDefault();
-                      addTag(e.clipboardData.getData("text"));
-                    }}
-                  />
-                )}
-              </div>
-            </FieldContent>
-          <div className="text-xs text-muted-foreground flex gap-2">
-            <span><Kbd>⏎</Kbd> Apply tag </span><span><Kbd>Del</Kbd> Remove all tags </span>
-          </div>
-          </Field>
-          </>
+                </div>
+                <FieldContent>
+                  <div className="flex flex-wrap gap-2 min-h-12 p-3 border rounded-md items-center">
+                    {draft.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="bg-background h-8 flex items-center gap-1 border text-xs px-2 py-0.5 rounded-md"
+                      >
+                        {tag}
+                        <button className="text-muted hover:text-foreground active:translate-y-[1px]" onClick={() => removeTag(tag)}>
+                          <XIcon className="size-4" />
+                        </button>
+                      </span>
+                    ))}
+                    {draft.tags.length < 13 && (
+                      <input
+                        className="flex-1 min-w-24 h-8 bg-transparent text-sm outline-none"
+                        placeholder="Keywords"
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === ",") {
+                            e.preventDefault();
+                            addTag(tagInput);
+                          }
+                          // Only when the input itself is empty — otherwise these
+                          // would hijack normal text editing inside the field.
+                          if (tagInput === "" && draft.tags.length > 0) {
+                            if (e.key === "Backspace") removeTag(draft.tags[draft.tags.length - 1]);
+                            if (e.key === "Delete") onChange({ tags: [] });
+                          }
+                        }}
+                        onPaste={(e) => {
+                          e.preventDefault();
+                          addTag(e.clipboardData.getData("text"));
+                        }}
+                      />
+                    )}
+                  </div>
+                </FieldContent>
+                <div className="text-xs text-muted-foreground flex gap-2">
+                  <span><Kbd>⏎</Kbd> Apply tag </span><span><Kbd>Del</Kbd> Remove all tags </span>
+                </div>
+              </Field>
+            </>
           )}
 
           {/* Store — picked last, only needed before actually saving/publishing */}
-          <div className="flex items-center justify-end gap-2">
-            <div className="flex items-center gap-1">
-              <Select value={draft.shopId} disabled={locked} onValueChange={(v) => onChange({ shopId: v ?? "" })}>
-                <SelectTrigger size="sm">
-                  <StoreIcon className="size-4" />
-                  <SelectValue placeholder="Store">
-                    {draft.shopId
-                      ? accounts.flatMap((a) => a.shops).find((s) => s.id === draft.shopId)?.title
-                      : "Store"}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent align="start">
-                  {accounts.map((a) => (
-                    <SelectGroup key={a.id}>
-                      <SelectLabel>{a.label}</SelectLabel>
-                      {a.shops.map((s) => (
-                        <SelectItem key={s.id} value={s.id}>{s.title}</SelectItem>
-                      ))}
-                    </SelectGroup>
-                  ))}
-                </SelectContent>
-              </Select>
-              {draft.shopId && !locked && (
-                <Button type="button" variant="ghost" size="icon" className="size-8" onClick={resetStore} aria-label="Clear store" title="Clear store">
-                  <RotateCcwIcon className="size-4" />
-                </Button>
-              )}
-            </div>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+            {!locked && (
+              <>
+                <Select
+                  value="Templates"
+                  onValueChange={(id) => {
+                    const t = templates.find((t) => t.id === id);
+                    if (t) applyTemplate(t);
+                  }}
+                >
+                  <SelectTrigger>
+                    <LayoutTemplateIcon className="size-4" />
+                    <SelectValue placeholder="Template" />
+                  </SelectTrigger>
+                  <SelectContent align="start">
+                    {templates.length === 0 && (
+                      <div className="px-2 py-1.5 text-xs text-muted-foreground">No templates yet</div>
+                    )}
+                    {templates.map((template) => (
+                      <SelectItem key={template.id} value={template.id}>
+                        {template.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-            <Button type="button" variant="outline" size="sm" onClick={openSaveTemplate}>
-              Save as Template
-            </Button>
+
+                <Button type="button" variant="outline" size="icon" onClick={openSaveTemplate}>
+                  <Save size="4" />
+                </Button>
+              </>
+            )}
+            </div>
           </div>
         </>
       )}
 
-      <Dialog open={templateDialogOpen} onOpenChange={setTemplateDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Save as Template</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleTemplateSubmit(saveAsTemplate)} className="py-2">
+      <Dialog open={templateDialogOpen} onOpenChange={(open) => {
+        setTemplateDialogOpen(open);
+        if (!open) setSelectedTemplateId("");
+      }}>
+        <DialogContent className="sm:max-w-lg min-w-3xl" showCloseButton={false}>
+          <form onSubmit={handleTemplateSubmit(saveAsTemplate)} className="space-y-3">
             <Controller
               name="name"
               control={templateControl}
@@ -519,10 +571,60 @@ export function ListingCardForm({ draft, onChange, locked, index, onRemove, coll
                 </Field>
               )}
             />
+            <Button type="submit" className="w-full" disabled={templateFormState.isSubmitting || replacingTemplate}>
+              {templateFormState.isSubmitting ? "Saving..." : "Save as New"}
+            </Button>
           </form>
+
+          <Separator />
+
+          <div className="space-y-3">
+            <div>
+              <p className="text-sm font-semibold">Replace existing</p>
+              <p className="text-xs text-muted-foreground">Select a template to overwrite with this listing setup.</p>
+            </div>
+            {templates.length === 0 ? (
+              <div className="rounded-md border border-dashed px-3 py-8 text-center text-sm text-muted-foreground">
+                No templates yet
+              </div>
+            ) : (
+              <ScrollArea className="h-56 rounded-md border">
+                <div className="space-y-1 p-2">
+                  {templates.map((template) => {
+                    const selected = template.id === selectedTemplateId;
+                    return (
+                      <button
+                        key={template.id}
+                        type="button"
+                        onClick={() => setSelectedTemplateId(template.id)}
+                        className={`flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left transition-colors ${selected ? "bg-muted text-accent-foreground" : "hover:bg-muted"}`}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium">{template.name}</p>
+                          <p className="truncate text-xs text-muted-foreground">
+                            {template.blueprintLabel} · {template.printProviderLabel}
+                          </p>
+                        </div>
+                        {selected && <CheckIcon className="size-4 shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </ScrollArea>
+            )}
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={replaceTemplate}
+              disabled={!selectedTemplateId || replacingTemplate || templateFormState.isSubmitting}
+            >
+              {replacingTemplate ? "Replacing..." : "Replace"}
+            </Button>
+          </div>
+
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setTemplateDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleTemplateSubmit(saveAsTemplate)} disabled={templateFormState.isSubmitting}>Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

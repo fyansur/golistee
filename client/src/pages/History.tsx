@@ -1,26 +1,34 @@
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
-import { HistoryIcon, ChevronDownIcon } from "lucide-react";
+import { HistoryIcon, ChevronDownIcon, UnplugIcon } from "lucide-react";
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
-import { LISTING_STATUS } from "@/lib/listingStatus";
 import { PaginationFooter } from "@/components/PaginationFooter";
+import { ListingStatusBadge } from "@/components/ListingStatusBadge";
 
 interface Shop {
   id: string;
   title: string;
+  enabled: boolean;
+  status: string;
+  listingCount: number;
 }
 
 interface Account {
   id: string;
   label: string;
+  tokenStatus: string;
   shops: Shop[];
 }
 
 interface BatchListing {
   id: string;
   title: string;
+  shop: string;
+  shopEnabled: boolean;
+  shopStatus: string;
+  accountTokenStatus: string;
   blueprintLabel: string;
   printProviderLabel: string;
   thumbnail: string | null;
@@ -31,26 +39,18 @@ interface BatchListing {
 
 interface Batch {
   id: string;
-  status: string;
   total: number;
-  successCount: number;
-  failedCount: number;
   createdAt: string;
   listings: BatchListing[];
 }
-const BATCH_STATUS_BADGE_COLOR: Record<string, string> = {
-  done: "dark:bg-sky-500",
-  queued: "dark:bg-amber-700",
-  pending: "dark:bg-amber-700",
-  failed: "dark:bg-red-900",
-};
 
-const BATCH_STATUS_LABELS: Record<string, string> = {
-  done: "Success",
-  queued: "Queued",
-  pending: "Pending",
-  failed: "Failed",
-};
+function batchStatusCounts(batch: Batch) {
+  const counts = new Map<string, number>();
+  for (const listing of batch.listings) {
+    counts.set(listing.status, (counts.get(listing.status) ?? 0) + 1);
+  }
+  return [...counts.entries()];
+}
 
 function BatchCardSkeleton() {
   return (
@@ -61,7 +61,6 @@ function BatchCardSkeleton() {
           <Skeleton className="h-3 w-56" />
         </div>
         <div className="flex items-center gap-3 shrink-0">
-          <Skeleton className="h-5 w-16 rounded-full" />
           <Skeleton className="size-5 rounded-sm" />
         </div>
       </div>
@@ -120,7 +119,13 @@ export default function History() {
       return next;
     });
 
-  const shops = accounts.flatMap((a) => a.shops);
+  const shops = accounts.flatMap((a) => a.shops).filter((shop) => shop.listingCount > 0);
+
+  const shopAvailability = (shop: Shop, account: Account) => {
+    if (account.tokenStatus !== "active") return "Connection expired";
+    if (shop.status !== "active") return "Unavailable";
+    return null;
+  };
 
   return (
     <div className="max-w-7xl mx-auto justify-center p-8 space-y-6">
@@ -153,12 +158,18 @@ export default function History() {
               key={s.id}
               type="button"
               onClick={() => toggleShop(s.id)}
-              className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${selectedShopIds.has(s.id)
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${selectedShopIds.has(s.id)
                   ? "bg-accent text-primary-foreground border-accent"
                   : "bg-card text-muted-foreground hover:bg-muted"
                 }`}
             >
               {s.title}
+              {!s.enabled && <UnplugIcon className="size-3.5" aria-label="Store disabled" />}
+              {(() => {
+                const account = accounts.find((candidate) => candidate.shops.some((shop) => shop.id === s.id));
+                const availability = account ? shopAvailability(s, account) : null;
+                return availability ? ` · ${availability}` : "";
+              })()}
             </button>
           ))}
         </div>
@@ -190,12 +201,16 @@ export default function History() {
                     <p className="font-bold">
                       {new Date(b.createdAt).toLocaleString("en-US", { timeZone: "Asia/Jakarta" })}
                     </p>
-                    <p className="text-sm text-muted-foreground">
-                      {b.successCount} published · {b.failedCount} failed · {b.total} total
-                    </p>
+                    <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                      {batchStatusCounts(b).map(([status, count]) => (
+                        <ListingStatusBadge key={status} status={status} count={count} />
+                      ))}
+                      <Badge variant="outline" className="h-6 rounded-full px-2.5 text-muted-foreground">
+                        {b.total} total
+                      </Badge>
+                    </div>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
-                    <Badge className={`${BATCH_STATUS_BADGE_COLOR[b.status] ?? "bg-emerald-500"} text-white`}>{BATCH_STATUS_LABELS[b.status] ?? b.status}</Badge>
                     <ChevronDownIcon
                       className={`size-5 text-muted-foreground transition-transform ${expanded ? "rotate-180" : ""}`}
                     />
@@ -205,11 +220,15 @@ export default function History() {
                 {expanded && (
                   <div className="border-t divide-y">
                     {b.listings.length === 0 ? (
-                      <p className="p-5 text-sm text-muted-foreground">No listings in this batch.</p>
+                      <p className="p-5 text-sm text-muted-foreground">No listings in this batch, or they have been deleted.</p>
                     ) : (
                       b.listings.map((l) => {
-                        const status = LISTING_STATUS[l.status] ?? { label: l.status, dot: "bg-muted-foreground" };
                         const title = l.title || "Untitled";
+                        const availability = l.accountTokenStatus !== "active"
+                          ? "Connection expired"
+                          : l.shopStatus !== "active"
+                            ? "Unavailable"
+                            : null;
                         return (
                           <div key={l.id} className="flex items-center gap-3 p-4">
                             <div
@@ -228,11 +247,13 @@ export default function History() {
                               {l.variantSummary && (
                                 <p className="text-xs text-muted-foreground truncate">{l.variantSummary}</p>
                               )}
+                              <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+                                <span>{l.shop}</span>
+                                {!l.shopEnabled && !availability && <UnplugIcon className="size-4" aria-label="Store disabled" />}
+                                {availability && <Badge variant="destructive">{availability}</Badge>}
+                              </div>
                             </div>
-                            <div className="flex items-center gap-1.5 shrink-0">
-                              <span className={`size-2 rounded-full ${status.dot}`} />
-                              <span className="text-sm">{status.label}</span>
-                            </div>
+                            <ListingStatusBadge status={l.status} className="shrink-0" />
                           </div>
                         );
                       })

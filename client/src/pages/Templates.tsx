@@ -132,9 +132,6 @@ export default function Templates() {
                 </div>
               )}
 
-              {t.description && (
-                <p className="text-xs text-muted-foreground line-clamp-2">{t.description}</p>
-              )}
 
               <p className="text-xs text-muted-foreground">{variantSummary(t)}</p>
             </div>

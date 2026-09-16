@@ -15,10 +15,6 @@ import { VariantPicker } from "@/components/listing/VariantPicker";
 import { PricingTable } from "@/components/listing/PricingTable";
 import type { ListingDraft } from "@/pages/CreateListing";
 
-interface Account {
-  id: string;
-  label: string;
-}
 interface Blueprint {
   id: string;
   blueprintId: number;
@@ -41,8 +37,8 @@ export default function TemplateForm() {
 
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
-  const [accounts, setAccounts] = useState<Account[]>([]);
   const [blueprints, setBlueprints] = useState<Blueprint[]>([]);
+  const [blueprintsLoading, setBlueprintsLoading] = useState(true);
   const [providers, setProviders] = useState<Provider[]>([]);
   const [catalogVariants, setCatalogVariants] = useState<CatalogVariant[]>([]);
 
@@ -55,10 +51,11 @@ export default function TemplateForm() {
   const [variants, setVariants] = useState<any[]>([]);
 
   useEffect(() => {
-    api.get("/connections").then(({ data }) => setAccounts(data));
     // This is a picker, not the paginated Catalog page — pull a generous
     // page size so the dropdown still shows everything for a normal user.
-    api.get("/blueprints", { params: { pageSize: 100 } }).then(({ data }) => setBlueprints(data.items));
+    api.get("/blueprints", { params: { pageSize: 100 } })
+      .then(({ data }) => setBlueprints(data.items))
+      .finally(() => setBlueprintsLoading(false));
   }, []);
 
   useEffect(() => {
@@ -127,10 +124,8 @@ export default function TemplateForm() {
         });
         toast.success("Template updated");
       } else {
-        const account = accounts[0];
-        if (!account) { toast.error("Connect a Printify account first"); return; }
         await api.post("/templates", {
-          printifyAccountId: account.id, name, description,
+          name, description,
           blueprintId, blueprintLabel, printProviderId, printProviderLabel, variants,
         });
         toast.success("Template created");
@@ -147,11 +142,14 @@ export default function TemplateForm() {
 
   return (
     <div>
-      <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-8 py-6">
-        <Button variant="ghost" onClick={() => navigate("/templates")}>
+      <div className="sticky top-0 z-10 grid grid-cols-3 items-center justify-items-stretch border-b bg-background px-8 py-6">
+        <Button variant="ghost" onClick={() => navigate("/templates")} className="justify-self-start">
           <ArrowLeftIcon className="size-4" /> Back
         </Button>
-        <Button onClick={save} disabled={saving || !name.trim() || !blueprintId || !printProviderId}>
+        <span className="text-lg font-semibold justify-self-center">
+          Edit Template
+        </span>
+        <Button onClick={save} disabled={saving || !name.trim() || !blueprintId || !printProviderId} className="justify-self-end">
           <SaveIcon className="size-4" />
           {saving ? "Saving..." : "Save"}
         </Button>
@@ -199,6 +197,11 @@ export default function TemplateForm() {
                       <SelectValue placeholder="Select blueprint...">{blueprintLabel || "Select blueprint..."}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
+                      {blueprintsLoading ? (
+                        <div className="px-2 py-1.5 text-xs text-muted-foreground">Loading blueprints...</div>
+                      ) : blueprints.length === 0 ? (
+                        <div className="px-2 py-1.5 text-xs text-muted-foreground">No blueprint added yet</div>
+                      ) : null}
                       {blueprints.map((b) => (
                         <SelectItem key={b.id} value={b.blueprintId.toString()}>{b.brand} {b.model}</SelectItem>
                       ))}

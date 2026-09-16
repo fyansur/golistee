@@ -96,7 +96,7 @@ const BlueprintCard = ({
       <p className="text-xs text-muted-foreground leading-none truncate">{title}</p>
     </CardContent>
     <CardFooter>
-      <Button size="sm" className="w-full" disabled={inPool} onClick={onAdd}>
+      <Button className="w-full" disabled={inPool} onClick={onAdd}>
         {inPool ? "Added" : <><PlusIcon className="size-4" /> Add</>}
       </Button>
     </CardFooter>

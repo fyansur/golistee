@@ -28,11 +28,20 @@ export async function createOnPrintify(listing: any, shop: any, opts: { publish:
     where: { id: listing.id },
     data: { printifyProductId: product.id, status: "draft_on_printify", errorMessage: null },
   });
-  if (opts.publish) await publishToSalesChannel(shop.printifyShopId, token, product.id);
-  return { printifyProductId: product.id as string, status: opts.publish ? "published" : "draft_on_printify" };
+  if (!opts.publish) {
+    return { printifyProductId: product.id as string, status: "draft_on_printify" as const };
+  }
+
+  await publishToSalesChannel(shop.printifyShopId, token, product.id);
+  const lastPublishedAt = new Date();
+  await prisma.listing.update({
+    where: { id: listing.id },
+    data: { status: "published", lastPublishedAt, errorMessage: null },
+  });
+  return { printifyProductId: product.id as string, status: "published" as const, lastPublishedAt };
 }
 
-export async function updateAndPublish(listing: any, shop: any, opts = { includeDesigns: true }) {
+export async function updateOnPrintify(listing: any, shop: any, opts = { includeDesigns: true }) {
   const token = decryptToken(shop.account.accessToken);
   const url = `https://api.printify.com/v1/shops/${shop.printifyShopId}/products/${listing.printifyProductId}.json`;
   const headers = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
@@ -46,8 +55,23 @@ export async function updateAndPublish(listing: any, shop: any, opts = { include
     payload.print_areas = buildPrintAreas(designs, current.variants.map((v: any) => v.id));
   }
   await printifyJson(url, { method: "PUT", headers, body: JSON.stringify(payload) });
+  return { printifyProductId: listing.printifyProductId as string };
+}
+
+export async function updateAndPublish(listing: any, shop: any, opts = { includeDesigns: true }) {
+  const token = decryptToken(shop.account.accessToken);
+  await updateOnPrintify(listing, shop, opts);
   await publishToSalesChannel(shop.printifyShopId, token, listing.printifyProductId);
-  return { printifyProductId: listing.printifyProductId as string, status: "published" };
+  const lastPublishedAt = new Date();
+  await prisma.listing.update({
+    where: { id: listing.id },
+    data: { status: "published", lastPublishedAt, errorMessage: null },
+  });
+  return { printifyProductId: listing.printifyProductId as string, status: "published" as const, lastPublishedAt };
+}
+
+export function statusAfterPrintifyDraft(lastPublishedAt: Date | string | null | undefined) {
+  return lastPublishedAt ? "out_of_sync" as const : "draft_on_printify" as const;
 }
 
 async function publishToSalesChannel(shopId: string, token: string, productId: string) {

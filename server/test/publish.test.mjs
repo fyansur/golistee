@@ -1,7 +1,7 @@
 import { test, beforeEach, mock } from "node:test";
 import assert from "node:assert/strict";
 
-let mappings, rows, calls, designUpdates, transport;
+let mappings, rows, calls, designUpdates, transport, listingUpdateHook;
 const keyOf = (where) => JSON.stringify(where.printifyAccountId_fileUrl);
 const prisma = {
   printifyImage: {
@@ -15,6 +15,7 @@ const prisma = {
   listing: {
     update: async ({ where, data }) => {
       rows.set(where.id, { ...rows.get(where.id), ...data });
+      listingUpdateHook?.({ where, data });
       return rows.get(where.id);
     },
   },
@@ -30,7 +31,7 @@ mock.method(globalThis, "fetch", async (url, options = {}) => {
 mock.module(new URL("../dist/lib/middleware.js", import.meta.url).href, { namedExports: { auth: (_req, _res, next) => next() } });
 const { default: publishRouter } = await import("../dist/routes/publish.js");
 const { ensurePrintifyImage } = await import("../dist/lib/printifyImages.js");
-const { createOnPrintify, updateAndPublish } = await import("../dist/lib/listingPublish.js");
+const { createOnPrintify, statusAfterPrintifyDraft, updateAndPublish, updateOnPrintify } = await import("../dist/lib/listingPublish.js");
 const { printifyJson } = await import("../dist/lib/printify.js");
 const reply = (body, status = 200) => new Response(JSON.stringify(body), { status });
 const account = (id) => ({ id, accessToken: `mock-${id}` });
@@ -39,7 +40,7 @@ const design = () => ({ id: "design", position: "front", fileUrl: "https://examp
 const listing = () => ({ id: "listing", title: "Test", description: "", tags: [], blueprintId: 1, printProviderId: 2, variants: [{ id: 1, price: 2500, is_enabled: true }], designs: [design()] });
 
 beforeEach(() => {
-  mappings = new Map(); rows = new Map(); calls = []; designUpdates = [];
+  mappings = new Map(); rows = new Map(); calls = []; designUpdates = []; listingUpdateHook = null;
   transport = (call) => { throw new Error(`Unexpected request: ${call.method} ${call.url}`); };
 });
 
@@ -117,6 +118,8 @@ test("publish rejection preserves product ID and retry updates instead of creati
   assert.equal(rows.get("listing").status, "draft_on_printify");
   rejectPublish = false;
   await updateAndPublish({ ...listing(), ...rows.get("listing") }, shop("a"));
+  assert.equal(rows.get("listing").status, "published");
+  assert.ok(rows.get("listing").lastPublishedAt instanceof Date);
   assert.equal(calls.filter((c) => c.method === "POST" && c.url.endsWith("/products.json")).length, 1);
   const update = calls.find((c) => c.method === "PUT");
   assert.deepEqual(update.body.print_areas[0].variant_ids, [1, 2]);
@@ -147,6 +150,18 @@ test("metadata-only edit does not replace remote print areas", async () => {
   assert.equal(calls[0].body.print_areas, undefined);
 });
 
+test("draft update stops after updating Printify and never publishes to the sales channel", async () => {
+  transport = () => reply({});
+  await updateOnPrintify({ ...listing(), printifyProductId: "product-a" }, shop("a"), { includeDesigns: false });
+  assert.deepEqual(calls.map((c) => c.method), ["PUT"]);
+  assert.equal(calls.some((c) => c.url.endsWith("/publish.json")), false);
+});
+
+test("Printify draft status depends on whether the listing has ever reached a sales channel", () => {
+  assert.equal(statusAfterPrintifyDraft(null), "draft_on_printify");
+  assert.equal(statusAfterPrintifyDraft(new Date()), "out_of_sync");
+});
+
 test("Printify errors retain method, endpoint, HTTP status and nested details", async () => {
   transport = () => reply({ message: "Operation failed.", errors: { reason: "Image not found", code: 8201 } }, 400);
   await assert.rejects(printifyJson("https://api.printify.com/v1/shops/b/products.json", { method: "POST" }), /POST .*products.json.*HTTP 400.*Image not found/);
@@ -155,8 +170,11 @@ test("Printify errors retain method, endpoint, HTTP status and nested details", 
 
 test("bulk-copy route saves a draft using the destination account's image", async () => {
   const target = shop("b");
-  let finish;
-  const completed = new Promise((resolve) => { finish = resolve; });
+  const completed = new Promise((resolve) => {
+    listingUpdateHook = ({ where, data }) => {
+      if (where.id === "copy" && data.status === "draft_on_printify") resolve();
+    };
+  });
   let copied;
   prisma.shop = { findFirst: async ({ where }) => {
     assert.equal(where.id, target.id);
@@ -168,7 +186,7 @@ test("bulk-copy route saves a draft using the destination account's image", asyn
     copied = { ...data, id: "copy", designs: data.designs.create.map((d) => ({ ...d, id: "copy-design" })) };
     return copied;
   };
-  prisma.publishBatch = { create: async () => ({ id: "batch" }), update: async ({ data }) => { finish(data); return data; } };
+  prisma.publishBatch = { create: async () => ({ id: "batch" }) };
   transport = (c) => {
     assert.equal(c.token, "Bearer mock-b");
     if (c.url.endsWith("/uploads/image-a.json")) return reply({}, 404);
@@ -182,11 +200,9 @@ test("bulk-copy route saves a draft using the destination account's image", asyn
   const handler = publishRouter.stack.find((layer) => layer.route?.path === "/listings/bulk-copy").route.stack[0].handle;
   let response;
   await handler({ userId: "user", body: { ids: ["listing"], targetShopId: target.id } }, { json: (data) => { response = data; } });
-  const batch = await completed;
+  await completed;
   assert.equal(response.queued, 1);
   assert.equal(copied.shopId, target.id);
   assert.equal(rows.get("copy").status, "draft_on_printify");
-  assert.equal(batch.successCount, 1);
-  assert.equal(batch.failedCount, 0);
   assert.equal(calls.some((c) => c.url.endsWith("/publish.json")), false);
 });
