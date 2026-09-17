@@ -1,0 +1,1 @@
+ALTER TABLE "BackgroundJob" ALTER COLUMN "updatedAt" DROP DEFAULT;

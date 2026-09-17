@@ -8,6 +8,8 @@ import { findCatalogAccount } from "../lib/shopAccess.js";
 
 const router = Router();
 router.use(auth);
+const CATALOG_CACHE_MS = 15 * 60_000;
+let catalogCache: { expiresAt: number; items: any[] } | null = null;
 
 // GET user's curated pool
 router.get("/", async (req, res) => {
@@ -40,10 +42,20 @@ router.get("/search", async (req, res) => {
   const account = await findCatalogAccount(userId);
   if (!account) return res.status(400).json({ error: "No enabled Printify store connected" });
 
-  const data = await printifyJson("https://api.printify.com/v1/catalog/blueprints.json", {
-    headers: { Authorization: `Bearer ${decryptToken(account.accessToken)}` },
-  });
-  res.json(data);
+  if (!catalogCache || catalogCache.expiresAt <= Date.now()) {
+    const items = await printifyJson<any[]>("https://api.printify.com/v1/catalog/blueprints.json", {
+      headers: { Authorization: `Bearer ${decryptToken(account.accessToken)}` },
+    });
+    catalogCache = { expiresAt: Date.now() + CATALOG_CACHE_MS, items };
+  }
+  const query = String(req.query.q ?? "").trim().toLowerCase();
+  const items = query
+    ? catalogCache.items.filter((blueprint) =>
+      [blueprint.title, blueprint.brand, blueprint.model]
+        .some((value) => String(value ?? "").toLowerCase().includes(query))
+    )
+    : catalogCache.items;
+  res.json(items);
 });
 
 // POST add blueprint to pool

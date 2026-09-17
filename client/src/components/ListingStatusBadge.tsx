@@ -22,10 +22,18 @@ const STATUS_STYLE: Record<string, { icon: LucideIcon; className: string; animat
     icon: TimerIcon,
     className: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900 dark:bg-blue-950/60 dark:text-blue-300",
   },
+  draft_queued: {
+    icon: TimerIcon,
+    className: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900 dark:bg-blue-950/60 dark:text-blue-300",
+  },
   creating: {
     icon: LoaderCircleIcon,
     className: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900 dark:bg-blue-950/60 dark:text-blue-300",
     animate: true,
+  },
+  scheduled: {
+    icon: TimerIcon,
+    className: "border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-900 dark:bg-violet-950/60 dark:text-violet-300",
   },
   draft_on_printify: {
     icon: CloudIcon,

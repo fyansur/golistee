@@ -89,14 +89,8 @@ export default function Catalog() {
   const searchBlueprints = async () => {
     setLoading(true);
     try {
-      const { data } = await api.get("/blueprints/search");
-      const filtered = data.filter(
-        (b: Blueprint) =>
-          b.title.toLowerCase().includes(search.toLowerCase()) ||
-          b.brand?.toLowerCase().includes(search.toLowerCase()) ||
-          b.model?.toLowerCase().includes(search.toLowerCase()),
-      );
-      setResults(filtered);
+      const { data } = await api.get("/blueprints/search", { params: { q: search } });
+      setResults(data);
     } catch (err: any) {
       toast.error(err.response?.data?.error ?? "Failed to fetch catalog");
     } finally {

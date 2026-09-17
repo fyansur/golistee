@@ -1,7 +1,7 @@
 import { test, beforeEach, mock } from "node:test";
 import assert from "node:assert/strict";
 
-let mappings, rows, calls, designUpdates, transport, listingUpdateHook;
+let mappings, rows, calls, designUpdates, jobs, transport, listingUpdateHook;
 const keyOf = (where) => JSON.stringify(where.printifyAccountId_fileUrl);
 const prisma = {
   printifyImage: {
@@ -20,7 +20,21 @@ const prisma = {
     },
   },
   listingDesign: { updateMany: async (args) => { designUpdates.push(args); return { count: 1 }; } },
+  backgroundJob: {
+    create: async ({ data }) => {
+      const job = { id: `job-${jobs.length + 1}`, ...data };
+      jobs.push(job);
+      return job;
+    },
+    createMany: async ({ data }) => {
+      for (const item of data) {
+        jobs.push({ id: `job-${jobs.length + 1}`, ...item });
+      }
+      return { count: data.length };
+    },
+  },
 };
+prisma.$transaction = async (operation) => Array.isArray(operation) ? Promise.all(operation) : operation(prisma);
 mock.module(new URL("../dist/lib/prisma.js", import.meta.url).href, { namedExports: { prisma } });
 mock.module(new URL("../dist/lib/crypto.js", import.meta.url).href, { namedExports: { decryptToken: (s) => s } });
 mock.method(globalThis, "fetch", async (url, options = {}) => {
@@ -29,7 +43,7 @@ mock.method(globalThis, "fetch", async (url, options = {}) => {
   return transport(call);
 });
 mock.module(new URL("../dist/lib/middleware.js", import.meta.url).href, { namedExports: { auth: (_req, _res, next) => next() } });
-const { default: publishRouter } = await import("../dist/routes/publish.js");
+const { default: publishRouter, publishJobHandlers } = await import("../dist/routes/publish.js");
 const { ensurePrintifyImage } = await import("../dist/lib/printifyImages.js");
 const { createOnPrintify, statusAfterPrintifyDraft, updateAndPublish, updateOnPrintify } = await import("../dist/lib/listingPublish.js");
 const { printifyJson } = await import("../dist/lib/printify.js");
@@ -40,7 +54,7 @@ const design = () => ({ id: "design", position: "front", fileUrl: "https://examp
 const listing = () => ({ id: "listing", title: "Test", description: "", tags: [], blueprintId: 1, printProviderId: 2, variants: [{ id: 1, price: 2500, is_enabled: true }], designs: [design()] });
 
 beforeEach(() => {
-  mappings = new Map(); rows = new Map(); calls = []; designUpdates = []; listingUpdateHook = null;
+  mappings = new Map(); rows = new Map(); calls = []; designUpdates = []; jobs = []; listingUpdateHook = null;
   transport = (call) => { throw new Error(`Unexpected request: ${call.method} ${call.url}`); };
 });
 
@@ -180,8 +194,12 @@ test("bulk-copy route saves a draft using the destination account's image", asyn
     assert.equal(where.id, target.id);
     assert.equal(where.account.userId, "user");
     return target;
-  } };
+  }, findUnique: async ({ where }) => where.id === target.id ? target : null };
   prisma.listing.findMany = async () => [listing()];
+  prisma.listing.findUnique = async ({ where }) => {
+    if (where.batchId_copiedFromListingId) return null;
+    return where.id === "listing" ? listing() : null;
+  };
   prisma.listing.create = async ({ data }) => {
     copied = { ...data, id: "copy", designs: data.designs.create.map((d) => ({ ...d, id: "copy-design" })) };
     return copied;
@@ -200,6 +218,9 @@ test("bulk-copy route saves a draft using the destination account's image", asyn
   const handler = publishRouter.stack.find((layer) => layer.route?.path === "/listings/bulk-copy").route.stack[0].handle;
   let response;
   await handler({ userId: "user", body: { ids: ["listing"], targetShopId: target.id } }, { json: (data) => { response = data; } });
+  assert.equal(jobs.length, 1);
+  assert.equal(jobs[0].type, "copy_listing");
+  await publishJobHandlers.copy_listing(jobs[0].payload);
   await completed;
   assert.equal(response.queued, 1);
   assert.equal(copied.shopId, target.id);

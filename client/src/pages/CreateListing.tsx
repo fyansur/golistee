@@ -1,13 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ChevronDownIcon, CloudUploadIcon, HardDriveIcon, PlusIcon, SendIcon, SaveIcon, ArrowLeftIcon } from "lucide-react";
+import { CalendarClockIcon, ChevronDownIcon, CloudUploadIcon, HardDriveIcon, PlusIcon, SendIcon, SaveIcon, ArrowLeftIcon } from "lucide-react";
 import { ListingCard } from "@/components/listing/ListingCard";
 import { toast } from "sonner";
 import api from "@/lib/api";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { localDateTime } from "@/lib/utils";
 
 export interface Design {
   position: string;
@@ -58,6 +64,8 @@ export default function CreateListing() {
   const [drafts, setDrafts] = useState<ListingDraft[]>([newDraft()]);
   const [publishing, setPublishing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
+  const [scheduleAt, setScheduleAt] = useState(() => localDateTime(new Date(Date.now() + 60 * 60_000)));
 
   const updateDraft = (id: string, patch: Partial<ListingDraft>) => {
     setDrafts((prev) => prev.map((d) => d.id === id ? { ...d, ...patch } : d));
@@ -111,7 +119,7 @@ export default function CreateListing() {
     setSaving(true);
     try {
       await api.post("/publish/batch", { listings: drafts, draftOnPrintify });
-      toast.success(draftOnPrintify ? "Saved as draft on Printify" : "Saved as local draft");
+      toast.success(draftOnPrintify ? "Drafts queued for Printify" : "Saved as local draft");
       setDrafts([newDraft()]);
     } catch (err: any) {
       toast.error(err.response?.data?.error ?? "Save failed");
@@ -136,6 +144,29 @@ export default function CreateListing() {
     } catch (err: any) {
       const details = err.response?.data?.details as string[] | undefined;
       toast.error(details ? details.join("\n") : "Publish failed");
+    } finally {
+      setPublishing(false);
+    }
+  };
+
+  const schedule = async () => {
+    const errors = validate();
+    if (errors.length > 0) {
+      toast.error(errors.join("\n"));
+      return;
+    }
+
+    setPublishing(true);
+    try {
+      const { data: batch } = await api.post("/publish/batch", { listings: drafts });
+      const ids = batch.listings.map((l: { id: string }) => l.id);
+      await api.post("/publish/listings/schedule", { ids, publishAt: new Date(scheduleAt).toISOString() });
+      toast.success(`${ids.length} listing(s) scheduled`);
+      setScheduleOpen(false);
+      setDrafts([newDraft()]);
+    } catch (err: any) {
+      const details = err.response?.data?.details as string[] | undefined;
+      toast.error(details ? details.join("\n") : "Scheduling failed");
     } finally {
       setPublishing(false);
     }
@@ -169,12 +200,44 @@ export default function CreateListing() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button onClick={publish} disabled={publishing || saving}>
-            <SendIcon className="size-4" />
-            {publishing ? "Publishing..." : "Publish All"}
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger render={<Button disabled={publishing || saving} />}>
+              <SendIcon className="size-4" />
+              {publishing ? "Publishing..." : "Publish All"}
+              <ChevronDownIcon className="size-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-48">
+              <DropdownMenuItem onClick={publish}>
+                <SendIcon className="size-4" /> Publish Now
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setScheduleOpen(true)}>
+                <CalendarClockIcon className="size-4" /> Schedule for Later
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
+
+      <Dialog open={scheduleOpen} onOpenChange={setScheduleOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Schedule publishing</DialogTitle></DialogHeader>
+          <div className="space-y-1">
+            <Label htmlFor="publish-at">Publish {drafts.length} listing(s) at</Label>
+            <Input
+              id="publish-at"
+              type="datetime-local"
+              value={scheduleAt}
+              min={localDateTime(new Date(Date.now() + 60_000))}
+              onChange={(event) => setScheduleAt(event.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">Uses your current timezone.</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setScheduleOpen(false)}>Cancel</Button>
+            <Button onClick={schedule} disabled={!scheduleAt || publishing}>Schedule</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     <div className="max-w-7xl mx-auto">
 
       <div className="space-y-6 p-8 pt-8">

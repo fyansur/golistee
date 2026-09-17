@@ -10,8 +10,11 @@ import connectionsRouter from "./routes/connections.js";
 import blueprintsRouter from "./routes/blueprints.js";
 import listingsRouter from "./routes/listings.js";
 import templatesRouter from "./routes/templates.js";
-import publishRouter from "./routes/publish.js";
+import publishRouter, { publishJobHandlers } from "./routes/publish.js";
 import designsRouter from "./routes/designs.js";
+import { startJobWorker, stopJobWorker } from "./lib/backgroundJobs.js";
+import ordersRouter, { orderJobHandlers } from "./routes/orders.js";
+import { accountJobHandlers } from "./lib/accountDeletion.js";
 
 // Default to the safe (non-verbose) posture unless a deploy explicitly opts
 // into development mode — this used to default the other way, which meant
@@ -25,7 +28,14 @@ const clientDist = path.join(__dirname, "../../client/dist");
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
-app.use(express.json());
+// Production traffic reaches Express through the single Nginx hop in nginx.conf.
+// This keeps IP-based rate limiting keyed to the client instead of the proxy.
+app.set("trust proxy", 1);
+app.use(express.json({
+  verify: (req, _res, buffer) => {
+    if ((req as express.Request).originalUrl === "/api/orders/webhook") (req as any).rawBody = Buffer.from(buffer);
+  },
+}));
 app.use("/api/auth", authRouter);
 app.use("/api/connections", connectionsRouter);
 app.use("/api/blueprints", blueprintsRouter);
@@ -33,6 +43,7 @@ app.use("/api/listings", listingsRouter);
 app.use("/api/templates", templatesRouter);
 app.use("/api/publish", publishRouter);
 app.use("/api/designs", designsRouter);
+app.use("/api/orders", ordersRouter);
 
 app.get("/health", async (_req, res) => {
   try {
@@ -71,6 +82,19 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   res.status(500).json({ error: "Something went wrong", ...(isDev ? { stack: err?.stack } : {}) });
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT} (${process.env.NODE_ENV})`);
 });
+startJobWorker({ ...publishJobHandlers, ...orderJobHandlers, ...accountJobHandlers });
+
+async function shutdown(signal: string) {
+  console.log(`${signal} received, shutting down`);
+  const closed = new Promise<void>((resolve) => server.close(() => resolve()));
+  await stopJobWorker();
+  await closed;
+  await prisma.$disconnect();
+  process.exit(0);
+}
+
+process.once("SIGTERM", () => void shutdown("SIGTERM"));
+process.once("SIGINT", () => void shutdown("SIGINT"));

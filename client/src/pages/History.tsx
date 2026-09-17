@@ -6,6 +6,7 @@ import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/
 import { Skeleton } from "@/components/ui/skeleton";
 import { PaginationFooter } from "@/components/PaginationFooter";
 import { ListingStatusBadge } from "@/components/ListingStatusBadge";
+import { ShopFilterSelect } from "@/components/ShopFilterSelect";
 
 interface Shop {
   id: string;
@@ -68,20 +69,10 @@ function BatchCardSkeleton() {
   );
 }
 
-function ShopChipsSkeleton() {
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      {["w-16", "w-20", "w-24", "w-14"].map((w, i) => (
-        <Skeleton key={i} className={`h-6 rounded-full ${w}`} />
-      ))}
-    </div>
-  );
-}
 
 export default function History() {
   const [accounts, setAccounts] = useState<Account[]>([]);
-  const [accountsLoading, setAccountsLoading] = useState(true);
-  const [selectedShopIds, setSelectedShopIds] = useState<Set<string>>(new Set());
+  const [selectedShopId, setSelectedShopId] = useState("");
   const [batches, setBatches] = useState<Batch[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -90,27 +81,20 @@ export default function History() {
   const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
-    api.get("/connections").then(({ data }) => setAccounts(data)).finally(() => setAccountsLoading(false));
+    api.get("/connections").then(({ data }) => setAccounts(data));
   }, []);
 
   useEffect(() => {
     setLoading(true);
     api
       .get("/publish/history", {
-        params: { page, pageSize, ...(selectedShopIds.size ? { shopId: [...selectedShopIds].join(",") } : {}) },
+        params: { page, pageSize, ...(selectedShopId ? { shopId: selectedShopId } : {}) },
       })
       .then(({ data }) => { setBatches(data.items); setTotal(data.total); })
       .finally(() => setLoading(false));
-  }, [selectedShopIds, page, pageSize]);
+  }, [selectedShopId, page, pageSize]);
 
-  useEffect(() => setPage(1), [selectedShopIds, pageSize]);
-
-  const toggleShop = (id: string) =>
-    setSelectedShopIds((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
+  useEffect(() => setPage(1), [selectedShopId, pageSize]);
 
   const toggleExpand = (id: string) =>
     setExpandedIds((prev) => {
@@ -120,12 +104,6 @@ export default function History() {
     });
 
   const shops = accounts.flatMap((a) => a.shops).filter((shop) => shop.listingCount > 0);
-
-  const shopAvailability = (shop: Shop, account: Account) => {
-    if (account.tokenStatus !== "active") return "Connection expired";
-    if (shop.status !== "active") return "Unavailable";
-    return null;
-  };
 
   return (
     <div className="max-w-7xl mx-auto justify-center p-8 space-y-6">
@@ -139,41 +117,9 @@ export default function History() {
         <p className="text-xl font-black">Batches</p>
       </div>
 
-      {accountsLoading ? (
-        <ShopChipsSkeleton />
-      ) : shops.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setSelectedShopIds(new Set())}
-            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${selectedShopIds.size === 0
-                ? "bg-accent text-primary-foreground border-accent"
-                : "bg-card text-muted-foreground hover:bg-muted"
-              }`}
-          >
-            All shops
-          </button>
-          {shops.map((s) => (
-            <button
-              key={s.id}
-              type="button"
-              onClick={() => toggleShop(s.id)}
-              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${selectedShopIds.has(s.id)
-                  ? "bg-accent text-primary-foreground border-accent"
-                  : "bg-card text-muted-foreground hover:bg-muted"
-                }`}
-            >
-              {s.title}
-              {!s.enabled && <UnplugIcon className="size-3.5" aria-label="Store disabled" />}
-              {(() => {
-                const account = accounts.find((candidate) => candidate.shops.some((shop) => shop.id === s.id));
-                const availability = account ? shopAvailability(s, account) : null;
-                return availability ? ` · ${availability}` : "";
-              })()}
-            </button>
-          ))}
-        </div>
-      )}
+      <div className="flex">
+        <ShopFilterSelect shops={shops} value={selectedShopId} onChange={setSelectedShopId} className="w-44 bg-card!" />
+      </div>
 
       {loading ? (
         <div className="space-y-4">

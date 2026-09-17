@@ -1,6 +1,8 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
 }
 
 datasource db {
@@ -8,14 +10,17 @@ datasource db {
 }
 
 model User {
-  id           String             @id @default(cuid())
-  email        String             @unique
-  passwordHash String
-  createdAt    DateTime           @default(now()) @db.Timestamptz
-  accounts     PrintifyAccount[]
-  blueprints   CuratedBlueprint[]
-  designAssets DesignAsset[]
-  templates    Template[]
+  id             String             @id @default(cuid())
+  email          String             @unique
+  passwordHash   String
+  createdAt      DateTime           @default(now()) @db.Timestamptz
+  deletionScheduledAt DateTime?     @db.Timestamptz
+  accounts       PrintifyAccount[]
+  blueprints     CuratedBlueprint[]
+  designAssets   DesignAsset[]
+  templates      Template[]
+  publishBatches PublishBatch[]
+  backgroundJobs BackgroundJob[]
 }
 
 model CuratedBlueprint {
@@ -27,19 +32,19 @@ model CuratedBlueprint {
   title       String
   images      Json
   addedAt     DateTime @default(now()) @db.Timestamptz
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model PrintifyAccount {
-  id          String    @id @default(cuid())
+  id          String          @id @default(cuid())
   userId      String
   label       String
   accessToken String
-  tokenStatus String    @default("active")
-  connectedAt DateTime  @default(now()) @db.Timestamptz
-  user        User      @relation(fields: [userId], references: [id])
+  tokenStatus String          @default("active")
+  connectedAt DateTime        @default(now()) @db.Timestamptz
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   shops       Shop[]
   images      PrintifyImage[]
 
@@ -54,15 +59,16 @@ model Shop {
   salesChannel      String
   status            String          @default("active")
   enabled           Boolean         @default(true)
-  account           PrintifyAccount @relation(fields: [printifyAccountId], references: [id])
+  account           PrintifyAccount @relation(fields: [printifyAccountId], references: [id], onDelete: Cascade)
   listings          Listing[]
+  orders            Order[]
 
-  @@index([printifyAccountId])
   @@unique([printifyAccountId, printifyShopId])
+  @@index([printifyAccountId])
 }
 
 model Template {
-  id                 String          @id @default(cuid())
+  id                 String @id @default(cuid())
   userId             String
   name               String
   blueprintId        Int
@@ -70,8 +76,8 @@ model Template {
   printProviderId    Int
   printProviderLabel String
   variants           Json
-  description        String          @default("")
-  user               User            @relation(fields: [userId], references: [id])
+  description        String @default("")
+  user               User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
@@ -83,38 +89,46 @@ model PublishBatch {
   total     Int       @default(0)
   createdAt DateTime  @default(now()) @db.Timestamptz
   listings  Listing[]
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([userId, createdAt])
 }
 
 model Listing {
-  id                 String          @id @default(cuid())
-  batchId            String
-  shopId             String
-  blueprintId        Int
-  blueprintLabel     String
-  printProviderId    Int
-  printProviderLabel String
-  title              String
-  description        String          @default("")
-  tags               String[]
-  variants           Json
-  status             String          @default("draft")
-  errorMessage       String?
-  printifyProductId  String?
-  lastPublishedAt    DateTime?       @db.Timestamptz
-  createdAt          DateTime        @default(now()) @db.Timestamptz
-  updatedAt          DateTime        @default(now()) @updatedAt @db.Timestamptz
-  batch              PublishBatch    @relation(fields: [batchId], references: [id])
-  shop               Shop            @relation(fields: [shopId], references: [id])
-  designs            ListingDesign[]
+  id                  String          @id @default(cuid())
+  batchId             String
+  shopId              String
+  blueprintId         Int
+  blueprintLabel      String
+  printProviderId     Int
+  printProviderLabel  String
+  title               String
+  description         String          @default("")
+  tags                String[]
+  variants            Json
+  status              String          @default("draft")
+  errorMessage        String?
+  printifyProductId   String?
+  lastPublishedAt     DateTime?       @db.Timestamptz
+  createdAt           DateTime        @default(now()) @db.Timestamptz
+  updatedAt           DateTime        @default(now()) @updatedAt @db.Timestamptz
+  processingStartedAt DateTime?       @db.Timestamptz
+  scheduledPublishAt  DateTime?       @db.Timestamptz
+  copiedFromListingId String?
+  batch               PublishBatch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  shop                Shop            @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  designs             ListingDesign[]
 
+  @@unique([batchId, copiedFromListingId])
   @@index([batchId])
   @@index([shopId])
+  @@index([batchId, createdAt])
+  @@index([shopId, createdAt])
 }
 
 model ListingDesign {
-  id              String   @id @default(cuid())
+  id              String  @id @default(cuid())
   listingId       String
   position        String?
   variantIds      Int[]
@@ -122,13 +136,13 @@ model ListingDesign {
   thumbUrl        String?
   printifyImageId String?
   localBackupPath String?
-  x               Float    @default(0.5)
-  y               Float    @default(0.5)
-  scale           Float    @default(1)
-  angle           Float    @default(0)
-  uploadStatus    String   @default("uploading")
+  x               Float   @default(0.5)
+  y               Float   @default(0.5)
+  scale           Float   @default(1)
+  angle           Float   @default(0)
+  uploadStatus    String  @default("uploading")
   uploadError     String?
-  listing         Listing  @relation(fields: [listingId], references: [id])
+  listing         Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
 
   @@index([listingId])
 }
@@ -141,24 +155,88 @@ model ListingDesign {
 // from "My files" (never placed on any listing) — there's no ListingDesign
 // row to source them from otherwise, so this is the only place they'd live.
 model DesignAsset {
-  id              String  @id @default(cuid())
+  id              String   @id @default(cuid())
   userId          String
   fileUrl         String
   name            String?
-  archived        Boolean @default(false)
+  archived        Boolean  @default(false)
   thumbUrl        String?
   printifyImageId String?
-  user            User    @relation(fields: [userId], references: [id])
+  sizeBytes       Int?
+  width           Int?
+  height          Int?
+  mimeType        String?
+  createdAt       DateTime @default(now()) @db.Timestamptz
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, fileUrl])
+  @@index([userId, archived, createdAt])
 }
 
 // Image IDs are scoped to the Printify account, not globally reusable files.
 model PrintifyImage {
   printifyAccountId String
   fileUrl           String
-  printifyImageId    String
+  printifyImageId   String
   account           PrintifyAccount @relation(fields: [printifyAccountId], references: [id], onDelete: Cascade)
 
   @@id([printifyAccountId, fileUrl])
+}
+
+// PostgreSQL-backed work queue. HTTP requests only enqueue; any app replica
+// can claim and finish work without losing it during deploys or restarts.
+model BackgroundJob {
+  id          String    @id @default(cuid())
+  userId      String?
+  type        String
+  payload     Json
+  status      String    @default("pending")
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(5)
+  runAt       DateTime  @default(now()) @db.Timestamptz
+  lockedAt    DateTime? @db.Timestamptz
+  lockedBy    String?
+  lastError   String?
+  createdAt   DateTime  @default(now()) @db.Timestamptz
+  updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz
+  user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status, runAt])
+  @@index([userId, status])
+}
+
+model RateLimitCounter {
+  key       String   @id
+  totalHits Int
+  resetAt   DateTime @db.Timestamptz
+
+  @@index([resetAt])
+}
+
+model Order {
+  id                   String    @id @default(cuid())
+  shopId               String
+  printifyOrderId      String
+  appOrderId           String?
+  status               String
+  customerName         String?
+  customerEmail        String?
+  totalPrice           Int       @default(0)
+  totalShipping        Int       @default(0)
+  totalTax             Int       @default(0)
+  addressTo            Json
+  lineItems            Json
+  shipments            Json
+  metadata             Json
+  printifyCreatedAt    DateTime  @db.Timestamptz
+  sentToProductionAt   DateTime? @db.Timestamptz
+  fulfilledAt          DateTime? @db.Timestamptz
+  syncedAt             DateTime  @default(now()) @db.Timestamptz
+  actionStatus         String?
+  errorMessage         String?
+  shop                  Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@unique([shopId, printifyOrderId])
+  @@index([shopId, printifyCreatedAt])
+  @@index([status, printifyCreatedAt])
 }

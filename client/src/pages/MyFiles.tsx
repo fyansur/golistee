@@ -20,6 +20,10 @@ interface FileItem {
   printifyImageId: string | null;
   name: string | null;
   archived: boolean;
+  sizeBytes: number | null;
+  width: number | null;
+  height: number | null;
+  mimeType: string | null;
 }
 
 // Uploaded key is `designs/{userId}/{timestamp}-{safeName}` — no separate
@@ -100,7 +104,9 @@ export default function MyFiles() {
         setItems(data.items);
         setTotal(data.total);
         data.items.forEach((item) => {
-          if (!(item.fileUrl in dims)) loadImageSize(item.fileUrl).then((d) => setDims((prev) => ({ ...prev, [item.fileUrl]: d })));
+          if (item.width == null && !(item.fileUrl in dims)) {
+            loadImageSize(item.fileUrl).then((d) => setDims((prev) => ({ ...prev, [item.fileUrl]: d })));
+          }
         });
       })
       .finally(() => setLoading(false));
@@ -114,7 +120,7 @@ export default function MyFiles() {
     if (!current) return;
     setRenaming(false);
     setNameDraft(displayNameOf(current));
-    if (!(current.fileUrl in sizes)) {
+    if (current.sizeBytes == null && !(current.fileUrl in sizes)) {
       fetch(current.fileUrl, { method: "HEAD" })
         .then((res) => {
           const len = res.headers.get("content-length");
@@ -145,32 +151,22 @@ export default function MyFiles() {
     const fileArr = Array.from(files);
     setUploadQueue(fileArr.map((f) => ({ name: f.name, percent: 0 })));
 
-    const uploads = fileArr.map(async (file, i) => {
-      const form = new FormData();
-      form.append("file", file);
-      const { data } = await api.post("/designs/upload", form, {
-        onUploadProgress: (e) => {
-          const percent = e.total ? Math.round((e.loaded / e.total) * 100) : 0;
-          setUploadQueue((prev) => prev.map((q, qi) => (qi === i ? { ...q, percent } : q)));
-        },
-      });
-      // Uploaded standalone (no listing to attach it to) — a ListingDesign
-      // row never gets created, so /library wouldn't otherwise know this
-      // file exists. Register it via the same DesignAsset row rename/archive
-      // already use.
-      if (data.uploadStatus === "synced") {
-        await api.patch("/designs/library", {
-          fileUrl: data.fileUrl,
-          thumbUrl: data.thumbUrl,
-          printifyImageId: data.printifyImageId,
+    const results = [];
+    for (const [i, file] of fileArr.entries()) {
+      try {
+        const form = new FormData();
+        form.append("file", file);
+        const { data } = await api.post("/designs/upload", form, {
+          onUploadProgress: (e) => {
+            const percent = e.total ? Math.round((e.loaded / e.total) * 100) : 0;
+            setUploadQueue((prev) => prev.map((q, qi) => (qi === i ? { ...q, percent } : q)));
+          },
         });
+        results.push(data);
+      } catch {
+        results.push({ uploadStatus: "failed" });
       }
-      return data;
-    });
-    // allSettled, not all — a hard failure (network error, no Printify account)
-    // on one file shouldn't strand the others mid-upload or leave the queue stuck.
-    const settled = await Promise.allSettled(uploads);
-    const results = settled.map((r) => (r.status === "fulfilled" ? r.value : { uploadStatus: "failed" }));
+    }
     const failed = results.filter((r) => r.uploadStatus !== "synced");
     if (failed.length > 0) toast.error(`${failed.length} of ${results.length} file(s) failed to upload`);
     if (failed.length < results.length) {
@@ -181,7 +177,9 @@ export default function MyFiles() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const dimsOf = (item: FileItem) => dims[item.fileUrl];
+  const dimsOf = (item: FileItem) => item.width != null && item.height != null
+    ? { w: item.width, h: item.height }
+    : dims[item.fileUrl];
 
   return (
     <div className="max-w-7xl mx-auto p-8 space-y-6">
@@ -343,12 +341,12 @@ export default function MyFiles() {
               <div className="text-sm text-muted-foreground space-y-0.5 break-words">
                 <p>
                   {dimsOf(current) ? `${dimsOf(current).w}px × ${dimsOf(current).h}px` : "…"}
-                  {sizes[current.fileUrl] != null && ` / ${(sizes[current.fileUrl] / 1048576).toFixed(1).replace(/\.0$/, "")} MiB`}
+                  {(current.sizeBytes ?? sizes[current.fileUrl]) != null && ` / ${((current.sizeBytes ?? sizes[current.fileUrl]) / 1048576).toFixed(1).replace(/\.0$/, "")} MiB`}
                 </p>
                 {uploadedAtOf(current.fileUrl) && (
                   <p>{uploadedAtOf(current.fileUrl)!.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</p>
                 )}
-                <p>IMAGE/{extOf(current.fileUrl)} file format</p>
+                <p>{current.mimeType?.toUpperCase() ?? `IMAGE/${extOf(current.fileUrl)}`} file format</p>
               </div>
 
               <div className="flex justify-end gap-2">

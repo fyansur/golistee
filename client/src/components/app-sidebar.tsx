@@ -1,5 +1,5 @@
 import type * as React from "react";
-import { PlugIcon, BookOpenIcon, LayoutTemplateIcon, PackageIcon, HistoryIcon, Tag, Settings, LogOutIcon } from "lucide-react";
+import { PlugIcon, BookOpenIcon, LayoutTemplateIcon, PackageIcon, HistoryIcon, Tag, Settings, LogOutIcon, PackageCheckIcon } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger,
@@ -12,6 +12,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 const NAV_ITEMS = [
   { title: "Catalog", url: "/blueprints", icon: Tag },
   { title: "Products", url: "/products", icon: PackageIcon },
+  { title: "Orders", url: "/orders", icon: PackageCheckIcon },
   { title: "Templates", url: "/templates", icon: LayoutTemplateIcon },
   { title: "History", url: "/history", icon: HistoryIcon },
 ];

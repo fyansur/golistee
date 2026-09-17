@@ -4,6 +4,7 @@ import { auth } from "../lib/middleware.js";
 import { encryptToken, decryptToken } from "../lib/crypto.js";
 import { printifyFetch } from "../lib/printify.js";
 import { usableShopWhere } from "../lib/shopAccess.js";
+import { newJob } from "../lib/backgroundJobs.js";
 
 const router = Router();
 router.use(auth);
@@ -110,6 +111,13 @@ router.post("/", async (req, res) => {
     include: { shops: true },
   });
 
+  if (process.env.PUBLIC_BASE_URL && process.env.PRINTIFY_WEBHOOK_SECRET) {
+    const enabledShops = account.shops.filter((shop) => shop.enabled);
+    await prisma.backgroundJob.createMany({
+      data: enabledShops.map((shop) => newJob("setup_order_webhooks", { shopId: shop.id, userId }, userId)),
+    });
+  }
+
   res.json(withoutToken(account));
 });
 
@@ -144,6 +152,11 @@ router.patch("/:id/shops", async (req, res) => {
   const updated = await prisma.printifyAccount.findUnique({
     where: { id: account.id }, include: { shops: { orderBy: { title: "asc" } } },
   });
+  if (process.env.PUBLIC_BASE_URL && process.env.PRINTIFY_WEBHOOK_SECRET && enabledShopIds.length > 0) {
+    await prisma.backgroundJob.createMany({
+      data: enabledShopIds.map((shopId) => newJob("setup_order_webhooks", { shopId, userId }, userId)),
+    });
+  }
   res.json(withoutToken(updated!));
 });
 

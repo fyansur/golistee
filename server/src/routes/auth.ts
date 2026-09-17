@@ -5,6 +5,8 @@ import { prisma } from "../lib/prisma.js";
 import { Prisma } from "../generated/prisma/client.js";
 import { signToken } from "../lib/jwt.js";
 import { auth } from "../lib/middleware.js";
+import { PostgresRateLimitStore } from "../lib/rateLimitStore.js";
+import { newJob } from "../lib/backgroundJobs.js";
 
 const router = Router();
 
@@ -15,6 +17,7 @@ const authLimiter = rateLimit({
   limit: process.env.NODE_ENV === "production" ? 10 : 1000,
   standardHeaders: true,
   legacyHeaders: false,
+  store: new PostgresRateLimitStore(),
   message: { error: "Too many attempts, please try again later" },
 });
 
@@ -23,7 +26,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 router.get("/me", auth, async (req, res) => {
   const user = await prisma.user.findUnique({
     where: { id: (req as any).userId },
-    select: { id: true, email: true, createdAt: true },
+    select: { id: true, email: true, createdAt: true, deletionScheduledAt: true },
   });
   res.json(user);
 });
@@ -70,6 +73,43 @@ router.put("/password", auth, async (req, res) => {
   }
   const passwordHash = await bcrypt.hash(newPassword, 10);
   await prisma.user.update({ where: { id: userId }, data: { passwordHash } });
+  res.json({ ok: true });
+});
+
+router.post("/delete-account", auth, async (req, res) => {
+  const userId = (req as any).userId;
+  const password = String(req.body.password ?? "");
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+    return res.status(401).json({ error: "Password is incorrect" });
+  }
+  if (user.deletionScheduledAt) return res.json({ deletionScheduledAt: user.deletionScheduledAt });
+
+  const deletionScheduledAt = new Date(Date.now() + 7 * 24 * 60 * 60_000);
+  await prisma.$transaction([
+    prisma.user.update({ where: { id: userId }, data: { deletionScheduledAt } }),
+    prisma.backgroundJob.create({
+      data: {
+        ...newJob("delete_account", { userId, scheduledAt: deletionScheduledAt.toISOString() }),
+        runAt: deletionScheduledAt,
+      },
+    }),
+  ]);
+  res.json({ deletionScheduledAt });
+});
+
+router.delete("/delete-account", auth, async (req, res) => {
+  const userId = (req as any).userId;
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { deletionScheduledAt: true } });
+  if (!user) return res.status(404).json({ error: "Account not found" });
+  if (!user.deletionScheduledAt) return res.json({ ok: true });
+  const scheduledAt = user.deletionScheduledAt.toISOString();
+  await prisma.$transaction([
+    prisma.user.update({ where: { id: userId }, data: { deletionScheduledAt: null } }),
+    prisma.backgroundJob.deleteMany({
+      where: { type: "delete_account", status: "pending", payload: { equals: { userId, scheduledAt } } },
+    }),
+  ]);
   res.json({ ok: true });
 });
 

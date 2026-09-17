@@ -6,8 +6,15 @@ import { Field, FieldLabel, FieldContent, FieldError } from "@/components/ui/fie
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Mail, Lock, CircleAlertIcon, Settings as SettingsIcon } from "lucide-react";
+import { Mail, Lock, CircleAlertIcon, Settings as SettingsIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
+import { useState } from "react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader,
+  AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
 
 interface PasswordForm {
   currentPassword: string;
@@ -15,7 +22,9 @@ interface PasswordForm {
 }
 
 export default function Settings() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   const { control, handleSubmit, setError, reset, formState } = useForm<PasswordForm>({
     defaultValues: { currentPassword: "", newPassword: "" },
@@ -32,6 +41,33 @@ export default function Settings() {
         type: "server",
         message: err.response?.data?.error ?? "Current password is incorrect",
       });
+    }
+  };
+
+  const scheduleDeletion = async () => {
+    setDeleting(true);
+    try {
+      await api.post("/auth/delete-account", { password: deletePassword });
+      setDeletePassword("");
+      await refreshUser();
+      toast.success("Account deletion scheduled for 7 days from now");
+    } catch (err: any) {
+      toast.error(err.response?.data?.error ?? "Could not schedule account deletion");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const cancelDeletion = async () => {
+    setDeleting(true);
+    try {
+      await api.delete("/auth/delete-account");
+      await refreshUser();
+      toast.success("Account deletion canceled");
+    } catch (err: any) {
+      toast.error(err.response?.data?.error ?? "Could not cancel account deletion");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -65,6 +101,7 @@ export default function Settings() {
             </p>
           </CardContent>
         </Card>
+        
 
         <Card>
           <CardHeader><CardTitle className="text-sm">Change Password</CardTitle></CardHeader>
@@ -125,14 +162,51 @@ export default function Settings() {
             </form>
           </CardContent>
         </Card>
-        {/* 
-        <Card>
-          <CardHeader><CardTitle className="text-sm">Appearance</CardTitle></CardHeader>
-          <CardContent className="flex flex-row items-center justify-between">
-            <p className="text-sm text-muted-foreground">Switch between light and dark theme.</p>
-            <ModeToggle />
+        <Card className="border-destructive/40">
+          <CardHeader><CardTitle className="text-sm text-destructive">Delete Account</CardTitle></CardHeader>
+          <CardContent className="space-y-4">
+            {user.deletionScheduledAt ? (
+              <>
+                <Alert className="border-destructive/30 bg-destructive/5">
+                  <CircleAlertIcon />
+                  <AlertDescription>
+                    Your account and stored data will be permanently deleted on {new Date(user.deletionScheduledAt).toLocaleString()}.
+                  </AlertDescription>
+                </Alert>
+                <Button variant="outline" onClick={cancelDeletion} disabled={deleting}>Cancel account deletion</Button>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  Deletion has a 7-day waiting period. You can cancel anytime before the deadline.
+                </p>
+                <AlertDialog>
+                  <AlertDialogTrigger render={<Button variant="destructive" />}>
+                    <Trash2Icon /> Delete account
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Schedule permanent account deletion?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Enter your password to confirm. Your account stays available for 7 days so you can cancel.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <Input
+                      type="password"
+                      placeholder="Current password"
+                      value={deletePassword}
+                      onChange={(event) => setDeletePassword(event.target.value)}
+                    />
+                    <AlertDialogFooter>
+                      <AlertDialogCancel onClick={() => setDeletePassword("")}>Keep account</AlertDialogCancel>
+                      <AlertDialogAction onClick={scheduleDeletion} disabled={!deletePassword || deleting}>Schedule deletion</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </>
+            )}
           </CardContent>
-        </Card> */}
+        </Card>
       </div>
     </div>
   );

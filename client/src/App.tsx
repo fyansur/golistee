@@ -17,6 +17,7 @@ import Settings from "@/pages/Settings";
 import Landing from "@/pages/Landing";
 import CreateListing from "./pages/CreateListing";
 import EditListing from "./pages/EditListing";
+import Orders from "./pages/Orders";
 
 
 import { Toaster } from "@/components/ui/sonner";
@@ -40,6 +41,7 @@ function App() {
                 <Route path="/templates/:id" element={<TemplateForm />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/products/:id" element={<EditListing />} />
+                <Route path="/orders" element={<Orders />} />
                 <Route path="/history" element={<History />} />
                 <Route path="/files" element={<MyFiles />} />
                 <Route path="/settings" element={<Settings />} />
