@@ -1,7 +1,7 @@
 import { Navigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
-import { Network, Layers, LayoutTemplate, Tag, Folder } from "lucide-react";
+import { Network, Layers, LayoutTemplate, Tag, Folder, Timer, ShoppingCartPlus } from "lucide-react";
 import { PrintifyBeam } from "@/components/ui/printify-beam";
 import { useForceLightMode } from "@/hooks/use-force-light-mode";
 import { cn } from "@/lib/utils";
@@ -32,36 +32,53 @@ const featurescard = [
     {
         icon: Tag,
         feature: "Bulk copy",
+        color: "bg-blue-500/20",
     },
     {
         icon: Layers,
         feature: "Bulk listing",
+        color: "bg-green-500/20",
     },
     {
         icon: LayoutTemplate,
         feature: "Listing templates",
+        color: "bg-yellow-500/20",
     },
     {
         icon: Network,
         feature: "Cross-account",
+        color: "bg-red-500/20",
     },
     {
         icon: Folder,
         feature: "Media library",
+        color: "bg-purple-500/20",
+    },
+    {
+        icon: Timer,
+        feature: "Scheduled publishing",
+        color: "bg-pink-500/20",
+    },
+    {
+        icon: ShoppingCartPlus,
+        feature: "Manage orders",
+        color: "bg-indigo-500/20",
     },
 ]
 const FeatureCard = ({
     icon: Icon, // <-- Ubah ke huruf kapital agar bisa jadi tag JSX
     feature,
+    color,
 }: {
     icon: React.ElementType // <-- Ubah tipe datanya ke ElementType
     feature: string
+    color: string
 }) => {
     return (
         <figure
             className={cn(
                 "relative h-full w-48 cursor-pointer overflow-hidden rounded-xl border p-4",
-                "border bg-background hover:bg-background/[.05]",
+                `border ${color}`,
                 "dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]"
             )}
         >
