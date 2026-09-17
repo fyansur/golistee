@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,7 +69,7 @@ export default function Catalog() {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const fetchPool = async () => {
+  const fetchPool = useCallback(async () => {
     try {
       const { data } = await api.get("/blueprints", { params: { page: poolPage, pageSize: poolPageSize } });
       setPool(data.items);
@@ -77,14 +77,14 @@ export default function Catalog() {
     } finally {
       setPoolLoading(false);
     }
-  };
-  const fetchPoolIds = async () => {
+  }, [poolPage, poolPageSize]);
+  const fetchPoolIds = useCallback(async () => {
     const { data } = await api.get("/blueprints/ids");
     setPoolBlueprintIds(new Set(data));
-  };
+  }, []);
 
-  useEffect(() => { fetchPool(); }, [poolPage, poolPageSize]);
-  useEffect(() => { fetchPoolIds(); }, []);
+  useEffect(() => { void fetchPool(); }, [fetchPool]);
+  useEffect(() => { void fetchPoolIds(); }, [fetchPoolIds]);
 
   const searchBlueprints = async () => {
     setLoading(true);
@@ -166,7 +166,7 @@ export default function Catalog() {
         </div>
       ) : pool.length > 0 ? (
         <div className="space-y-3">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {pool.map((p) => (
               <Card key={p.id} className="overflow-hidden">
                 <CardHeader>
@@ -206,7 +206,7 @@ export default function Catalog() {
       )}
       {/* Search Dialog */}
       <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) setResults([]); }}>
-        <DialogContent className="min-w-7xl max-h-[80vh] flex flex-col" showCloseButton={false}>
+        <DialogContent className="2xl:min-w-7xl max-h-[80vh] flex flex-col" showCloseButton={false}>
           <DialogHeader>
             <DialogTitle>Add Blueprints</DialogTitle>
           </DialogHeader>

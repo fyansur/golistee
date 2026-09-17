@@ -60,6 +60,28 @@ async function deleteAccount(userId: string, scheduledAt: string) {
   await prisma.user.deleteMany({ where: { id: userId, deletionScheduledAt: user.deletionScheduledAt } });
 }
 
+export async function cancelAccountDeletion(userId: string) {
+  return prisma.$transaction(async (tx) => {
+    const user = await tx.user.findUnique({ where: { id: userId }, select: { deletionScheduledAt: true } });
+    if (!user) return "missing" as const;
+    if (!user.deletionScheduledAt) return "not_scheduled" as const;
+    const scheduledAt = user.deletionScheduledAt.toISOString();
+    const deleted = await tx.backgroundJob.deleteMany({
+      where: {
+        type: "delete_account",
+        status: { in: ["pending", "failed"] },
+        payload: { equals: { userId, scheduledAt } },
+      },
+    });
+    if (deleted.count === 0) return "in_progress" as const;
+    await tx.user.updateMany({
+      where: { id: userId, deletionScheduledAt: user.deletionScheduledAt },
+      data: { deletionScheduledAt: null },
+    });
+    return "canceled" as const;
+  });
+}
+
 export const accountJobHandlers: Record<string, JobHandler> = {
   delete_account: ({ userId, scheduledAt }) => deleteAccount(String(userId), String(scheduledAt)),
 };

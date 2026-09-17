@@ -4,6 +4,7 @@ export const LISTING_STATUS: Record<string, { label: string; dot: string }> = {
   draft_queued: { label: "Draft queued", dot: "bg-blue-500" },
   creating: { label: "Publishing…", dot: "bg-blue-500" },
   scheduled: { label: "Scheduled", dot: "bg-violet-500" },
+  scheduledProducts: { label: "", dot: "bg-violet-500" },
   draft_on_printify: { label: "Draft on Printify", dot: "bg-yellow-500" },
   published: { label: "Published", dot: "bg-green-600" },
   out_of_sync: { label: "Out of sync", dot: "bg-orange-500" },

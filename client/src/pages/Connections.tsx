@@ -200,7 +200,8 @@ export default function Connections() {
   const toggleDiscovered = (id: string) => {
     setSelectedDiscoveredIds((current) => {
       const next = new Set(current);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   };
@@ -209,7 +210,8 @@ export default function Connections() {
     if (shop.status !== "active") return;
     setManagedShopIds((current) => {
       const next = new Set(current);
-      next.has(shop.id) ? next.delete(shop.id) : next.add(shop.id);
+      if (next.has(shop.id)) next.delete(shop.id);
+      else next.add(shop.id);
       return next;
     });
   };

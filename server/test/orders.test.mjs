@@ -39,7 +39,15 @@ const prisma = {
       return { count: 1 };
     },
   },
-  backgroundJob: { create: (...args) => createJob(...args) },
+  backgroundJob: {
+    create: (...args) => createJob(...args),
+    findFirst: async ({ where }) => jobs.find((job) =>
+      job.type === where.type
+      && job.status === where.status
+      && job.payload.shopId === where.AND[0].payload.equals
+      && job.payload.reconcile === where.AND[1].payload.equals
+    ) ?? null,
+  },
 };
 mock.module(new URL("../dist/lib/prisma.js", import.meta.url).href, { namedExports: { prisma } });
 mock.module(new URL("../dist/lib/crypto.js", import.meta.url).href, { namedExports: { decryptToken: (s) => s } });
@@ -76,7 +84,10 @@ beforeEach(() => {
   shops = []; orders = []; jobs = []; calls = [];
   transport = (call) => { throw new Error(`Unexpected request: ${call.method} ${call.url}`); };
   process.env.PRINTIFY_WEBHOOK_SECRET = "test-secret";
-  prisma.backgroundJob.create = (...args) => createJob(...args);
+  delete process.env.PUBLIC_BASE_URL;
+  prisma.backgroundJob.create = async ({ data }) => createJob({
+    data: { status: data.status ?? "pending", ...data },
+  });
 });
 
 test("webhook: valid signature enqueues a dedup-keyed sync job", async () => {
@@ -137,6 +148,18 @@ test("order action: produce applies the remote result on success", async () => {
   assert.equal(orders[0].actionStatus, null);
 });
 
+test("order action: final transient failure releases the order", async () => {
+  const shop = shopFixture("shop-1");
+  orders = [{ id: "order-1", printifyOrderId: "9", shopId: "shop-1", shop, actionStatus: "produce", errorMessage: null }];
+  transport = () => reply({ message: "Unavailable" }, 503);
+  await assert.rejects(
+    orderJobHandlers.order_action({ orderId: "order-1", userId: "user", action: "produce" }, 5, 5),
+    /HTTP 503/,
+  );
+  assert.equal(orders[0].actionStatus, null);
+  assert.match(orders[0].errorMessage, /HTTP 503/);
+});
+
 test("reconciliation: a full pass reschedules the next cycle when reconcile is set", async () => {
   shops = [shopFixture("shop-1")];
   transport = () => reply({ data: [{ id: "1", status: "pending", created_at: new Date().toISOString() }], last_page: 1 });
@@ -145,6 +168,15 @@ test("reconciliation: a full pass reschedules the next cycle when reconcile is s
   assert.equal(jobs[0].type, "sync_shop_orders");
   assert.deepEqual(jobs[0].payload, { shopId: "shop-1", userId: "user", page: 1, reconcile: true });
   assert.ok(jobs[0].runAt.getTime() > Date.now() + 5 * 60 * 60_000);
+});
+
+test("reconciliation: duplicate setup keeps one pending chain", async () => {
+  shops = [shopFixture("shop-1")];
+  process.env.PUBLIC_BASE_URL = "https://example.test";
+  transport = () => reply([]);
+  await orderJobHandlers.setup_order_webhooks({ shopId: "shop-1", userId: "user" });
+  await orderJobHandlers.setup_order_webhooks({ shopId: "shop-1", userId: "user" });
+  assert.equal(jobs.length, 1);
 });
 
 test("reconciliation: a one-off manual sync does not reschedule itself", async () => {

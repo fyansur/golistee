@@ -14,8 +14,7 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { DateTimePicker } from "@/components/DateTimePicker";
 import { localDateTime } from "@/lib/utils";
 
 export default function EditListing() {
@@ -31,6 +30,7 @@ export default function EditListing() {
   const [scheduledAt, setScheduledAt] = useState<string | null>(null);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [scheduleAt, setScheduleAt] = useState(() => localDateTime(new Date(Date.now() + 60 * 60_000)));
+  const [scheduleMin] = useState(() => localDateTime(new Date(Date.now() + 60_000)));
   // Tracks the designs array as last loaded/saved — reference-compared against
   // draft.designs at save time so we only resend designs (and trigger a
   // print_areas resync on Printify) when DesignDialog actually replaced it.
@@ -189,22 +189,19 @@ export default function EditListing() {
       </div>
 
       <Dialog open={scheduleOpen} onOpenChange={setScheduleOpen}>
-        <DialogContent>
-          <DialogHeader><DialogTitle>Schedule publishing</DialogTitle></DialogHeader>
-          <div className="space-y-1">
-            <Label htmlFor="publish-at">Publish at</Label>
-            <Input
-              id="publish-at"
-              type="datetime-local"
-              value={scheduleAt}
-              min={localDateTime(new Date(Date.now() + 60_000))}
-              onChange={(event) => setScheduleAt(event.target.value)}
-            />
-            <p className="text-xs text-muted-foreground">Uses your current timezone.</p>
+        <DialogContent showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle>Schedule publishing</DialogTitle>
+            </DialogHeader>
+          <div className="space-y-3">
+            <DateTimePicker value={scheduleAt} onChange={setScheduleAt} min={scheduleMin} />
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setScheduleOpen(false)}>Cancel</Button>
-            <Button onClick={schedule} disabled={!scheduleAt || saving}>Schedule</Button>
+          <DialogFooter className="flex items-center justify-between!">
+            <p className="text-xs text-muted-foreground">Uses your current timezone.</p>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setScheduleOpen(false)}>Cancel</Button>
+              <Button onClick={schedule} disabled={!scheduleAt || new Date(scheduleAt) < new Date(scheduleMin) || saving}>Schedule</Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>

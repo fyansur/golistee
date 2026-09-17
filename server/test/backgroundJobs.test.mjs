@@ -61,3 +61,16 @@ test("worker schedules a failed job for retry", async () => {
   assert.match(row.lastError, /temporary/);
   assert.ok(row.runAt > new Date());
 });
+
+test("worker passes retry position and marks the final failure", async () => {
+  row.attempts = 2;
+  let position;
+  assert.equal(await runOneJob({
+    demo: async (_payload, attempt, maxAttempts) => {
+      position = [attempt, maxAttempts];
+      throw new Error("still failing");
+    },
+  }), true);
+  assert.deepEqual(position, [3, 3]);
+  assert.equal(row.status, "failed");
+});

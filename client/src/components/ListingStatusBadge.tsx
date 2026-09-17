@@ -51,6 +51,10 @@ const STATUS_STYLE: Record<string, { icon: LucideIcon; className: string; animat
     icon: CircleXIcon,
     className: "border-red-200 bg-red-50 text-red-700 dark:border-red-900 dark:bg-red-950/60 dark:text-red-300",
   },
+  scheduledProducts: {
+    icon: TimerIcon,
+    className: "border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-900 dark:bg-violet-950/60 dark:text-violet-300",
+  },
 };
 
 interface ListingStatusBadgeProps {

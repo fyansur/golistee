@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Package, PlusIcon, Trash2Icon, Box, SendIcon, CopyIcon, UnplugIcon, CalendarClockIcon, SearchIcon, Pencil } from "lucide-react";
@@ -11,7 +11,6 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue,
@@ -25,7 +24,7 @@ import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/
 import { PaginationFooter } from "@/components/PaginationFooter";
 import { Badge } from "@/components/ui/badge";
 import { ListingStatusBadge } from "@/components/ListingStatusBadge";
-import { Input } from "@/components/ui/input";
+import { DateTimePicker } from "@/components/DateTimePicker";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { localDateTime } from "@/lib/utils";
 import { FILTERABLE_STATUSES } from "@/lib/listingStatus";
@@ -123,6 +122,7 @@ export default function Products() {
   const [copyTargetShop, setCopyTargetShop] = useState("");
   const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
   const [scheduleAt, setScheduleAt] = useState(() => localDateTime(new Date(Date.now() + 60 * 60_000)));
+  const [scheduleMin] = useState(() => localDateTime(new Date(Date.now() + 60_000)));
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search);
 
@@ -135,7 +135,7 @@ export default function Products() {
   // overlap in flight — without this guard, an older request resolving after
   // a newer one would clobber the newer, correct result.
   const fetchRequestId = useRef(0);
-  const fetchProducts = () => {
+  const fetchProducts = useCallback(() => {
     const requestId = ++fetchRequestId.current;
     setLoading(true);
     api
@@ -152,20 +152,19 @@ export default function Products() {
         setProducts(data.items); setTotal(data.total);
       })
       .finally(() => { if (requestId === fetchRequestId.current) setLoading(false); });
-  };
+  }, [debouncedSearch, page, pageSize, selectedShopId, selectedStatus]);
 
-  useEffect(() => { fetchProducts(); }, [selectedShopId, selectedStatus, debouncedSearch, page, pageSize]);
-  useEffect(() => setPage(1), [selectedShopId, selectedStatus, debouncedSearch, pageSize]);
-  useEffect(() => setSelectedIds(new Set()), [selectedShopId, selectedStatus, debouncedSearch]);
+  useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
   const toggleSelect = (id: string) =>
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
 
-  const allSelected = products.length > 0 && selectedIds.size === products.length;
+  const allSelected = products.length > 0 && products.every((product) => selectedIds.has(product.id));
   const toggleSelectAll = () => setSelectedIds(allSelected ? new Set() : new Set(products.map((p) => p.id)));
 
   const deleteProduct = async (id: string) => {
@@ -292,24 +291,41 @@ export default function Products() {
       </div>
 
       <div className="flex flex-row items-center gap-2">
-      <InputGroup className="w-full bg-card!">
-        <InputGroupAddon align="inline-start">
-          <SearchIcon className="size-4" />
-        </InputGroupAddon>
-        <InputGroupInput
-          placeholder="Search by title"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+        <InputGroup className="w-full bg-card!">
+          <InputGroupAddon align="inline-start">
+            <SearchIcon className="size-4" />
+          </InputGroupAddon>
+          <InputGroupInput
+            placeholder="Search by title"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+              setSelectedIds(new Set());
+            }}
+          />
+        </InputGroup>
+        <ShopFilterSelect
+          shops={shops}
+          value={selectedShopId}
+          onChange={(value) => {
+            setSelectedShopId(value);
+            setPage(1);
+            setSelectedIds(new Set());
+          }}
+          className="bg-card!"
         />
-      </InputGroup>
-      <ShopFilterSelect shops={shops} value={selectedShopId} onChange={setSelectedShopId} className="bg-card!" />
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-2">
         <StatusFilterChips
           statuses={FILTERABLE_STATUSES}
           value={selectedStatus}
-          onChange={setSelectedStatus}
+          onChange={(value) => {
+            setSelectedStatus(value);
+            setPage(1);
+            setSelectedIds(new Set());
+          }}
           renderBadge={(s) => <ListingStatusBadge status={s} />}
         />
       </div>
@@ -356,11 +372,11 @@ export default function Products() {
             <Table className="table-fixed bg-card">
               <colgroup>
                 <col className="w-[3%]" />
-                <col className="w-[40%]"/>
+                <col className="w-[40%]" />
                 <col className="w-[15%]" />
                 <col className="w-[10%]" />
                 <col className="w-[15%]" />
-                <col/>
+                <col />
               </colgroup>
               <TableHeader>
                 <TableRow className="bg-card">
@@ -420,7 +436,7 @@ export default function Products() {
                       <TableHead className="p-6 font-bold">Shop</TableHead>
                       <TableHead className="p-6 font-bold">Sales</TableHead>
                       <TableHead className="p-6 font-bold">Status</TableHead>
-                      <TableHead className="p-6 font-bold"/>
+                      <TableHead className="p-6 font-bold" />
                     </>
                   )}
                 </TableRow>
@@ -430,7 +446,7 @@ export default function Products() {
                   const title = p.title || "Untitled";
                   const availability = productAvailability(p);
                   return (
-                    <TableRow key={p.id} data-state={selectedIds.has(p.id) ? "selected" : undefined} className="h-36">  
+                    <TableRow key={p.id} data-state={selectedIds.has(p.id) ? "selected" : undefined} className="h-36">
                       <TableCell className="p-6">
                         <Checkbox checked={selectedIds.has(p.id)} onCheckedChange={() => toggleSelect(p.id)} />
                       </TableCell>
@@ -472,10 +488,12 @@ export default function Products() {
                       </TableCell>
 
                       <TableCell className="p-6">
-                        <ListingStatusBadge status={p.status} />
-                        {p.scheduledPublishAt && (
-                          <p className="mt-1 text-xs text-muted-foreground">{new Date(p.scheduledPublishAt).toLocaleString()}</p>
-                        )}
+                        <div className="flex flex-row items-start">
+                          <ListingStatusBadge status={p.status === "scheduled" ? "scheduledProducts" : p.status} className={`${p.status === "scheduled" ? "rounded-r-none" : ""}`} />
+                          {p.scheduledPublishAt && (
+                            <Badge className="border-l-0 border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-900 dark:bg-violet-900/60 dark:text-violet-300 h-6 gap-1.5 rounded-full rounded-l-none px-2.5 font-semibold">{new Date(p.scheduledPublishAt).toLocaleString()}</Badge>
+                          )}
+                        </div>
                       </TableCell>
 
                       <TableCell className="p-6">
@@ -513,7 +531,20 @@ export default function Products() {
             </Table>
           </div>
 
-          <PaginationFooter page={page} pageSize={pageSize} total={total} onPageChange={setPage} onPageSizeChange={setPageSize} />
+          <PaginationFooter
+            page={page}
+            pageSize={pageSize}
+            total={total}
+            onPageChange={(value) => {
+              setPage(value);
+              setSelectedIds(new Set());
+            }}
+            onPageSizeChange={(value) => {
+              setPageSize(value);
+              setPage(1);
+              setSelectedIds(new Set());
+            }}
+          />
         </>
       )}
 
@@ -523,7 +554,6 @@ export default function Products() {
             <DialogTitle>Copy to Other Shop</DialogTitle>
           </DialogHeader>
           <div className="py-2 space-y-1">
-            <Label>Target store</Label>
             <Select value={copyTargetShop} onValueChange={(v) => setCopyTargetShop(v ?? "")}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a store...">
@@ -553,21 +583,18 @@ export default function Products() {
 
       <Dialog open={scheduleDialogOpen} onOpenChange={setScheduleDialogOpen}>
         <DialogContent showCloseButton={false}>
-          <DialogHeader><DialogTitle>Schedule publishing</DialogTitle></DialogHeader>
-          <div className="space-y-1">
-            <Label htmlFor="publish-at">Publish {selectedIds.size} product(s) at</Label>
-            <Input
-              id="publish-at"
-              type="datetime-local"
-              value={scheduleAt}
-              min={localDateTime(new Date(Date.now() + 60_000))}
-              onChange={(event) => setScheduleAt(event.target.value)}
-            />
-            <p className="text-xs text-muted-foreground">Uses your current timezone.</p>
+          <DialogHeader>
+            <DialogTitle>Schedule</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <DateTimePicker value={scheduleAt} onChange={setScheduleAt} min={scheduleMin} />
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setScheduleDialogOpen(false)}>Cancel</Button>
-            <Button onClick={bulkSchedule} disabled={!scheduleAt || bulkBusy}>Schedule</Button>
+          <DialogFooter className="flex items-center justify-between!">
+            <p className="text-xs text-muted-foreground">Uses your current timezone.</p>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setScheduleDialogOpen(false)}>Cancel</Button>
+              <Button onClick={bulkSchedule} disabled={!scheduleAt || new Date(scheduleAt) < new Date(scheduleMin) || bulkBusy}>Schedule</Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>

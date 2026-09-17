@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import api from "@/lib/api";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -81,6 +81,8 @@ export default function MyFiles() {
   const [nameDraft, setNameDraft] = useState("");
   const [uploadQueue, setUploadQueue] = useState<{ name: string; percent: number }[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const loadedDimensions = useRef(new Set<string>());
+  const loadedSizes = useRef(new Set<string>());
 
   // Debounced so typing doesn't fire a request per keystroke.
   useEffect(() => {
@@ -90,7 +92,7 @@ export default function MyFiles() {
 
   useEffect(() => setPage(1), [filter, debouncedSearch, pageSize]);
 
-  const fetchLibrary = () => {
+  const fetchLibrary = useCallback(() => {
     setLoading(true);
     api
       .get("/designs/library", {
@@ -104,15 +106,16 @@ export default function MyFiles() {
         setItems(data.items);
         setTotal(data.total);
         data.items.forEach((item) => {
-          if (item.width == null && !(item.fileUrl in dims)) {
+          if (item.width == null && !loadedDimensions.current.has(item.fileUrl)) {
+            loadedDimensions.current.add(item.fileUrl);
             loadImageSize(item.fileUrl).then((d) => setDims((prev) => ({ ...prev, [item.fileUrl]: d })));
           }
         });
       })
       .finally(() => setLoading(false));
-  };
+  }, [debouncedSearch, filter, page, pageSize]);
 
-  useEffect(fetchLibrary, [filter, debouncedSearch, page, pageSize]);
+  useEffect(fetchLibrary, [fetchLibrary]);
 
   const current = openIndex != null ? items[openIndex] : null;
 
@@ -120,15 +123,16 @@ export default function MyFiles() {
     if (!current) return;
     setRenaming(false);
     setNameDraft(displayNameOf(current));
-    if (current.sizeBytes == null && !(current.fileUrl in sizes)) {
+    if (current.sizeBytes == null && !loadedSizes.current.has(current.fileUrl)) {
+      loadedSizes.current.add(current.fileUrl);
       fetch(current.fileUrl, { method: "HEAD" })
         .then((res) => {
           const len = res.headers.get("content-length");
           if (len) setSizes((prev) => ({ ...prev, [current.fileUrl]: Number(len) }));
         })
-        .catch(() => {});
+        .catch(() => loadedSizes.current.delete(current.fileUrl));
     }
-  }, [current?.fileUrl]);
+  }, [current]);
 
   const saveName = async () => {
     if (!current) return;

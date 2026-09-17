@@ -422,7 +422,8 @@ export function DesignDialog({ draft, onChange, onClose }: Props) {
   const toggleOne = (v: Variant) => {
     const next = new Set(selected);
     const wasSelected = next.has(v.id);
-    wasSelected ? next.delete(v.id) : next.add(v.id);
+    if (wasSelected) next.delete(v.id);
+    else next.add(v.id);
     setSelected(next);
     if (!wasSelected && !selectedVariants.some((x) => x.options.color === v.options.color)) {
       setActiveColor(v.options.color);
@@ -432,7 +433,10 @@ export function DesignDialog({ draft, onChange, onClose }: Props) {
   const toggleGroup = (ids: number[], color?: string) => {
     const next = new Set(selected);
     const allSelected = ids.every((id) => next.has(id));
-    ids.forEach((id) => allSelected ? next.delete(id) : next.add(id));
+    ids.forEach((id) => {
+      if (allSelected) next.delete(id);
+      else next.add(id);
+    });
     setSelected(next);
     if (!allSelected && color && !selectedVariants.some((v) => v.options.color === color)) {
       setActiveColor(color);

@@ -70,7 +70,7 @@ export default function TemplateForm() {
       setVariants(data.variants);
       setLoading(false);
     }).catch(() => toast.error("Template not found"));
-  }, [id]);
+  }, [id, isEdit]);
 
   useEffect(() => {
     if (!blueprintId) return;

@@ -11,8 +11,7 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { DateTimePicker } from "@/components/DateTimePicker";
 import { localDateTime } from "@/lib/utils";
 
 export interface Design {
@@ -66,6 +65,7 @@ export default function CreateListing() {
   const [saving, setSaving] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [scheduleAt, setScheduleAt] = useState(() => localDateTime(new Date(Date.now() + 60 * 60_000)));
+  const [scheduleMin] = useState(() => localDateTime(new Date(Date.now() + 60_000)));
 
   const updateDraft = (id: string, patch: Partial<ListingDraft>) => {
     setDrafts((prev) => prev.map((d) => d.id === id ? { ...d, ...patch } : d));
@@ -219,39 +219,36 @@ export default function CreateListing() {
       </div>
 
       <Dialog open={scheduleOpen} onOpenChange={setScheduleOpen}>
-        <DialogContent>
-          <DialogHeader><DialogTitle>Schedule publishing</DialogTitle></DialogHeader>
-          <div className="space-y-1">
-            <Label htmlFor="publish-at">Publish {drafts.length} listing(s) at</Label>
-            <Input
-              id="publish-at"
-              type="datetime-local"
-              value={scheduleAt}
-              min={localDateTime(new Date(Date.now() + 60_000))}
-              onChange={(event) => setScheduleAt(event.target.value)}
-            />
-            <p className="text-xs text-muted-foreground">Uses your current timezone.</p>
+        <DialogContent showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle>Schedule</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <DateTimePicker value={scheduleAt} onChange={setScheduleAt} min={scheduleMin} />
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setScheduleOpen(false)}>Cancel</Button>
-            <Button onClick={schedule} disabled={!scheduleAt || publishing}>Schedule</Button>
+          <DialogFooter className="flex items-center justify-between!">
+            <p className="text-xs text-muted-foreground">Uses your current timezone.</p>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setScheduleOpen(false)}>Cancel</Button>
+              <Button onClick={schedule} disabled={!scheduleAt || new Date(scheduleAt) < new Date(scheduleMin) || publishing}>Schedule</Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto">
 
-      <div className="space-y-6 p-8 pt-8">
-        {drafts.map((draft, i) => (
-          <ListingCard
-            key={draft.id}
-            index={i}
-            draft={draft}
-            onChange={(patch) => updateDraft(draft.id, patch)}
-            onRemove={() => removeCard(draft.id)}
-          />
-        ))}
+        <div className="space-y-6 p-8 pt-8">
+          {drafts.map((draft, i) => (
+            <ListingCard
+              key={draft.id}
+              index={i}
+              draft={draft}
+              onChange={(patch) => updateDraft(draft.id, patch)}
+              onRemove={() => removeCard(draft.id)}
+            />
+          ))}
+        </div>
       </div>
-    </div>
     </>
   );
 }

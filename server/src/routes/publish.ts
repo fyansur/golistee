@@ -671,6 +671,8 @@ async function processBulkPublish(
   ids: string[],
   queuedStatus: "queued" | "scheduled" = "queued",
   scheduledAt?: string,
+  attempt = 1,
+  maxAttempts = 5,
 ) {
   for (const id of ids) {
     const claim = await claimListing(id, queuedStatus, scheduledAt);
@@ -713,7 +715,9 @@ async function processBulkPublish(
       if (current?.printifyProductId && retryablePrintifyError(err)) {
         await prisma.listing.update({
           where: { id },
-          data: { status: queuedStatus, errorMessage: err.message, processingStartedAt: null },
+          data: attempt >= maxAttempts
+            ? { status: "failed", errorMessage: err.message, processingStartedAt: null, scheduledPublishAt: null }
+            : { status: queuedStatus, errorMessage: err.message, processingStartedAt: null },
         });
         throw err;
       }
@@ -725,7 +729,7 @@ async function processBulkPublish(
   }
 }
 
-async function processDrafts(ids: string[]) {
+async function processDrafts(ids: string[], attempt = 1, maxAttempts = 5) {
   for (const id of ids) {
     const claim = await claimListing(id, "draft_queued");
     if (!claim) continue;
@@ -769,7 +773,11 @@ async function processDrafts(ids: string[]) {
       if (current?.printifyProductId && retryablePrintifyError(err)) {
         await prisma.listing.update({
           where: { id },
-          data: { status: "draft_queued", errorMessage: err.message, processingStartedAt: null },
+          data: {
+            status: attempt >= maxAttempts ? "failed" : "draft_queued",
+            errorMessage: err.message,
+            processingStartedAt: null,
+          },
         });
         throw err;
       }
@@ -873,10 +881,11 @@ async function processBulkCopy(ids: string[], targetShopId: string, batchId: str
 }
 
 export const publishJobHandlers: Record<string, JobHandler> = {
-  publish_listing: ({ id, scheduledAt }) => processBulkPublish(
-    [String(id)], scheduledAt ? "scheduled" : "queued", scheduledAt ? String(scheduledAt) : undefined
+  publish_listing: ({ id, scheduledAt }, attempt, maxAttempts) => processBulkPublish(
+    [String(id)], scheduledAt ? "scheduled" : "queued", scheduledAt ? String(scheduledAt) : undefined,
+    attempt, maxAttempts,
   ),
-  create_draft: ({ id }) => processDrafts([String(id)]),
+  create_draft: ({ id }, attempt, maxAttempts) => processDrafts([String(id)], attempt, maxAttempts),
   delete_listing: ({ id }) => processBulkDelete([String(id)]),
   copy_listing: ({ id, targetShopId, batchId }) => processBulkCopy(
     [String(id)], String(targetShopId), String(batchId)

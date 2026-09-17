@@ -101,7 +101,7 @@ export default function Settings() {
             </p>
           </CardContent>
         </Card>
-        
+
 
         <Card>
           <CardHeader><CardTitle className="text-sm">Change Password</CardTitle></CardHeader>

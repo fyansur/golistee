@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "./prisma.js";
 
-export type JobHandler = (payload: any) => Promise<void>;
+export type JobHandler = (payload: any, attempt?: number, maxAttempts?: number) => Promise<void>;
 
 const POLL_MS = 1_000;
 const LEASE_MS = 15 * 60_000;
@@ -60,7 +60,7 @@ async function runJob(handlers: Record<string, JobHandler>) {
   try {
     const handler = handlers[job.type];
     if (!handler) throw new Error(`No handler for job type ${job.type}`);
-    await handler(job.payload);
+    await handler(job.payload, job.attempts, job.maxAttempts);
     await prisma.backgroundJob.update({
       where: { id: job.id },
       data: { status: "succeeded", lockedAt: null, lockedBy: null, lastError: null },

@@ -50,7 +50,7 @@ async function upsertOrder(shopId: string, order: any) {
   return prisma.order.upsert({
     where: { shopId_printifyOrderId: { shopId, printifyOrderId: data.printifyOrderId } },
     create: data,
-    update: data,
+    update: { ...data, actionStatus: undefined, errorMessage: undefined },
   });
 }
 
@@ -64,6 +64,26 @@ async function fetchOrder(shop: any, printifyOrderId: string) {
 }
 
 const RECONCILE_INTERVAL_MS = 6 * 60 * 60_000;
+
+async function enqueueReconcile(shopId: string, userId: string, runAt = new Date()) {
+  const existing = await prisma.backgroundJob.findFirst({
+    where: {
+      type: "sync_shop_orders",
+      status: "pending",
+      AND: [
+        { payload: { path: ["shopId"], equals: shopId } },
+        { payload: { path: ["reconcile"], equals: true } },
+      ],
+    },
+  });
+  if (existing) return;
+  await prisma.backgroundJob.create({
+    data: {
+      ...newJob("sync_shop_orders", { shopId, userId, page: 1, reconcile: true }, userId),
+      runAt,
+    },
+  });
+}
 
 // reconcile:true makes this call chain self-perpetuating: each full pass
 // through a shop's pages re-queues page 1 for RECONCILE_INTERVAL_MS later,
@@ -86,15 +106,7 @@ async function syncShopOrders(shopId: string, userId: string, page = 1, reconcil
       data: newJob("sync_shop_orders", { shopId, userId, page: page + 1, reconcile }, userId),
     });
   } else if (reconcile) {
-    // ponytail: fixed interval, no jitter/backoff and no dedupe against a
-    // second chain (e.g. from disconnect+reconnect). Add a per-shop chain
-    // owner if duplicate reconcile loops ever show up in Printify usage.
-    await prisma.backgroundJob.create({
-      data: {
-        ...newJob("sync_shop_orders", { shopId, userId, page: 1, reconcile: true }, userId),
-        runAt: new Date(Date.now() + RECONCILE_INTERVAL_MS),
-      },
-    });
+    await enqueueReconcile(shopId, userId, new Date(Date.now() + RECONCILE_INTERVAL_MS));
   }
 }
 
@@ -122,12 +134,16 @@ async function setupOrderWebhooks(shopId: string, userId: string) {
       body: JSON.stringify({ topic, url, secret }),
     });
   }
-  await prisma.backgroundJob.create({
-    data: newJob("sync_shop_orders", { shopId, userId, page: 1, reconcile: true }, userId),
-  });
+  await enqueueReconcile(shopId, userId);
 }
 
-async function runOrderAction(orderId: string, userId: string, action: "produce" | "cancel") {
+async function runOrderAction(
+  orderId: string,
+  userId: string,
+  action: "produce" | "cancel",
+  attempt = 1,
+  maxAttempts = 5,
+) {
   const local = await prisma.order.findFirst({
     where: { id: orderId, shop: { account: { userId } } },
     include: { shop: { include: { account: true } } },
@@ -135,8 +151,14 @@ async function runOrderAction(orderId: string, userId: string, action: "produce"
   if (!local) return;
   try {
     const remote = await fetchOrder(local.shop, local.printifyOrderId);
-    if (action === "cancel" && remote.status === "canceled") return;
-    if (action === "produce" && ["sending-to-production", "in-production", "partially-fulfilled", "fulfilled"].includes(remote.status)) return;
+    if (action === "cancel" && remote.status === "canceled") {
+      await prisma.order.update({ where: { id: local.id }, data: { actionStatus: null, errorMessage: null } });
+      return;
+    }
+    if (action === "produce" && ["sending-to-production", "in-production", "partially-fulfilled", "fulfilled"].includes(remote.status)) {
+      await prisma.order.update({ where: { id: local.id }, data: { actionStatus: null, errorMessage: null } });
+      return;
+    }
     if (action === "cancel" && !["on-hold", "payment-not-received"].includes(remote.status)) {
       await prisma.order.update({ where: { id: local.id }, data: { actionStatus: null, errorMessage: `Order cannot be canceled from ${remote.status}` } });
       return;
@@ -150,13 +172,23 @@ async function runOrderAction(orderId: string, userId: string, action: "produce"
       `https://api.printify.com/v1/shops/${local.shop.printifyShopId}/orders/${local.printifyOrderId}/${endpoint}.json`,
       { method: "POST", headers: { Authorization: `Bearer ${decryptToken(local.shop.account.accessToken)}` } },
     );
-    if (result?.id) await upsertOrder(local.shopId, result);
-    else await prisma.order.update({
+    if (result?.id) {
+      await upsertOrder(local.shopId, result);
+      await prisma.order.update({ where: { id: local.id }, data: { actionStatus: null, errorMessage: null } });
+    } else await prisma.order.update({
       where: { id: local.id },
       data: { status: action === "produce" ? "sending-to-production" : "canceled", actionStatus: null, errorMessage: null },
     });
   } catch (error) {
-    if (error instanceof PrintifyError && (error.status === 429 || error.status >= 500)) throw error;
+    if (error instanceof PrintifyError && (error.status === 429 || error.status >= 500)) {
+      if (attempt >= maxAttempts) {
+        await prisma.order.updateMany({
+          where: { id: local.id },
+          data: { actionStatus: null, errorMessage: error.message },
+        });
+      }
+      throw error;
+    }
     await prisma.order.updateMany({
       where: { id: local.id },
       data: { actionStatus: null, errorMessage: error instanceof Error ? error.message : String(error) },
@@ -273,8 +305,8 @@ export const orderJobHandlers: Record<string, JobHandler> = {
     });
     if (shop) await fetchOrder(shop, String(orderId));
   },
-  order_action: ({ orderId, userId, action }) => runOrderAction(
-    String(orderId), String(userId), action === "cancel" ? "cancel" : "produce"
+  order_action: ({ orderId, userId, action }, attempt, maxAttempts) => runOrderAction(
+    String(orderId), String(userId), action === "cancel" ? "cancel" : "produce", attempt, maxAttempts,
   ),
 };
 

@@ -7,6 +7,7 @@ import { signToken } from "../lib/jwt.js";
 import { auth } from "../lib/middleware.js";
 import { PostgresRateLimitStore } from "../lib/rateLimitStore.js";
 import { newJob } from "../lib/backgroundJobs.js";
+import { cancelAccountDeletion } from "../lib/accountDeletion.js";
 
 const router = Router();
 
@@ -100,16 +101,9 @@ router.post("/delete-account", auth, async (req, res) => {
 
 router.delete("/delete-account", auth, async (req, res) => {
   const userId = (req as any).userId;
-  const user = await prisma.user.findUnique({ where: { id: userId }, select: { deletionScheduledAt: true } });
-  if (!user) return res.status(404).json({ error: "Account not found" });
-  if (!user.deletionScheduledAt) return res.json({ ok: true });
-  const scheduledAt = user.deletionScheduledAt.toISOString();
-  await prisma.$transaction([
-    prisma.user.update({ where: { id: userId }, data: { deletionScheduledAt: null } }),
-    prisma.backgroundJob.deleteMany({
-      where: { type: "delete_account", status: "pending", payload: { equals: { userId, scheduledAt } } },
-    }),
-  ]);
+  const result = await cancelAccountDeletion(userId);
+  if (result === "missing") return res.status(404).json({ error: "Account not found" });
+  if (result === "in_progress") return res.status(409).json({ error: "Account deletion is already in progress" });
   res.json({ ok: true });
 });
 

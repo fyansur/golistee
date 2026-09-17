@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Trash2Icon, PencilIcon, LayoutTemplateIcon, PlusIcon } from "lucide-react";
@@ -38,13 +38,13 @@ export default function Templates() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const fetchTemplates = async () => {
+  const fetchTemplates = useCallback(async () => {
     const { data } = await api.get("/templates", { params: { page, pageSize } });
     setTemplates(data.items);
     setTotal(data.total);
-  };
+  }, [page, pageSize]);
 
-  useEffect(() => { fetchTemplates(); }, [page, pageSize]);
+  useEffect(() => { void fetchTemplates(); }, [fetchTemplates]);
 
   const deleteTemplate = async (id: string) => {
     await api.delete(`/templates/${id}`);
