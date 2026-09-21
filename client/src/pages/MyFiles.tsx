@@ -167,12 +167,20 @@ export default function MyFiles() {
           },
         });
         results.push(data);
-      } catch {
-        results.push({ uploadStatus: "failed" });
+      } catch (err: any) {
+        // Keep the server's reason (size cap, unsupported type) — a bare
+        // "failed to upload" gives the user nothing to act on.
+        results.push({ uploadStatus: "failed", uploadError: err.response?.data?.error });
       }
     }
     const failed = results.filter((r) => r.uploadStatus !== "synced");
-    if (failed.length > 0) toast.error(`${failed.length} of ${results.length} file(s) failed to upload`);
+    if (failed.length > 0) {
+      const reasons = [...new Set(failed.map((r) => r.uploadError).filter(Boolean))];
+      toast.error(
+        `${failed.length} of ${results.length} file(s) failed to upload`,
+        reasons.length > 0 ? { description: reasons.join(" · ") } : undefined,
+      );
+    }
     if (failed.length < results.length) {
       toast.success(results.length - failed.length > 1 ? "Files uploaded" : "File uploaded");
     }

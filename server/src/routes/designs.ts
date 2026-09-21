@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, type RequestHandler } from "express";
 import { randomUUID } from "node:crypto";
 import { createReadStream } from "node:fs";
 import { unlink } from "node:fs/promises";
@@ -14,6 +14,7 @@ import { ensurePrintifyImage } from "../lib/printifyImages.js";
 import { findCatalogAccount, usableShopWhere } from "../lib/shopAccess.js";
 
 const ALLOWED_IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp", "image/gif"]);
+const MAX_UPLOAD_MB = 100;
 
 const router = Router();
 const upload = multer({
@@ -21,7 +22,7 @@ const upload = multer({
     destination: os.tmpdir(),
     filename: (_req, file, cb) => cb(null, `${randomUUID()}-${file.originalname.replace(/[^a-zA-Z0-9.-]/g, "_")}`),
   }),
-  limits: { fileSize: 100 * 1024 * 1024 }, // print files can be large; still bounded
+  limits: { fileSize: MAX_UPLOAD_MB * 1024 * 1024 }, // print files can be large; still bounded
   fileFilter: (_req, file, cb) => {
     if (!ALLOWED_IMAGE_TYPES.has(file.mimetype)) return cb(new Error("Unsupported file type"));
     cb(null, true);
@@ -29,7 +30,20 @@ const upload = multer({
 });
 router.use(auth);
 
-router.post("/upload", upload.single("file"), async (req, res) => {
+// Multer rejections (over the size cap, unsupported mime) are thrown, not passed
+// to the handler — without this they fall through to Express' default handler and
+// reach the client as an opaque 500 with an HTML body, so the UI could only say
+// "failed to upload" without ever saying why.
+const uploadFile: RequestHandler = (req, res, next) =>
+  upload.single("file")(req, res, (err: any) => {
+    if (!err) return next();
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return res.status(413).json({ error: `File is too large — the limit is ${MAX_UPLOAD_MB}MB` });
+    }
+    return res.status(400).json({ error: err.message || "Upload failed" });
+  });
+
+router.post("/upload", uploadFile, async (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file" });
   try {
     const userId = (req as any).userId;
