@@ -73,6 +73,10 @@ const loadImageSize = (url: string) =>
     img.src = url;
   });
 
+// Small enough that the panel paints almost immediately; the rest streams in as
+// the user scrolls, instead of every thumbnail racing the canvas for connections.
+const LIBRARY_PAGE_SIZE = 8;
+
 // The library row as /designs/library returns it — width/height come straight
 // from the DB (sharp reads them at upload), so nothing has to download the
 // full-res file just to learn how big it is.
@@ -183,18 +187,54 @@ export function DesignDialog({ draft, onChange, onClose }: Props) {
   const [librarySort, setLibrarySort] = useState<"recent" | "name">("recent");
   const [libraryView, setLibraryView] = useState<"grid" | "list">("grid");
   const [libraryOpen, setLibraryOpen] = useState(true);
+  const [libraryPage, setLibraryPage] = useState(1);
+  const [libraryTotal, setLibraryTotal] = useState(0);
+  const [libraryLoading, setLibraryLoading] = useState(false);
+  const [librarySearchQuery, setLibrarySearchQuery] = useState("");
+
+  // Debounced so typing doesn't fire a request per keystroke. Resetting the page
+  // in the same batch keeps a stale page N from firing against the new query.
   useEffect(() => {
-    // This is a reuse-a-design gallery, not the paginated My Files page —
-    // pull a generous page size so it still shows everything for a normal user.
-    api.get("/designs/library", { params: { pageSize: 100 } }).then(({ data }) => setLibrary(data.items));
-  }, []);
-  const filteredLibrary = library.filter((item) =>
-    fileNameOf(item.fileUrl).toLowerCase().includes(librarySearch.toLowerCase())
-  );
-  // The API already orders recent-first; only "Name" needs an actual client sort.
+    const t = setTimeout(() => { setLibrarySearchQuery(librarySearch); setLibraryPage(1); }, 300);
+    return () => clearTimeout(t);
+  }, [librarySearch]);
+
+  // One page at a time, appended as the user reaches the bottom — a full library
+  // used to arrive as one 100-item page, every thumbnail racing for the same six
+  // connections the canvas needs.
+  useEffect(() => {
+    setLibraryLoading(true);
+    api
+      .get("/designs/library", {
+        params: { page: libraryPage, pageSize: LIBRARY_PAGE_SIZE, ...(librarySearchQuery ? { search: librarySearchQuery } : {}) },
+      })
+      .then(({ data }: { data: { items: LibraryItem[]; total: number } }) => {
+        setLibrary((prev) => (libraryPage === 1 ? data.items : [...prev, ...data.items]));
+        setLibraryTotal(data.total);
+      })
+      .finally(() => setLibraryLoading(false));
+  }, [libraryPage, librarySearchQuery]);
+
+  const hasMoreLibrary = library.length < libraryTotal;
+  // Sentinel at the end of the list; it only exists while there's a next page and
+  // nothing is in flight, so reaching the bottom can't queue two fetches at once.
+  const libraryEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = libraryEndRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setLibraryPage((p) => p + 1);
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [hasMoreLibrary, libraryLoading]);
+
+  // Searching is server-side; only "Name" needs a client sort.
+  // ponytail: sorts the pages loaded so far, not the whole library — needs a
+  // stored display name to sort on server-side (most rows have name = null).
   const sortedLibrary = librarySort === "name"
-    ? [...filteredLibrary].sort((a, b) => fileNameOf(a.fileUrl).localeCompare(fileNameOf(b.fileUrl)))
-    : filteredLibrary;
+    ? [...library].sort((a, b) => fileNameOf(a.fileUrl).localeCompare(fileNameOf(b.fileUrl)))
+    : library;
 
   // Switching which design is active (position/color context) unfocuses whatever
   // was focused before — focus is earned by clicking the design on canvas again.
@@ -640,7 +680,7 @@ export function DesignDialog({ draft, onChange, onClose }: Props) {
               <ScrollArea className="flex-1 min-h-0">
                 {sortedLibrary.length === 0 ? (
                   <p className="text-xs text-muted-foreground text-center py-4">
-                    {library.length === 0 ? "No uploads yet" : "No matches"}
+                    {libraryLoading ? "Loading…" : librarySearchQuery ? "No matches" : "No uploads yet"}
                   </p>
                 ) : libraryView === "grid" ? (
                   <div className="p-4 grid grid-cols-2 gap-3">
@@ -685,6 +725,10 @@ export function DesignDialog({ draft, onChange, onClose }: Props) {
                     ))}
                   </div>
                 )}
+                {libraryLoading && library.length > 0 && (
+                  <p className="text-xs text-muted-foreground text-center pb-4">Loading…</p>
+                )}
+                {hasMoreLibrary && !libraryLoading && <div ref={libraryEndRef} className="h-px" />}
               </ScrollArea>
             </div>
           ) : (
