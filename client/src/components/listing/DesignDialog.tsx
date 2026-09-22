@@ -73,6 +73,17 @@ const loadImageSize = (url: string) =>
     img.src = url;
   });
 
+// The library row as /designs/library returns it — width/height come straight
+// from the DB (sharp reads them at upload), so nothing has to download the
+// full-res file just to learn how big it is.
+type LibraryItem = {
+  fileUrl: string;
+  thumbUrl: string | null;
+  printifyImageId: string;
+  width: number | null;
+  height: number | null;
+};
+
 // Checkerboard behind library thumbnails so transparent PNGs read clearly.
 const CHECKERBOARD_BG: React.CSSProperties = {
   backgroundImage:
@@ -167,25 +178,15 @@ export function DesignDialog({ draft, onChange, onClose }: Props) {
 
   // Library — every design this user has ever uploaded, for reusing one instead
   // of re-uploading the same file.
-  const [library, setLibrary] = useState<{ fileUrl: string; thumbUrl: string | null; printifyImageId: string }[]>([]);
+  const [library, setLibrary] = useState<LibraryItem[]>([]);
   const [librarySearch, setLibrarySearch] = useState("");
   const [librarySort, setLibrarySort] = useState<"recent" | "name">("recent");
   const [libraryView, setLibraryView] = useState<"grid" | "list">("grid");
   const [libraryOpen, setLibraryOpen] = useState(true);
-  // Original pixel dimensions aren't stored — loaded lazily per item, same as
-  // the DPI check below does for placed designs.
-  const [libraryDims, setLibraryDims] = useState<Record<string, { w: number; h: number }>>({});
   useEffect(() => {
     // This is a reuse-a-design gallery, not the paginated My Files page —
     // pull a generous page size so it still shows everything for a normal user.
-    api.get("/designs/library", { params: { pageSize: 100 } }).then(({ data }) => {
-      setLibrary(data.items);
-      data.items.forEach((item: { fileUrl: string }) => {
-        loadImageSize(item.fileUrl).then(({ w, h }) => {
-          setLibraryDims((prev) => ({ ...prev, [item.fileUrl]: { w, h } }));
-        });
-      });
-    });
+    api.get("/designs/library", { params: { pageSize: 100 } }).then(({ data }) => setLibrary(data.items));
   }, []);
   const filteredLibrary = library.filter((item) =>
     fileNameOf(item.fileUrl).toLowerCase().includes(librarySearch.toLowerCase())
@@ -398,13 +399,25 @@ export function DesignDialog({ draft, onChange, onClose }: Props) {
   };
 
   // Reuse an already-uploaded design from the library — same placement, no re-upload.
-  // Canvas preview/placement always uses the full-res fileUrl, never the thumbnail.
-  const reuseDesign = async (item: { fileUrl: string; thumbUrl: string | null; printifyImageId: string }) => {
-    const { w, h } = await loadImageSize(item.fileUrl);
+  // Placement is instant: dimensions come from the DB and the thumbnail (already
+  // painted in the list, so it's in cache) stands in on canvas, then gets swapped
+  // for the full-res file once that finishes downloading in the background.
+  // Only legacy rows with no stored size still have to measure the real file.
+  const reuseDesign = async (item: LibraryItem) => {
+    const { w, h } = item.width && item.height
+      ? { w: item.width, h: item.height }
+      : await loadImageSize(item.fileUrl);
     placeDesign({
-      file: null, preview: item.fileUrl, imgWidth: w, imgHeight: h,
+      file: null, preview: item.thumbUrl ?? item.fileUrl, imgWidth: w, imgHeight: h,
       fileUrl: item.fileUrl, thumbUrl: item.thumbUrl ?? undefined, printifyImageId: item.printifyImageId,
     });
+    if (item.thumbUrl) {
+      const full = new Image();
+      full.onload = () => setDesigns((prev) => prev.map((d) =>
+        d.fileUrl === item.fileUrl && d.preview === item.thumbUrl ? { ...d, preview: item.fileUrl } : d
+      ));
+      full.src = item.fileUrl;
+    }
   };
 
   const onDrop = (e: React.DragEvent) => {
@@ -624,7 +637,7 @@ export function DesignDialog({ draft, onChange, onClose }: Props) {
                   </div>
                 </div>
               </div>
-              <ScrollArea className="flex-1">
+              <ScrollArea className="flex-1 min-h-0">
                 {sortedLibrary.length === 0 ? (
                   <p className="text-xs text-muted-foreground text-center py-4">
                     {library.length === 0 ? "No uploads yet" : "No matches"}
@@ -644,7 +657,7 @@ export function DesignDialog({ draft, onChange, onClose }: Props) {
                         <div className="p-2">
                           <p className="text-xs font-medium truncate">{fileNameOf(item.fileUrl)}</p>
                           <p className="text-[11px] text-muted-foreground">
-                            {libraryDims[item.fileUrl] ? `${libraryDims[item.fileUrl].w}px × ${libraryDims[item.fileUrl].h}px` : "…"}
+                            {item.width && item.height ? `${item.width}px × ${item.height}px` : "—"}
                           </p>
                         </div>
                       </button>
@@ -665,7 +678,7 @@ export function DesignDialog({ draft, onChange, onClose }: Props) {
                         <div className="min-w-0">
                           <p className="text-xs font-medium truncate">{fileNameOf(item.fileUrl)}</p>
                           <p className="text-[11px] text-muted-foreground">
-                            {libraryDims[item.fileUrl] ? `${libraryDims[item.fileUrl].w}px × ${libraryDims[item.fileUrl].h}px` : "…"}
+                            {item.width && item.height ? `${item.width}px × ${item.height}px` : "—"}
                           </p>
                         </div>
                       </button>
